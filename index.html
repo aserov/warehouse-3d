@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warehouse 3D</title>
+  
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="canvas-container"></div>
+
+  <!-- Left Control Panel -->
+  <div id="controls-panel">
+    <button id="toggle2DBtn" class="btn-toggle-view">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+      <span id="toggle2DBtnText">2D / 3D View</span>
+    </button>
+
+    <div class="divider"></div>
+
+    <label><input type="checkbox" id="toggle-row-labels" checked> Show Row Labels</label>
+    <label><input type="checkbox" id="toggle-level-labels" checked> Show Level Labels</label>
+    <label><input type="checkbox" id="toggle-info-panel" checked> Show Information Panel</label>
+  </div>
+
+  <!-- Right Information Panel -->
+  <div id="info-panel">
+    <button id="close-info-panel" title="Close Panel">&times;</button>
+    <h3>Information</h3>
+    <div id="info-content">Click on a cell, row, or area to view details.</div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- i18n -->
+  <script src="js/i18n/ru.js"></script>
+  <script src="js/i18n/en.js"></script>
+
+  <!-- Application Modules -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/sceneSetup.js"></script>
+  <script src="js/layoutEngine.js"></script>
+  <script src="js/warehouseBuilder.js"></script>
+  <script src="js/cameraController.js"></script>
+  <script src="js/uiController.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

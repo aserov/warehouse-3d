@@ -2,11 +2,30 @@ window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.CONFIG = {
   // --- Language Settings ---
-  defaultLang: 'ru', // 'ru' | 'en'
+  defaultLang: 'en', // 'ru' | 'en'
 
   // --- Scale & Physics ---
   scaleFactor: 0.001, // 10000 mm in JSON -> 10 units (meters)
-  
+
+  // --- Camera & View Controls ---
+  camera: {
+    fov: 60,
+    near: 1.0,           // High near-plane precision prevents depth buffer flickering
+    far: 2000,
+    maxPolarAngle: Math.PI / 2 - 0.03, // Blocks camera from looking under floor (~88 deg)
+    minDistance: 5,
+    maxDistance: 1200
+  },
+
+  // --- Floor Grid Configuration ---
+  grid: {
+    size: 2500,          // Grid plane extent
+    divisions: 250,       // Larger division step eliminates aliasing noise
+    positionY: -0.05,    // Y offset below ground plane to eliminate Z-fighting
+    centerX: 200,
+    centerZ: 250
+  },
+
   // --- Grid & Layout Gaps (meters) ---
   cellGap: 0.5,
   rowGap: 15.0,
@@ -16,7 +35,6 @@ window.Warehouse.CONFIG = {
   originZ: 15,           // Offset of the first area from the top wall
 
   // --- Warehouse Building Outline (L-shaped Polygon coordinates in meters: [X, Z]) ---
-  // L-shaped building outline defined by 6 vertices
   buildingPolygon: [
     { x: 0,   z: 0 },
     { x: 420, z: 0 },
@@ -41,7 +59,17 @@ window.Warehouse.CONFIG = {
       "#2e7d32", // Emerald Green
       "#ef6c00", // Warm Orange
       "#8e24aa", // Purple
-      "#00838f"  // Cyan
+      "#00838f", // Cyan
+      "#d32f2f", // Red
+      "#f57c00", // Amber
+      "#1976d2", // Bright Blue
+      "#388e3c", // Forest Green
+      "#c2185b", // Raspberry
+      "#7b1fa2", // Deep Purple
+      "#0097a7", // Teal
+      "#f9a825", // Golden Yellow
+      "#e64a19", // Vermillion
+      "#5d4037"  // Brown
     ]
   }
 };

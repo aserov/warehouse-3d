@@ -44,15 +44,12 @@ window.Warehouse.Builder = (function() {
    * Completely clears existing warehouse objects, labels, and disposes GPU resources.
    */
   function clearWarehouse() {
-    // 1. Reset tracking arrays without breaking references
     rowLabels.length = 0;
     levelLabels.length = 0;
     areaLabels.length = 0;
 
-    // 2. Remove DOM elements if CSS2D labels are present
     document.querySelectorAll('.area-label-element, .row-label-element').forEach(el => el.remove());
 
-    // 3. Helper function to recursively dispose object graphics resources
     const disposeObject = (obj) => {
       if (!obj) return;
       if (obj.geometry) {
@@ -71,7 +68,6 @@ window.Warehouse.Builder = (function() {
       }
     };
 
-    // 4. Clean warehouseGroup contents thoroughly
     if (warehouseGroup) {
       while (warehouseGroup.children.length > 0) {
         const child = warehouseGroup.children[0];
@@ -80,7 +76,6 @@ window.Warehouse.Builder = (function() {
       }
     }
 
-    // 5. Clean any direct scene children tagged as warehouse objects
     if (scene) {
       const objectsToRemove = [];
       scene.children.forEach(child => {
@@ -112,8 +107,8 @@ window.Warehouse.Builder = (function() {
     const floorGeo = new THREE.ShapeGeometry(shape);
     const floorMat = new THREE.MeshStandardMaterial({
       color: colors.buildingFloor,
-      roughness: 0.8,
-      shininess: 10,
+      roughness: 0.9,
+      metalness: 0.0,
       side: THREE.DoubleSide
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
@@ -151,7 +146,6 @@ window.Warehouse.Builder = (function() {
 
     const t = Utils.t.bind(Utils);
 
-    // Build floor building outline
     createBuildingOutline(CONFIG.buildingPolygon);
 
     let currentX = CONFIG.originX;
@@ -241,7 +235,6 @@ window.Warehouse.Builder = (function() {
           const levelText = `${levelData.level}`;
           const labelCenterY = currentYOffset + (levelMaxHeight / 2);
 
-          // Level indicators are added directly to levelGroup so they clear automatically with the scene
           const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
           leftLevelMesh.rotation.y = -Math.PI / 2;
           leftLevelMesh.position.set(firstCellX - 0.05, labelCenterY, zOffset + rowCellDepth / 2);
@@ -259,7 +252,7 @@ window.Warehouse.Builder = (function() {
         });
 
         const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
-        floorRowLabel.position.set(areaOffsetX + dims.maxRowX + 18, 0.02, zOffset + 5);
+        floorRowLabel.position.set(areaOffsetX + dims.maxRowX + 18, 0.09, zOffset + 5);
         floorRowLabel.userData = rowSummary;
 
         rowGroup.add(floorRowLabel);
@@ -272,21 +265,30 @@ window.Warehouse.Builder = (function() {
       const areaCenterX = minX + dims.totalWidth / 2;
       const areaCenterZ = minZ + dims.totalDepth / 2;
 
-      // Area background plane
+      // Area background plane with depthWrite: false to prevent Z-fighting
       const areaRectGeo = new THREE.PlaneGeometry(dims.totalWidth, dims.totalDepth);
-      const areaRectMat = new THREE.MeshBasicMaterial({ color: areaColor, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
+      const areaRectMat = new THREE.MeshBasicMaterial({
+        color: areaColor,
+        transparent: true,
+        opacity: 0.07,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
       const areaRectMesh = new THREE.Mesh(areaRectGeo, areaRectMat);
       areaRectMesh.rotation.x = -Math.PI / 2;
-      areaRectMesh.position.set(areaCenterX, 0.01, areaCenterZ);
+      areaRectMesh.position.set(areaCenterX, 0.05, areaCenterZ);
       areaGroup.add(areaRectMesh);
 
-      // Area borders
-      const borderLines = new THREE.LineSegments(new THREE.EdgesGeometry(areaRectGeo), new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3 }));
+      // Area border lines
+      const borderLines = new THREE.LineSegments(
+        new THREE.EdgesGeometry(areaRectGeo),
+        new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3 })
+      );
       borderLines.rotation.x = -Math.PI / 2;
-      borderLines.position.set(areaCenterX, 0.02, areaCenterZ);
+      borderLines.position.set(areaCenterX, 0.08, areaCenterZ);
       areaGroup.add(borderLines);
 
-      // Area corner labels
+      // Corner tags
       [{ x: Math.round(minX), z: Math.round(minZ) },
        { x: Math.round(maxX), z: Math.round(minZ) },
        { x: Math.round(minX), z: Math.round(maxZ) },
@@ -299,7 +301,7 @@ window.Warehouse.Builder = (function() {
       // Main Area title label
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
       const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
-      areaTitleMesh.position.set(areaCenterX, 0.03, maxZ - CONFIG.areaPadding / 2);
+      areaTitleMesh.position.set(areaCenterX, 0.10, maxZ - CONFIG.areaPadding / 2);
       areaTitleMesh.userData = areaSummary;
 
       areaGroup.add(areaTitleMesh);

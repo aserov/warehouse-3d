@@ -105,49 +105,6 @@ window.Warehouse.UIController = (function() {
   }
 
   /**
-   * Initializes real-time clock updating in top toolbar.
-   */
-  function startClock() {
-    const clockEl = document.getElementById('toolbar-clock');
-    if (!clockEl) return;
-
-    function updateTime() {
-      const lang = (CONFIG && CONFIG.defaultLang) || 'en';
-      const now = new Date();
-
-      const days = lang === 'ru'
-        ? ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-        : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-      const months = lang === 'ru'
-        ? ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
-        : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-      const dayName = days[now.getDay()];
-      const monthName = months[now.getMonth()];
-      const dayNum = String(now.getDate()).padStart(2, '0');
-      const year = now.getFullYear();
-
-      const hours = String(now.getHours()).padStart(2, '0');
-      const mins = String(now.getMinutes()).padStart(2, '0');
-      const secs = String(now.getSeconds()).padStart(2, '0');
-
-      let timeZoneStr = 'Standard Time';
-      try {
-        const timeZoneMatch = Intl.DateTimeFormat(lang, { timeZoneName: 'long' })
-          .formatToParts(now)
-          .find(p => p.type === 'timeZoneName');
-        if (timeZoneMatch) timeZoneStr = timeZoneMatch.value;
-      } catch (e) {}
-
-      clockEl.textContent = `${dayName} ${monthName} ${dayNum} ${year} ${hours}:${mins}:${secs} (${timeZoneStr})`;
-    }
-
-    updateTime();
-    setInterval(updateTime, 1000);
-  }
-
-  /**
    * Displays modal error overlay when loading fails.
    */
   function showErrorUI(title, details) {
@@ -165,12 +122,63 @@ window.Warehouse.UIController = (function() {
   }
 
   /**
-   * Closes all active custom dropdown popups (floors, areas, search results).
+   * Closes all active custom dropdown popups (warehouses, floors, areas, search results).
    */
   function closeAllDropdowns() {
+    document.getElementById('custom-warehouse-select')?.classList.remove('open');
     document.getElementById('custom-floor-select')?.classList.remove('open');
     document.getElementById('custom-area-select')?.classList.remove('open');
     document.getElementById('search-dropdown-menu')?.classList.remove('open');
+  }
+
+  /**
+   * Dynamically populates warehouse selector dropdown items.
+   * Unlike floors/areas, a warehouse can never be unselected - there is always exactly one active.
+   * @param {Array<Object>} warehouses - List of available warehouse objects ({ warehouse, warehouseName }).
+   * @param {number|string} activeWarehouseId - Currently selected warehouse id.
+   * @param {Function} onWarehouseChange - Callback invoked with the chosen warehouse id.
+   */
+  function populateWarehouses(warehouses, activeWarehouseId, onWarehouseChange) {
+    const menu = document.getElementById('warehouse-dropdown-menu');
+    const currentText = document.getElementById('warehouse-current-text');
+    if (!menu || !currentText) return;
+
+    menu.innerHTML = '';
+
+    let activeLabel = '';
+
+    (warehouses || []).forEach(wh => {
+      const label = wh.warehouseName || `#${wh.warehouse}`;
+      const isActive = Number(wh.warehouse) === Number(activeWarehouseId);
+      if (isActive) activeLabel = label;
+
+      const item = document.createElement('div');
+      item.className = `floor-option ${isActive ? 'active' : ''}`;
+      item.setAttribute('data-value', wh.warehouse);
+      item.textContent = label;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        if (Number(wh.warehouse) === Number(activeWarehouseId)) {
+          closeAllDropdowns();
+          return;
+        }
+
+        menu.querySelectorAll('.floor-option').forEach(opt => opt.classList.remove('active'));
+        item.classList.add('active');
+        currentText.textContent = label;
+        closeAllDropdowns();
+
+        if (typeof onWarehouseChange === 'function') {
+          onWarehouseChange(wh.warehouse);
+        }
+      });
+
+      menu.appendChild(item);
+    });
+
+    currentText.textContent = activeLabel;
   }
 
   /**
@@ -212,7 +220,7 @@ window.Warehouse.UIController = (function() {
       floorMenu.appendChild(item);
     });
 
-    currentText.textContent = `${floorPrefix} ${activeFloor}`;
+    currentText.textContent = floors.length > 0 ? `${floorPrefix} ${activeFloor}` : '—';
   }
 
   /**
@@ -252,12 +260,17 @@ window.Warehouse.UIController = (function() {
 
     areaMenu.appendChild(allOption);
 
+    let activeAreaLabel = null;
+
     // Add dynamic areas
     if (areas && Array.isArray(areas)) {
       areas.forEach(area => {
         const areaName = area.areaName || area;
+        const isActive = activeArea === areaName;
+        if (isActive) activeAreaLabel = `${areaPrefix} ${areaName}`;
+
         const item = document.createElement('div');
-        item.className = `floor-option ${activeArea === areaName ? 'active' : ''}`;
+        item.className = `floor-option ${isActive ? 'active' : ''}`;
         item.setAttribute('data-value', areaName);
         item.textContent = `${areaPrefix} ${areaName}`;
 
@@ -277,7 +290,7 @@ window.Warehouse.UIController = (function() {
       });
     }
 
-    currentText.textContent = (activeArea === 'all' || !activeArea) ? allAreasText : `${areaPrefix} ${areaName}`;
+    currentText.textContent = (activeArea === 'all' || !activeArea) ? allAreasText : (activeAreaLabel || allAreasText);
   }
 
   /**
@@ -299,56 +312,35 @@ window.Warehouse.UIController = (function() {
     const searchInput = document.getElementById('cell-search-input');
     const searchDropdown = document.getElementById('search-dropdown-menu');
     const clearBtn = document.getElementById('search-clear-btn');
-
     if (!searchInput || !searchDropdown) return;
 
     const performSearch = () => {
       const query = searchInput.value.trim().toLowerCase();
+      clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+      searchDropdown.innerHTML = '';
 
-      if (clearBtn) {
-        clearBtn.style.display = query.length > 0 ? 'block' : 'none';
-      }
-
-      if (!query) {
+      if (query.length === 0) {
         searchDropdown.classList.remove('open');
-        searchDropdown.innerHTML = '';
         return;
       }
 
-      // Filter cell objects from Builder interactive items
-      const interactive = (Builder && Builder.interactiveObjects) ? Builder.interactiveObjects : [];
-      const matchingCells = interactive.filter(obj => {
-        if (!obj || !obj.userData || obj.userData.type !== 'cell') return false;
+      const objects = (Builder && Builder.interactiveObjects) || [];
+      const matches = objects.filter(mesh => {
+        const ud = mesh.userData;
+        if (!ud || ud.type !== 'cell') return false;
+        const cell = ud.data;
+        return cell && cell.number && String(cell.number).toLowerCase().includes(query);
+      }).slice(0, 8);
 
-        const userData = obj.userData;
-        const cell = userData.data || {};
-
-        const searchableText = [
-          cell.number,
-          cell.place,
-          userData.cellNumber,
-          userData.areaName,
-          userData.rowName,
-          userData.levelName
-        ].filter(Boolean).join(' ').toLowerCase();
-
-        return searchableText.includes(query);
-      });
-
-      searchDropdown.innerHTML = '';
-
-      if (matchingCells.length === 0) {
-        const noResult = document.createElement('div');
-        noResult.className = 'search-item';
-        noResult.style.cursor = 'default';
-        noResult.style.color = '#64748b';
-        noResult.textContent = t('noResults');
-        searchDropdown.appendChild(noResult);
+      if (matches.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'search-item search-item-empty';
+        empty.textContent = t('noResults') || 'No results';
+        searchDropdown.appendChild(empty);
       } else {
-        matchingCells.slice(0, 20).forEach(mesh => {
+        matches.forEach(mesh => {
           const userData = mesh.userData;
-          const cell = userData.data || {};
-          const cellTitle = cell.number || userData.cellNumber || '';
+          const cellTitle = userData.data && userData.data.number;
 
           const item = document.createElement('div');
           item.className = 'search-item';
@@ -445,6 +437,19 @@ window.Warehouse.UIController = (function() {
       if (zoomWidget) zoomWidget.style.display = e.target.checked ? 'flex' : 'none';
     });
 
+    // Custom Warehouse Dropdown Toggle
+    const warehouseSelect = document.getElementById('custom-warehouse-select');
+    const warehouseBtn = document.getElementById('warehouse-select-btn');
+
+    if (warehouseSelect && warehouseBtn) {
+      warehouseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = warehouseSelect.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) warehouseSelect.classList.add('open');
+      });
+    }
+
     // Custom Floor Dropdown Toggle
     const floorSelect = document.getElementById('custom-floor-select');
     const floorBtn = document.getElementById('floor-select-btn');
@@ -538,5 +543,14 @@ window.Warehouse.UIController = (function() {
     });
   }
 
-  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents, populateFloors, populateAreas, closeAllDropdowns };
+  return {
+    displayInfo,
+    applyTranslations,
+    showErrorUI,
+    initEvents,
+    populateWarehouses,
+    populateFloors,
+    populateAreas,
+    closeAllDropdowns
+  };
 })();

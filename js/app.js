@@ -1,7 +1,7 @@
 window.Warehouse = window.Warehouse || {};
 
 (function() {
-  const { CONFIG, SceneSetup, Builder, CameraController, UIController } = window.Warehouse;
+  const { CONFIG, SceneSetup, Builder, CameraController, UIController, Utils } = window.Warehouse;
   const { scene, camera, renderer, controls, raycaster, mouse, warehouseGroup } = SceneSetup;
   const { colors } = CONFIG;
 
@@ -24,13 +24,9 @@ window.Warehouse = window.Warehouse || {};
       this.originalMaterial = null;
       this.originalScale = null;
 
-      // Сброс информационной панели
       const infoContent = document.getElementById('info-content');
       if (infoContent) {
-        const lang = (CONFIG && CONFIG.defaultLang) || 'en';
-        const defaultText = (window.Warehouse.i18n && window.Warehouse.i18n[lang]?.defaultInfoText)
-          || 'Click on a cell, row, or area to view details.';
-        infoContent.textContent = defaultText;
+        infoContent.textContent = Warehouse.Utils.t("defaultInfoText");
       }
     },
 
@@ -146,7 +142,9 @@ window.Warehouse = window.Warehouse || {};
 
   document.addEventListener('DOMContentLoaded', () => {
     UIController.applyTranslations();
-    UIController.startClock();
+    if (window.Warehouse.ToolbarClock && window.Warehouse.ToolbarClock.start) {
+      window.Warehouse.ToolbarClock.start();
+    }
   });
 
   function updateCanvasSize() {
@@ -162,25 +160,35 @@ window.Warehouse = window.Warehouse || {};
 
   window.addEventListener('resize', updateCanvasSize);
 
-  let rawWarehouseData = null;
+  // --- Multi-warehouse state ---
+  let rawData = null;           // { warehouses: [...] } as fetched from server
+  let currentWarehouse = null;  // currently active warehouse object
+  let currentWarehouseId = null;
 
   /**
-   * Renders the warehouse scene for a specific floor.
+   * A warehouse polygon is only considered valid if it's an array of at least 3 points.
+   */
+  function isValidPolygon(polygon) {
+    return Array.isArray(polygon) && polygon.length >= 3;
+  }
+
+  /**
+   * Renders the warehouse scene for a specific floor of the currently active warehouse.
    * @param {number|string} floorNumber - The floor number to filter and render.
    */
   function renderWarehouseForFloor(floorNumber) {
-    if (!rawWarehouseData) return;
+    if (!currentWarehouse) return;
 
     // Clear active selection before re-building 3D mesh objects
     Selection.clear();
 
-    // Filter areas that belong to the selected floor
-    const filteredAreas = (rawWarehouseData.areas || []).filter(
+    // Filter areas that belong to the selected floor (within the active warehouse only)
+    const filteredAreas = (currentWarehouse.areas || []).filter(
       area => Number(area.floor) === Number(floorNumber)
     );
 
     const filteredData = {
-      ...rawWarehouseData,
+      ...currentWarehouse,
       areas: filteredAreas
     };
 
@@ -208,39 +216,87 @@ window.Warehouse = window.Warehouse || {};
     });
   }
 
-  // Fetch Data & Dynamic Floor Initialization
-  fetch('data/cells-full.json')
+  /**
+   * Selects a warehouse: validates its polygon, applies its geometry (polygon + scale)
+   * onto CONFIG, resolves its floor list, and triggers a fresh render on the minimal floor.
+   * @param {number|string} warehouseId
+   */
+  function selectWarehouse(warehouseId) {
+    if (!rawData || !Array.isArray(rawData.warehouses)) return;
+
+    const warehouse = rawData.warehouses.find(w => Number(w.warehouse) === Number(warehouseId));
+    if (!warehouse) return;
+
+    currentWarehouse = warehouse;
+    currentWarehouseId = warehouse.warehouse;
+
+    // Keep the warehouse dropdown in sync even on programmatic selection
+    UIController.populateWarehouses(rawData.warehouses, currentWarehouseId, (newId) => selectWarehouse(newId));
+
+    if (!isValidPolygon(warehouse.polygon)) {
+      const details = `Polygon is not defined for warehouse "${warehouse.warehouseName}" [id=${warehouse.warehouse}]`;
+
+      console.error(`[Warehouse] ${details}`);
+      UIController.showErrorUI('Warehouse configuration error', details);
+
+      Selection.clear();
+      CONFIG.buildingPolygon = null; // don't leave a stale outline from a previously valid warehouse
+      Builder.buildWarehouse({ areas: [] }); // clears the scene without drawing an outline
+      UIController.populateFloors([], null, () => {});
+      UIController.populateAreas([], 'all', () => {});
+      return;
+    }
+
+    // Apply this warehouse's geometry onto CONFIG - everything downstream
+    // (Builder, LayoutEngine, CameraController) reads these live.
+    CONFIG.buildingPolygon = warehouse.polygon;
+    CONFIG.scaleFactor = (typeof warehouse.scale === 'number' && warehouse.scale > 0)
+      ? warehouse.scale
+      : CONFIG.scaleFactor; // fallback to whatever CONFIG already had
+
+    const uniqueFloors = [...new Set((warehouse.areas || []).map(a => Number(a.floor)).filter(Boolean))].sort((a, b) => a - b);
+
+    if (uniqueFloors.length === 0) {
+      const details = `No floor data found for warehouse "${warehouse.warehouseName}" [id=${warehouse.warehouse}]`;
+      console.error(`[Warehouse] ${details}`);
+      UIController.showErrorUI('Warehouse data error', details);
+
+      // The building polygon IS valid here, so we still draw the empty building shell -
+      // only the floor/area listings are empty.
+      Selection.clear();
+      Builder.buildWarehouse({ areas: [] });
+      UIController.populateFloors([], null, () => {});
+      UIController.populateAreas([], 'all', () => {});
+      return;
+    }
+
+    const initialFloor = uniqueFloors[0];
+
+    UIController.populateFloors(uniqueFloors, initialFloor, (selectedFloor) => {
+      renderWarehouseForFloor(selectedFloor);
+    });
+
+    renderWarehouseForFloor(initialFloor);
+  }
+
+  // Fetch Data & Dynamic Warehouse/Floor Initialization
+  fetch('data/cells-min-new.json')
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      if (!data || !data.areas || !Array.isArray(data.areas) || data.areas.length === 0) {
+      if (!data || !data.warehouses || !Array.isArray(data.warehouses) || data.warehouses.length === 0) {
         throw new Error('Received empty or invalid JSON data structure.');
       }
 
-      rawWarehouseData = data;
+      rawData = data;
 
-      // Extract unique floor numbers from backend response and sort ascending
-      const uniqueFloors = [...new Set(data.areas.map(a => Number(a.floor)).filter(Boolean))].sort((a, b) => a - b);
-
-      if (uniqueFloors.length === 0) {
-        throw new Error('No floor data found in JSON.');
-      }
-
-      // Select the first available floor by default
-      const initialFloor = uniqueFloors[0];
-
-      // Initialize floor dropdown selector UI
-      UIController.populateFloors(uniqueFloors, initialFloor, (selectedFloor) => {
-        renderWarehouseForFloor(selectedFloor);
-      });
-
-      // Initial render for default floor
-      renderWarehouseForFloor(initialFloor);
+      const initialWarehouse = data.warehouses[0];
+      selectWarehouse(initialWarehouse.warehouse);
     })
     .catch(err => {
-      console.error("Error loading cells-full.json:", err);
+      console.error("Error loading cells-min.json:", err);
       UIController.showErrorUI('Failed to load warehouse data', err.message);
     });
 

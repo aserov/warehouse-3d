@@ -65,12 +65,30 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <input type="text" id="cell-search-input" placeholder="Поиск ячейки..." autocomplete="off">
+              <input type="text" id="cell-search-input" placeholder="Search cell..." autocomplete="off">
               <button id="search-clear-btn" class="search-clear-btn" type="button" style="display: none;">✕</button>
             </div>
 
             <!-- Auto-complete Popup Menu -->
             <div class="search-dropdown-menu" id="search-dropdown-menu"></div>
+          </div>
+
+          <div class="view-mode-divider"></div>
+
+          <!-- Custom Warehouse Dropdown -->
+          <div class="custom-floor-select" id="custom-warehouse-select">
+            <button class="floor-select-btn" id="warehouse-select-btn" type="button">
+              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 8.35V20a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8.35a1 1 0 0 1 .53-.88l8-4.44a1 1 0 0 1 .94 0l8 4.44a1 1 0 0 1 .53.88Z"></path>
+                <path d="M6 21V11h12v10"></path>
+              </svg>
+              <span class="floor-current-text" id="warehouse-current-text">Warehouse</span>
+              <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+
+            <div class="floor-dropdown-menu" id="warehouse-dropdown-menu"></div>
           </div>
 
           <div class="view-mode-divider"></div>
@@ -89,8 +107,6 @@
             </button>
 
             <div class="floor-dropdown-menu" id="floor-dropdown-menu">
-              <div class="floor-option active" data-value="1">Floor 1</div>
-              <div class="floor-option" data-value="2">Floor 2</div>
             </div>
           </div>
 
@@ -183,6 +199,7 @@
   <script src="js/warehouseBuilder.js"></script>
   <script src="js/cameraController.js"></script>
   <script src="js/uiController.js"></script>
+  <script src="js/toolbarClock.js"></script>
   <script src="js/app.js"></script>
 
 </body>

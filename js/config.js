@@ -5,6 +5,8 @@ window.Warehouse.CONFIG = {
   defaultLang: 'en', // 'ru' | 'en'
 
   // --- Scale & Physics ---
+  // Fallback used ONLY when a warehouse from the server doesn't provide its own `scale`.
+  // Not a source of truth anymore - each warehouse should send its own scale.
   scaleFactor: 0.001, // 10000 mm in JSON -> 10 units (meters)
 
   // --- Camera & View Controls ---
@@ -41,15 +43,12 @@ window.Warehouse.CONFIG = {
   originX: 15,           // Offset of the first area from the left wall
   originZ: 15,           // Offset of the first area from the top wall
 
-  // --- Warehouse Building Outline (L-shaped Polygon coordinates in meters: [X, Z]) ---
-  buildingPolygon: [
-    { x: 0,   z: 0 },
-    { x: 620, z: 0 },
-    { x: 620, z: 180 },
-    { x: 280, z: 180 },
-    { x: 280, z: 530 },
-    { x: 0,   z: 530 }
-  ],
+  // --- Warehouse Building Outline ---
+  // NOTE: buildingPolygon is intentionally NOT defined here anymore.
+  // It always comes from the server per-warehouse (warehouse.polygon) and is
+  // assigned onto this object at runtime (see app.js -> selectWarehouse()).
+  // If a warehouse has no polygon, that's treated as a data error - nothing is drawn.
+  buildingPolygon: null,
 
   // --- Colors & Themes ---
   colors: {

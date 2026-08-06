@@ -54,15 +54,19 @@
     document.querySelectorAll('.compass-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const angle = parseFloat(e.target.getAttribute('data-angle'));
-        if (!isNaN(angle)) CameraController.rotateToCardinal(angle);
+        if (!isNaN(angle) && CameraController && CameraController.rotateToCardinal) {
+          CameraController.rotateToCardinal(angle);
+        }
       });
     });
 
-    document.getElementById('zoom-in-btn')?.addEventListener('click', CameraController.zoomIn);
-    document.getElementById('zoom-out-btn')?.addEventListener('click', CameraController.zoomOut);
+    document.getElementById('zoom-in-btn')?.addEventListener('click', () => CameraController?.zoomIn && CameraController.zoomIn());
+    document.getElementById('zoom-out-btn')?.addEventListener('click', () => CameraController?.zoomOut && CameraController.zoomOut());
 
     document.getElementById('zoom-slider')?.addEventListener('input', (e) => {
-      CameraController.setZoomFromSlider(parseFloat(e.target.value));
+      if (CameraController && CameraController.setZoomFromSlider) {
+        CameraController.setZoomFromSlider(parseFloat(e.target.value));
+      }
     });
   }
 
@@ -108,12 +112,27 @@
       areas: filteredAreas
     };
 
-    // Rebuild scene with filtered floor data
-    Warehouse.Builder.buildWarehouse(filteredData);
-    Warehouse.CameraController.fitCameraToWarehouse();
-    if (typeof updateCanvasSize === 'function') {
-      updateCanvasSize();
+    // Rebuild 3D scene with filtered floor data
+    Builder.buildWarehouse(filteredData);
+    if (CameraController && CameraController.fitCameraToWarehouse) {
+      CameraController.fitCameraToWarehouse();
     }
+    updateCanvasSize();
+
+    // Populate zone / area dropdown options for this specific floor
+    UIController.populateAreas(filteredAreas, 'all', (selectedArea) => {
+      if (selectedArea === 'all') {
+        if (Builder.setFocusedArea) {
+          Builder.setFocusedArea(null);
+        } else if (CameraController && CameraController.fitCameraToWarehouse) {
+          CameraController.fitCameraToWarehouse();
+        }
+      } else {
+        if (Builder.setFocusedArea) {
+          Builder.setFocusedArea(selectedArea);
+        }
+      }
+    });
   }
 
   // Fetch Data & Dynamic Floor Initialization
@@ -140,7 +159,7 @@
       const initialFloor = uniqueFloors[0];
 
       // Initialize floor dropdown selector UI
-      Warehouse.UIController.populateFloors(uniqueFloors, initialFloor, (selectedFloor) => {
+      UIController.populateFloors(uniqueFloors, initialFloor, (selectedFloor) => {
         renderWarehouseForFloor(selectedFloor);
       });
 
@@ -149,14 +168,16 @@
     })
     .catch(err => {
       console.error("Error loading cells-full.json:", err);
-      Warehouse.UIController.showErrorUI('Failed to load warehouse data', err.message);
+      UIController.showErrorUI('Failed to load warehouse data', err.message);
     });
 
   // Render Loop
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    CameraController.updateCompass();
+    if (CameraController && CameraController.updateCompass) {
+      CameraController.updateCompass();
+    }
     renderer.render(scene, camera);
   }
   animate();

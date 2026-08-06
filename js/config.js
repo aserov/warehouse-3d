@@ -17,10 +17,17 @@ window.Warehouse.CONFIG = {
     maxDistance: 1200
   },
 
+  // --- Area Focus & Dimming Settings ---
+  focus: {
+    dimmedOpacity: 0.15,       // Opacity for inactive areas when focusing on a specific zone
+    animationDuration: 1000,   // Camera fly animation duration (in milliseconds)
+    paddingFactor: 1.4         // Framing offset multiplier around focused area bounds
+  },
+
   // --- Floor Grid Configuration ---
   grid: {
     size: 2500,          // Grid plane extent
-    divisions: 250,       // Larger division step eliminates aliasing noise
+    divisions: 250,      // Division density across the grid
     positionY: -0.05,    // Y offset below ground plane to eliminate Z-fighting
     centerX: 200,
     centerZ: 250
@@ -66,10 +73,11 @@ window.Warehouse.CONFIG = {
       "#388e3c", // Forest Green
       "#c2185b", // Raspberry
       "#7b1fa2", // Deep Purple
+      "#e64a19", // Vermillion
       "#0097a7", // Teal
       "#f9a825", // Golden Yellow
-      "#e64a19", // Vermillion
       "#5d4037"  // Brown
+
     ]
   }
 };

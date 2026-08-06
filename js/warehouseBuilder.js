@@ -3,7 +3,7 @@ window.Warehouse = window.Warehouse || {};
 window.Warehouse.Builder = (function() {
   const { CONFIG, Utils, SceneSetup, LayoutEngine } = window.Warehouse;
   const { scene, warehouseGroup } = SceneSetup;
-  const { colors } = CONFIG;
+  const { colors, focus: focusCfg } = CONFIG;
 
   const rowLabels = [];
   const levelLabels = [];
@@ -34,9 +34,10 @@ window.Warehouse.Builder = (function() {
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+    const material = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true });
     const sprite = new THREE.Sprite(material);
     sprite.scale.set(12, 6, 1);
+    sprite.userData.initialOpacity = 1.0;
     return sprite;
   }
 
@@ -209,13 +210,14 @@ window.Warehouse.Builder = (function() {
             if (cellIdx === 0) firstCellX = areaOffsetX + xOffset;
             lastCellX = areaOffsetX + xOffset + w;
 
+            const baseOpacity = cellData.active ? 0.9 : 0.4;
             const geometry = new THREE.BoxGeometry(w, h, d);
             const material = new THREE.MeshStandardMaterial({
               color: cellData.active ? areaColor : colors.inactive,
               roughness: 0.3,
               metalness: 0.1,
               transparent: true,
-              opacity: cellData.active ? 0.9 : 0.4
+              opacity: baseOpacity
             });
 
             const cellMesh = new THREE.Mesh(geometry, material);
@@ -226,7 +228,8 @@ window.Warehouse.Builder = (function() {
               areaName: areaData.areaName,
               areaSummary,
               rowName: rowData.rowName,
-              levelName: levelData.levelName
+              levelName: levelData.levelName,
+              initialOpacity: baseOpacity
             };
 
             levelGroup.add(cellMesh);
@@ -238,12 +241,14 @@ window.Warehouse.Builder = (function() {
           const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
           leftLevelMesh.rotation.y = -Math.PI / 2;
           leftLevelMesh.position.set(firstCellX - 0.05, labelCenterY, zOffset + rowCellDepth / 2);
+          leftLevelMesh.userData.initialOpacity = 1.0;
           levelGroup.add(leftLevelMesh);
           levelLabels.push(leftLevelMesh);
 
           const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
           rightLevelMesh.rotation.y = Math.PI / 2;
           rightLevelMesh.position.set(lastCellX + 0.05, labelCenterY, zOffset + rowCellDepth / 2);
+          rightLevelMesh.userData.initialOpacity = 1.0;
           levelGroup.add(rightLevelMesh);
           levelLabels.push(rightLevelMesh);
 
@@ -253,7 +258,7 @@ window.Warehouse.Builder = (function() {
 
         const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
         floorRowLabel.position.set(areaOffsetX + dims.maxRowX + 18, 0.09, zOffset + 5);
-        floorRowLabel.userData = rowSummary;
+        floorRowLabel.userData = { ...rowSummary, initialOpacity: 1.0 };
 
         rowGroup.add(floorRowLabel);
         rowLabels.push(floorRowLabel);
@@ -265,7 +270,7 @@ window.Warehouse.Builder = (function() {
       const areaCenterX = minX + dims.totalWidth / 2;
       const areaCenterZ = minZ + dims.totalDepth / 2;
 
-      // Area background plane with depthWrite: false to prevent Z-fighting
+      // Area background plane
       const areaRectGeo = new THREE.PlaneGeometry(dims.totalWidth, dims.totalDepth);
       const areaRectMat = new THREE.MeshBasicMaterial({
         color: areaColor,
@@ -277,15 +282,15 @@ window.Warehouse.Builder = (function() {
       const areaRectMesh = new THREE.Mesh(areaRectGeo, areaRectMat);
       areaRectMesh.rotation.x = -Math.PI / 2;
       areaRectMesh.position.set(areaCenterX, 0.05, areaCenterZ);
+      areaRectMesh.userData.initialOpacity = 0.07;
       areaGroup.add(areaRectMesh);
 
       // Area border lines
-      const borderLines = new THREE.LineSegments(
-        new THREE.EdgesGeometry(areaRectGeo),
-        new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3 })
-      );
+      const borderMat = new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3, transparent: true, opacity: 1.0 });
+      const borderLines = new THREE.LineSegments(new THREE.EdgesGeometry(areaRectGeo), borderMat);
       borderLines.rotation.x = -Math.PI / 2;
       borderLines.position.set(areaCenterX, 0.08, areaCenterZ);
+      borderLines.userData.initialOpacity = 1.0;
       areaGroup.add(borderLines);
 
       // Corner tags
@@ -302,7 +307,7 @@ window.Warehouse.Builder = (function() {
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
       const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
       areaTitleMesh.position.set(areaCenterX, 0.10, maxZ - CONFIG.areaPadding / 2);
-      areaTitleMesh.userData = areaSummary;
+      areaTitleMesh.userData = { ...areaSummary, initialOpacity: 1.0 };
 
       areaGroup.add(areaTitleMesh);
       areaLabels.push(areaTitleMesh);
@@ -312,5 +317,38 @@ window.Warehouse.Builder = (function() {
     });
   }
 
-  return { buildWarehouse, rowLabels, levelLabels, areaLabels };
+  /**
+   * Sets focus to a specific warehouse area or resets focus back to all areas.
+   * @param {string|null} areaName - Name of the area to focus (e.g., 'RF') or null/'all' to reset.
+   */
+  function setFocusedArea(areaName) {
+    const isReset = !areaName || areaName === 'all';
+    const targetGroupName = isReset ? null : `Area_${areaName}`;
+    const dimmedFactor = focusCfg?.dimmedOpacity || 0.15;
+
+    let targetGroup = null;
+
+    warehouseGroup.children.forEach(group => {
+      if (group.name && group.name.startsWith('Area_')) {
+        const isTargetArea = !isReset && group.name === targetGroupName;
+        if (isTargetArea) targetGroup = group;
+
+        group.traverse(child => {
+          if (child.material) {
+            const initOpacity = child.userData?.initialOpacity ?? 1.0;
+            child.material.transparent = true;
+            child.material.opacity = isReset || isTargetArea ? initOpacity : initOpacity * dimmedFactor;
+            child.material.needsUpdate = true;
+          }
+        });
+      }
+    });
+
+    if (targetGroup && SceneSetup.focusOnBounds) {
+      const box = new THREE.Box3().setFromObject(targetGroup);
+      SceneSetup.focusOnBounds(box);
+    }
+  }
+
+  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels };
 })();

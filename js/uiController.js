@@ -4,6 +4,13 @@ window.Warehouse.UIController = (function() {
   const { CONFIG, Utils, Builder, CameraController } = window.Warehouse;
 
   /**
+   * Helper fallback to handle missing Utils gracefully if undefined.
+   */
+  const t = (key) => (Utils && Utils.t ? Utils.t(key) : key);
+  const getUnit = (type) => (Utils && Utils.getUnit ? Utils.getUnit(type) : '');
+  const formatNum = (num, decimals) => (Utils && Utils.formatNumber ? Utils.formatNumber(num, decimals) : num);
+
+  /**
    * Renders details card in sidebar when an object (area, row, cell) is selected.
    * @param {Object} userData - Metadata associated with the clicked 3D mesh.
    */
@@ -11,8 +18,6 @@ window.Warehouse.UIController = (function() {
     const infoContent = document.getElementById('info-content');
     if (!infoContent || !userData || !userData.type) return;
 
-    const t = Utils.t.bind(Utils);
-    const getUnit = Utils.getUnit.bind(Utils);
     const unitVol = getUnit('volume');
     const unitWeight = getUnit('weight');
     const unitDim = getUnit('dimension');
@@ -26,8 +31,8 @@ window.Warehouse.UIController = (function() {
           <div class="info-card-list">
             <div>${t('totalRows')}: <strong>${userData.totalRows}</strong></div>
             <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
-            <div>${t('totalVolume')}: <strong>${Utils.formatNumber(userData.totalVolume)} ${unitVol}</strong></div>
-            <div>${t('totalMaxWeight')}: <strong>${Utils.formatNumber(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
+            <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
           </div>
           <div class="info-badge-list">
             <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
@@ -43,8 +48,8 @@ window.Warehouse.UIController = (function() {
           <div class="info-card-list">
             <div>${t('totalLevels')}: <strong>${userData.totalLevels}</strong></div>
             <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
-            <div>${t('totalVolume')}: <strong>${Utils.formatNumber(userData.totalVolume)} ${unitVol}</strong></div>
-            <div>${t('totalMaxWeight')}: <strong>${Utils.formatNumber(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
+            <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
           </div>
           <div class="info-badge-list">
             <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
@@ -53,7 +58,7 @@ window.Warehouse.UIController = (function() {
         </div>`;
     } else if (userData.type === 'cell') {
       const cell = userData.data;
-      const cellVol = Utils.calculateCellVolume(cell.width, cell.height, cell.depth);
+      const cellVol = Utils && Utils.calculateCellVolume ? Utils.calculateCellVolume(cell.width, cell.height, cell.depth) : 0;
       infoContent.innerHTML = `
         <div class="info-card type-cell">
           <h3 class="info-card-header">🏷️ ${t('cell')}: ${cell.number}</h3>
@@ -65,9 +70,9 @@ window.Warehouse.UIController = (function() {
           <hr class="info-card-divider">
           <div class="info-card-list">
             <div>${t('position')}: <strong>${cell.place}</strong></div>
-            <div>${t('totalVolume')}: <strong>${Utils.formatNumber(cellVol, 2)} ${unitVol}</strong></div>
-            <div>${t('totalMaxWeight')}: <strong>${Utils.formatNumber(cell.weight, 0)} ${unitWeight}</strong></div>
-            <div>${t('totalFreeWeight')}: <strong>${Utils.formatNumber(cell.freeWeight, 0)} ${unitWeight}</strong></div>
+            <div>${t('totalVolume')}: <strong>${formatNum(cellVol, 2)} ${unitVol}</strong></div>
+            <div>${t('totalMaxWeight')}: <strong>${formatNum(cell.weight, 0)} ${unitWeight}</strong></div>
+            <div>${t('totalFreeWeight')}: <strong>${formatNum(cell.freeWeight, 0)} ${unitWeight}</strong></div>
             <div>${t('dimensions')}: <strong>${cell.width}×${cell.height}×${cell.depth} ${unitDim}</strong></div>
           </div>
         </div>`;
@@ -78,12 +83,14 @@ window.Warehouse.UIController = (function() {
    * Applies active language translations to elements with data-i18n attribute.
    */
   function applyTranslations() {
-    const currentLang = CONFIG.defaultLang || 'en';
+    if (!window.Warehouse || !window.Warehouse.i18n) return;
+
+    const currentLang = (CONFIG && CONFIG.defaultLang) || 'en';
     const dictionary = window.Warehouse.i18n[currentLang] || window.Warehouse.i18n.en;
 
     document.querySelectorAll('[data-i18n]').forEach(element => {
       const key = element.getAttribute('data-i18n');
-      const translatedText = dictionary[key];
+      const translatedText = dictionary ? dictionary[key] : null;
 
       if (!translatedText) return;
 
@@ -105,7 +112,7 @@ window.Warehouse.UIController = (function() {
     if (!clockEl) return;
 
     function updateTime() {
-      const lang = CONFIG.defaultLang || 'en';
+      const lang = (CONFIG && CONFIG.defaultLang) || 'en';
       const now = new Date();
 
       const days = lang === 'ru'
@@ -125,7 +132,7 @@ window.Warehouse.UIController = (function() {
       const mins = String(now.getMinutes()).padStart(2, '0');
       const secs = String(now.getSeconds()).padStart(2, '0');
 
-      let timeZoneStr = 'Berlin Standard Time';
+      let timeZoneStr = 'Standard Time';
       try {
         const timeZoneMatch = Intl.DateTimeFormat(lang, { timeZoneName: 'long' })
           .formatToParts(now)
@@ -158,7 +165,15 @@ window.Warehouse.UIController = (function() {
   }
 
   /**
-   * Dynamically populates floor selector dropdown items based on backend data.
+   * Closes all active custom dropdown popups.
+   */
+  function closeAllDropdowns() {
+    document.getElementById('custom-floor-select')?.classList.remove('open');
+    document.getElementById('custom-area-select')?.classList.remove('open');
+  }
+
+  /**
+   * Dynamically populates floor selector dropdown items.
    * @param {Array<number|string>} floors - List of available floor numbers.
    * @param {number|string} activeFloor - Currently selected floor.
    * @param {Function} onFloorChange - Callback invoked when a floor is clicked.
@@ -170,7 +185,6 @@ window.Warehouse.UIController = (function() {
 
     floorMenu.innerHTML = '';
 
-    // Determine localized floor prefix
     const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
     const floorPrefix = lang === 'ru' ? 'Этаж' : 'Floor';
 
@@ -187,7 +201,7 @@ window.Warehouse.UIController = (function() {
         item.classList.add('active');
 
         currentText.textContent = `${floorPrefix} ${floor}`;
-        document.getElementById('custom-floor-select')?.classList.remove('open');
+        closeAllDropdowns();
 
         if (typeof onFloorChange === 'function') {
           onFloorChange(floor);
@@ -197,25 +211,89 @@ window.Warehouse.UIController = (function() {
       floorMenu.appendChild(item);
     });
 
-    // Set initial text on button
     currentText.textContent = `${floorPrefix} ${activeFloor}`;
   }
 
   /**
-   * Binds UI control events (toggles, camera views, dropdown listeners).
+   * Dynamically populates area/zone selector dropdown items.
+   * @param {Array<Object>} areas - List of area items for current floor.
+   * @param {string} activeArea - Currently selected area name ('all' or areaName).
+   * @param {Function} onAreaChange - Callback invoked when an area is selected.
+   */
+  function populateAreas(areas, activeArea, onAreaChange) {
+    const areaMenu = document.getElementById('area-dropdown-menu');
+    const currentText = document.getElementById('area-current-text');
+    if (!areaMenu || !currentText) return;
+
+    areaMenu.innerHTML = '';
+
+    const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
+    const allAreasText = lang === 'ru' ? 'Все зоны' : 'All Areas';
+    const areaPrefix = lang === 'ru' ? 'Зона' : 'Area';
+
+    // Default "All Areas" option
+    const allOption = document.createElement('div');
+    allOption.className = `floor-option ${activeArea === 'all' || !activeArea ? 'active' : ''}`;
+    allOption.setAttribute('data-value', 'all');
+    allOption.textContent = allAreasText;
+
+    allOption.addEventListener('click', (e) => {
+      e.stopPropagation();
+      areaMenu.querySelectorAll('.floor-option').forEach(opt => opt.classList.remove('active'));
+      allOption.classList.add('active');
+      currentText.textContent = allAreasText;
+      closeAllDropdowns();
+
+      if (typeof onAreaChange === 'function') {
+        onAreaChange('all');
+      }
+    });
+
+    areaMenu.appendChild(allOption);
+
+    // Add dynamic areas
+    if (areas && Array.isArray(areas)) {
+      areas.forEach(area => {
+        const areaName = area.areaName || area;
+        const item = document.createElement('div');
+        item.className = `floor-option ${activeArea === areaName ? 'active' : ''}`;
+        item.setAttribute('data-value', areaName);
+        item.textContent = `${areaPrefix} ${areaName}`;
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          areaMenu.querySelectorAll('.floor-option').forEach(opt => opt.classList.remove('active'));
+          item.classList.add('active');
+          currentText.textContent = `${areaPrefix} ${areaName}`;
+          closeAllDropdowns();
+
+          if (typeof onAreaChange === 'function') {
+            onAreaChange(areaName);
+          }
+        });
+
+        areaMenu.appendChild(item);
+      });
+    }
+
+    currentText.textContent = (activeArea === 'all' || !activeArea) ? allAreasText : `${areaPrefix} ${activeArea}`;
+  }
+
+  /**
+   * Binds UI control events (toggles, camera views, custom dropdown listeners).
    */
   function initEvents() {
     // 3D Scene Label Toggles
     document.getElementById('toggle-area-labels')?.addEventListener('change', (e) => {
-      Builder.areaLabels.forEach(mesh => mesh.visible = e.target.checked);
+      if (Builder && Builder.areaLabels) Builder.areaLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
     document.getElementById('toggle-row-labels')?.addEventListener('change', (e) => {
-      Builder.rowLabels.forEach(mesh => mesh.visible = e.target.checked);
+      if (Builder && Builder.rowLabels) Builder.rowLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
     document.getElementById('toggle-level-labels')?.addEventListener('change', (e) => {
-      Builder.levelLabels.forEach(mesh => mesh.visible = e.target.checked);
+      if (Builder && Builder.levelLabels) Builder.levelLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
     // Compass & Zoom Overlay Toggles
@@ -229,25 +307,41 @@ window.Warehouse.UIController = (function() {
       if (zoomWidget) zoomWidget.style.display = e.target.checked ? 'flex' : 'none';
     });
 
-    // Floor Selector Toggle & Outside Click Listener
+    // Custom Floor Dropdown Toggle
     const floorSelect = document.getElementById('custom-floor-select');
     const floorBtn = document.getElementById('floor-select-btn');
 
     if (floorSelect && floorBtn) {
       floorBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        floorSelect.classList.toggle('open');
-      });
-
-      document.addEventListener('click', () => {
-        floorSelect.classList.remove('open');
+        const isOpen = floorSelect.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) floorSelect.classList.add('open');
       });
     }
 
+    // Custom Area Dropdown Toggle
+    const areaSelect = document.getElementById('custom-area-select');
+    const areaBtn = document.getElementById('area-select-btn');
+
+    if (areaSelect && areaBtn) {
+      areaBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = areaSelect.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) areaSelect.classList.add('open');
+      });
+    }
+
+    // Global listener to close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      closeAllDropdowns();
+    });
+
     // View Mode Switcher (2D / 3D / Reset)
-    const btn2D = document.getElementById('btn-view-2d');
-    const btn3D = document.getElementById('btn-view-3d');
-    const btnReset = document.getElementById('btn-view-reset');
+    const btn2D = document.getElementById('btn-2d');
+    const btn3D = document.getElementById('btn-3d');
+    const btnReset = document.getElementById('btn-reset-view');
 
     btn2D?.addEventListener('click', () => {
       btn2D.classList.add('active');
@@ -266,11 +360,32 @@ window.Warehouse.UIController = (function() {
     });
 
     btnReset?.addEventListener('click', () => {
-      if (CameraController && CameraController.resetView) {
+      closeAllDropdowns();
+
+      // 1. Reset UI text and zone list
+      const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
+      const allAreasText = lang === 'ru' ? 'Все зоны' : 'All Areas';
+      const currentAreaText = document.getElementById('area-current-text');
+      if (currentAreaText) currentAreaText.textContent = allAreasText;
+
+      const areaMenu = document.getElementById('area-dropdown-menu');
+      if (areaMenu) {
+        areaMenu.querySelectorAll('.floor-option').forEach(opt => {
+          opt.classList.toggle('active', opt.getAttribute('data-value') === 'all');
+        });
+      }
+
+      // 2. Reset highlight/opacity of elements
+      if (Builder && typeof Builder.setFocusedArea === 'function') {
+        Builder.setFocusedArea(null);
+      }
+
+      // 3. Reset camera position (ALWAYS executed)
+      if (CameraController && typeof CameraController.resetView === 'function') {
         CameraController.resetView();
       }
     });
   }
 
-  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents, populateFloors };
+  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents, populateFloors, populateAreas, closeAllDropdowns };
 })();

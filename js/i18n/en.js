@@ -4,7 +4,7 @@ window.Warehouse.i18n = window.Warehouse.i18n || {};
 window.Warehouse.i18n.en = {
   // Application
   appTitle: 'Warehouse 3D',
-  
+
   // Units
   units: {
     weight: 'kg',
@@ -18,7 +18,7 @@ window.Warehouse.i18n.en = {
   row: 'Row',
   level: 'Level',
   cell: 'Cell',
-  
+
   // Headers & Sections
   areaSummary: 'Area Summary',
   rowSummary: 'Row Summary',
@@ -26,7 +26,7 @@ window.Warehouse.i18n.en = {
   infoTitle: 'Information',
   settingsTitle: 'Settings',
   helpTitle: 'Navigation Help',
-  
+
   // Metrics
   totalRows: 'Total Rows',
   totalLevels: 'Total Levels',

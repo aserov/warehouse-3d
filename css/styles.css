@@ -284,36 +284,6 @@ body {
 }
 
 /* Section 2: Settings */
-.btn-toggle-view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 9px 12px;
-  background: #2a3140;
-  color: #f1f5f9;
-  border: 1px solid #3b4454;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-toggle-view:hover {
-  background: #343d50;
-  border-color: #38bdf8;
-  color: #38bdf8;
-}
-
-.btn-toggle-view.active {
-  background: #0284c7;
-  border-color: #38bdf8;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(2, 132, 199, 0.5);
-}
-
 .checkbox-group {
   display: flex;
   flex-direction: column;
@@ -532,7 +502,7 @@ body {
   pointer-events: auto;
 }
 
-/* Right Side Controls (Floor Select, 2D | 3D | Reset Widget) */
+/* Right Side Controls (Floor Select, Area Select, 2D | 3D | Reset Widget) */
 .canvas-controls-right {
   position: absolute;
   bottom: 24px;
@@ -601,49 +571,7 @@ body {
   transform: rotate(-90deg);
 }
 
-/* --- Floor Select Styles --- */
-.floor-select-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 6px 0 10px;
-}
-
-.floor-icon {
-  color: #38bdf8;
-  flex-shrink: 0;
-}
-
-.floor-dropdown {
-  background: transparent;
-  border: none;
-  color: #f8fafc;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 20px 6px 4px;
-  outline: none;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 2px center;
-  transition: color 0.2s ease;
-}
-
-.floor-dropdown:hover {
-  color: #38bdf8;
-}
-
-.floor-dropdown option {
-  background: #0f172a;
-  color: #f8fafc;
-  padding: 8px;
-  font-weight: 500;
-}
-
-/* --- Custom Floor Select Component --- */
+/* --- Custom Floor / Area Select Component --- */
 .custom-floor-select {
   position: relative;
 }
@@ -690,7 +618,7 @@ body {
   color: #38bdf8;
 }
 
-/* Floating Dropdown Menu */
+/* Floating Dropdown Menu Popup */
 .floor-dropdown-menu {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -712,14 +640,12 @@ body {
   z-index: 100;
 }
 
-/* State Open */
 .custom-floor-select.open .floor-dropdown-menu {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
-/* Individual Option Items */
 .floor-option {
   padding: 8px 12px;
   font-size: 13px;
@@ -731,6 +657,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  white-space: nowrap;
 }
 
 .floor-option:hover {

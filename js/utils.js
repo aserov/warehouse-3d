@@ -1,6 +1,34 @@
 window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.Utils = {
+  /**
+   * Calculates the scale factor converting scene units to meters.
+   * Priority: explicit scale property > measurement string unit > fallback CONFIG scaleFactor.
+   * @param {string} [measurement] - Unit string ('m', 'cm', 'sm', 'mm').
+   * @param {number} [explicitScale] - Direct scale factor specified in warehouse config.
+   * @returns {number} Scale factor for coordinate conversion.
+   */
+  getScaleFactor(measurement, explicitScale) {
+    if (typeof explicitScale === 'number' && explicitScale > 0) {
+      return explicitScale;
+    }
+
+    if (typeof measurement === 'string') {
+      const unit = measurement.toLowerCase().trim();
+      switch (unit) {
+        case 'm':
+          return 1.0;
+        case 'cm':
+        case 'sm':
+          return 0.01;
+        case 'mm':
+          return 0.001;
+      }
+    }
+
+    return window.Warehouse.CONFIG.scaleFactor || 0.001;
+  },
+
   // Get localized string by key
   t(key) {
     const lang = window.Warehouse.CONFIG.defaultLang || 'ru';
@@ -45,7 +73,7 @@ window.Warehouse.Utils = {
       if (c.active === 1) activeCells++;
       totalWeight += (c.weight || 0);
       totalFreeWeight += (c.freeWeight || 0);
-      
+
       const vol = this.calculateCellVolume(c.width || 0, c.height || 0, c.depth || 0);
       totalVolume += vol;
     });
@@ -70,36 +98,36 @@ window.Warehouse.Utils = {
     canvas.height = 256;
 
     ctx.save();
-    
+
     if (isCondensed) {
       ctx.scale(1.0, 0.65);
       ctx.font = `Bold ${fontSize * 1.3}px Arial Black, Arial, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      
+
       if (strokeColor) {
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = 14;
         ctx.strokeText(text, 512, 128 / 0.65);
       }
-      
+
       ctx.fillStyle = color;
       ctx.fillText(text, 512, 128 / 0.65);
     } else {
       ctx.font = `Bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      
+
       if (strokeColor) {
         ctx.strokeStyle = strokeColor;
         ctx.lineWidth = 14;
         ctx.strokeText(text, 512, 128);
       }
-      
+
       ctx.fillStyle = color;
       ctx.fillText(text, 512, 128);
     }
-    
+
     ctx.restore();
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -110,9 +138,9 @@ window.Warehouse.Utils = {
   createSideLevelLabel(text, width = 6, height = 6) {
     const texture = this.createTextTexture(text, '#ffffff', 180, 'rgba(0,0,0,0.85)', true);
     const geometry = new THREE.PlaneGeometry(width, height);
-    const material = new THREE.MeshBasicMaterial({ 
-      map: texture, 
-      transparent: true, 
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
       side: THREE.DoubleSide,
       depthWrite: false
     });
@@ -122,13 +150,13 @@ window.Warehouse.Utils = {
   createFloorLabelMesh(text, color, width = 60, height = 20, fontSize = 140) {
     const texture = this.createTextTexture(text, color, fontSize);
     const geometry = new THREE.PlaneGeometry(width, height);
-    const material = new THREE.MeshBasicMaterial({ 
-      map: texture, 
-      transparent: true, 
+    const material = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
       side: THREE.DoubleSide,
       depthWrite: false
     });
-    
+
     const mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.x = -Math.PI / 2;
     return mesh;

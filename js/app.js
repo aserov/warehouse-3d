@@ -5,7 +5,7 @@ window.Warehouse = window.Warehouse || {};
   const { scene, camera, renderer, controls, raycaster, mouse, warehouseGroup } = SceneSetup;
   const { colors } = CONFIG;
 
-// --- Unified Selection Manager ---
+  // --- Unified Selection Manager ---
   const Selection = {
     selectedMesh: null,
     originalMaterial: null,
@@ -79,7 +79,6 @@ window.Warehouse = window.Warehouse || {};
 
   // --- Pointer Interaction Handler ---
   function onPointerDown(event) {
-    // Prevent raycasting when clicking UI controls or dropdown popups
     if (
       event.target.closest('#sidebar') ||
       event.target.closest('#top-toolbar') ||
@@ -102,14 +101,12 @@ window.Warehouse = window.Warehouse || {};
     if (intersects.length > 0) {
       let clickedMesh = intersects[0].object;
 
-      // Travel up to parent node with userData if leaf geometry was hit
       while (clickedMesh && (!clickedMesh.userData || !clickedMesh.userData.type) && clickedMesh.parent) {
         clickedMesh = clickedMesh.parent;
       }
 
       Selection.select(clickedMesh);
     } else {
-      // Clicked on empty space -> clear active highlight
       Selection.clear();
     }
   }
@@ -161,13 +158,10 @@ window.Warehouse = window.Warehouse || {};
   window.addEventListener('resize', updateCanvasSize);
 
   // --- Multi-warehouse state ---
-  let rawData = null;           // { warehouses: [...] } as fetched from server
-  let currentWarehouse = null;  // currently active warehouse object
+  let rawData = null;
+  let currentWarehouse = null;
   let currentWarehouseId = null;
 
-  /**
-   * A warehouse polygon is only considered valid if it's an array of at least 3 points.
-   */
   function isValidPolygon(polygon) {
     return Array.isArray(polygon) && polygon.length >= 3;
   }
@@ -179,10 +173,8 @@ window.Warehouse = window.Warehouse || {};
   function renderWarehouseForFloor(floorNumber) {
     if (!currentWarehouse) return;
 
-    // Clear active selection before re-building 3D mesh objects
     Selection.clear();
 
-    // Filter areas that belong to the selected floor (within the active warehouse only)
     const filteredAreas = (currentWarehouse.areas || []).filter(
       area => Number(area.floor) === Number(floorNumber)
     );
@@ -192,19 +184,24 @@ window.Warehouse = window.Warehouse || {};
       areas: filteredAreas
     };
 
-    // Rebuild 3D scene with filtered floor data
     Builder.buildWarehouse(filteredData);
-    if (CameraController && CameraController.fitCameraToWarehouse) {
+
+    // Initial camera framing centered on current grid boundaries
+    if (SceneSetup.fitCameraToGrid) {
+      SceneSetup.fitCameraToGrid();
+    } else if (CameraController && CameraController.fitCameraToWarehouse) {
       CameraController.fitCameraToWarehouse();
     }
+
     updateCanvasSize();
 
-    // Populate zone / area dropdown options for this specific floor
     UIController.populateAreas(filteredAreas, 'all', (selectedArea) => {
       Selection.clear();
       if (selectedArea === 'all') {
         if (Builder.setFocusedArea) {
           Builder.setFocusedArea(null);
+        } else if (SceneSetup.fitCameraToGrid) {
+          SceneSetup.fitCameraToGrid();
         } else if (CameraController && CameraController.fitCameraToWarehouse) {
           CameraController.fitCameraToWarehouse();
         }
@@ -217,8 +214,8 @@ window.Warehouse = window.Warehouse || {};
   }
 
   /**
-   * Selects a warehouse: validates its polygon, applies its geometry (polygon + scale)
-   * onto CONFIG, resolves its floor list, and triggers a fresh render on the minimal floor.
+   * Selects a warehouse: evaluates unit scaling factor, recalculates grid,
+   * resolves floor options, and triggers scene rendering.
    * @param {number|string} warehouseId
    */
   function selectWarehouse(warehouseId) {
@@ -230,7 +227,6 @@ window.Warehouse = window.Warehouse || {};
     currentWarehouse = warehouse;
     currentWarehouseId = warehouse.warehouse;
 
-    // Keep the warehouse dropdown in sync even on programmatic selection
     UIController.populateWarehouses(rawData.warehouses, currentWarehouseId, (newId) => selectWarehouse(newId));
 
     if (!isValidPolygon(warehouse.polygon)) {
@@ -240,19 +236,22 @@ window.Warehouse = window.Warehouse || {};
       UIController.showErrorUI('Warehouse configuration error', details);
 
       Selection.clear();
-      CONFIG.buildingPolygon = null; // don't leave a stale outline from a previously valid warehouse
-      Builder.buildWarehouse({ areas: [] }); // clears the scene without drawing an outline
+      CONFIG.buildingPolygon = null;
+      Builder.buildWarehouse({ areas: [] });
       UIController.populateFloors([], null, () => {});
       UIController.populateAreas([], 'all', () => {});
       return;
     }
 
-    // Apply this warehouse's geometry onto CONFIG - everything downstream
-    // (Builder, LayoutEngine, CameraController) reads these live.
     CONFIG.buildingPolygon = warehouse.polygon;
-    CONFIG.scaleFactor = (typeof warehouse.scale === 'number' && warehouse.scale > 0)
-      ? warehouse.scale
-      : CONFIG.scaleFactor; // fallback to whatever CONFIG already had
+
+    // Determine target scaling factor using measurement unit or explicit scale
+    CONFIG.scaleFactor = Utils.getScaleFactor(warehouse.measurement, warehouse.scale);
+
+    // Rebuild floor grid according to calculated polygon geometry and scale
+    if (SceneSetup.updateGridForPolygon) {
+      SceneSetup.updateGridForPolygon(warehouse.polygon, CONFIG.scaleFactor);
+    }
 
     const uniqueFloors = [...new Set((warehouse.areas || []).map(a => Number(a.floor)).filter(Boolean))].sort((a, b) => a - b);
 
@@ -261,8 +260,6 @@ window.Warehouse = window.Warehouse || {};
       console.error(`[Warehouse] ${details}`);
       UIController.showErrorUI('Warehouse data error', details);
 
-      // The building polygon IS valid here, so we still draw the empty building shell -
-      // only the floor/area listings are empty.
       Selection.clear();
       Builder.buildWarehouse({ areas: [] });
       UIController.populateFloors([], null, () => {});
@@ -279,7 +276,6 @@ window.Warehouse = window.Warehouse || {};
     renderWarehouseForFloor(initialFloor);
   }
 
-  // Fetch Data & Dynamic Warehouse/Floor Initialization
   fetch('data/cells-min-new.json')
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -300,7 +296,6 @@ window.Warehouse = window.Warehouse || {};
       UIController.showErrorUI('Failed to load warehouse data', err.message);
     });
 
-  // Render Loop
   function animate() {
     requestAnimationFrame(animate);
     controls.update();

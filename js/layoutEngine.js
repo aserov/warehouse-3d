@@ -33,6 +33,9 @@ window.Warehouse.LayoutEngine = {
     };
   },
 
+  // NOTE: no longer called anywhere - it was only used by the old auto-packing
+  // layout algorithm for areas, which has been replaced by per-area polygons
+  // from the server. Left in place as a candidate for cleanup later.
   getMinWallWidthForZRange(polygon, startZ, depth) {
     let minAllowedX = Infinity;
     const steps = 5;
@@ -61,5 +64,30 @@ window.Warehouse.LayoutEngine = {
     }
 
     return minAllowedX === Infinity ? 0 : minAllowedX;
+  },
+
+  /**
+   * Checks whether a polygon has enough points to be drawable (>= 3).
+   * @param {Array<{x:number,z:number}>} polygon
+   */
+  isValidPolygon(polygon) {
+    return Array.isArray(polygon) && polygon.length >= 3;
+  },
+
+  /**
+   * Computes the axis-aligned bounding box of a polygon (used to place rows/cells
+   * inside an area whose visual shape comes directly from its own polygon).
+   * @param {Array<{x:number,z:number}>} polygon
+   * @returns {{minX:number,maxX:number,minZ:number,maxZ:number,width:number,depth:number}}
+   */
+  getPolygonBounds(polygon) {
+    const xs = polygon.map(p => p.x);
+    const zs = polygon.map(p => p.z);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minZ = Math.min(...zs);
+    const maxZ = Math.max(...zs);
+
+    return { minX, maxX, minZ, maxZ, width: maxX - minX, depth: maxZ - minZ };
   }
 };

@@ -139,6 +139,53 @@ window.Warehouse.Builder = (function() {
   }
 
   /**
+   * Builds an area's visual shape (fill + border) directly from its own polygon,
+   * mirroring createBuildingOutline's approach so areas can be non-rectangular too.
+   * Adds the resulting meshes into the given areaGroup (not warehouseGroup directly,
+   * since areas are grouped per-area for focus/dim/selection purposes).
+   * @param {THREE.Group} areaGroup
+   * @param {Array<{x:number,z:number}>} polygonPoints
+   * @param {number} areaColor - hex color used for both fill and border
+   */
+  function createAreaShape(areaGroup, polygonPoints, areaColor) {
+    const shape = new THREE.Shape();
+    shape.moveTo(polygonPoints[0].x, polygonPoints[0].z);
+    for (let i = 1; i < polygonPoints.length; i++) {
+      shape.lineTo(polygonPoints[i].x, polygonPoints[i].z);
+    }
+    shape.closePath();
+
+    const fillGeo = new THREE.ShapeGeometry(shape);
+    const fillMat = new THREE.MeshBasicMaterial({
+      color: areaColor,
+      transparent: true,
+      opacity: 0.07,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const fillMesh = new THREE.Mesh(fillGeo, fillMat);
+    fillMesh.rotation.x = Math.PI / 2;
+    fillMesh.position.y = 0.05;
+    fillMesh.userData.initialOpacity = 0.07;
+    areaGroup.add(fillMesh);
+
+    const points3D = polygonPoints.map(p => new THREE.Vector3(p.x, 0.08, p.z));
+    points3D.push(new THREE.Vector3(polygonPoints[0].x, 0.08, polygonPoints[0].z));
+
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(points3D);
+    const lineMat = new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3, transparent: true, opacity: 1.0 });
+    const borderLine = new THREE.Line(lineGeo, lineMat);
+    borderLine.userData.initialOpacity = 1.0;
+    areaGroup.add(borderLine);
+
+    polygonPoints.forEach(point => {
+      const cornerLabel = createCornerLabel(`(${Math.round(point.x)}, ${Math.round(point.z)})`, areaColor);
+      cornerLabel.position.set(point.x, 1.0, point.z);
+      areaGroup.add(cornerLabel);
+    });
+  }
+
+  /**
    * Main builder method rendering floor areas, racks, and labels.
    * @param {Object} data - Filtered floor warehouse data.
    */
@@ -148,28 +195,30 @@ window.Warehouse.Builder = (function() {
     if (!data || !data.areas) return;
 
     const t = Utils.t.bind(Utils);
+    const UI = window.Warehouse.UIController;
 
     createBuildingOutline(CONFIG.buildingPolygon);
 
-    let currentX = CONFIG.originX;
-    let currentZ = CONFIG.originZ;
-    let currentRowHeight = 0;
-
     data.areas.forEach((areaData, areaIdx) => {
-      const dims = LayoutEngine.calculateAreaDimensions(areaData);
-      const maxAllowedWallX = LayoutEngine.getMinWallWidthForZRange(CONFIG.buildingPolygon, currentZ, dims.totalDepth);
-      const areaRightX = currentX + dims.totalWidth;
-      const maxAvailableX = maxAllowedWallX - CONFIG.originX;
-
-      if (areaRightX > maxAvailableX && currentX > CONFIG.originX) {
-        currentX = CONFIG.originX;
-        currentZ += currentRowHeight + CONFIG.areaGap;
-        currentRowHeight = 0;
+      // No polygon at all - just skip this area and its contents silently, let them configure it.
+      if (!areaData.polygon) {
+        console.warn(`[Warehouse] Area "${areaData.areaName}" has no polygon, skipping.`);
+        return;
       }
 
-      currentRowHeight = Math.max(currentRowHeight, dims.totalDepth);
-      const areaOffsetX = currentX + CONFIG.areaPadding;
-      const startZ = currentZ + CONFIG.areaPadding;
+      // Polygon present but malformed (< 3 points) - this is a real config error, surface it.
+      if (!LayoutEngine.isValidPolygon(areaData.polygon)) {
+        const details = `Area "${areaData.areaName}" [area=${areaData.area}] has an invalid polygon (needs at least 3 points).`;
+        console.error(`[Warehouse] ${details}`);
+        if (UI && UI.showErrorUI) UI.showErrorUI('Area configuration error', details);
+        return;
+      }
+
+      const bounds = LayoutEngine.getPolygonBounds(areaData.polygon);
+      const dims = LayoutEngine.calculateAreaDimensions(areaData);
+
+      const areaOffsetX = bounds.minX + CONFIG.areaPadding;
+      const startZ = bounds.minZ + CONFIG.areaPadding;
 
       const areaGroup = new THREE.Group();
       areaGroup.name = `Area_${areaData.areaName}`;
@@ -265,56 +314,26 @@ window.Warehouse.Builder = (function() {
 
         rowGroup.add(floorRowLabel);
         rowLabels.push(floorRowLabel);
-        interactiveObjects.push(floorRowLabel); // <-- Регистрируем метку ряда как интерактивную
+        interactiveObjects.push(floorRowLabel);
         areaGroup.add(rowGroup);
       });
 
-      const minX = currentX, maxX = currentX + dims.totalWidth;
-      const minZ = currentZ, maxZ = currentZ + dims.totalDepth;
-      const areaCenterX = minX + dims.totalWidth / 2;
-      const areaCenterZ = minZ + dims.totalDepth / 2;
+      // Draw the area's own shape (fill + border + per-vertex corner labels) from its polygon.
+      // Drawn regardless of whether it fits inside the building outline - misconfiguration
+      // should be visible, not silently clipped.
+      createAreaShape(areaGroup, areaData.polygon, areaColor);
 
-      const areaRectGeo = new THREE.PlaneGeometry(dims.totalWidth, dims.totalDepth);
-      const areaRectMat = new THREE.MeshBasicMaterial({
-        color: areaColor,
-        transparent: true,
-        opacity: 0.07,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
-      const areaRectMesh = new THREE.Mesh(areaRectGeo, areaRectMat);
-      areaRectMesh.rotation.x = -Math.PI / 2;
-      areaRectMesh.position.set(areaCenterX, 0.05, areaCenterZ);
-      areaRectMesh.userData.initialOpacity = 0.07;
-      areaGroup.add(areaRectMesh);
-
-      const borderMat = new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3, transparent: true, opacity: 1.0 });
-      const borderLines = new THREE.LineSegments(new THREE.EdgesGeometry(areaRectGeo), borderMat);
-      borderLines.rotation.x = -Math.PI / 2;
-      borderLines.position.set(areaCenterX, 0.08, areaCenterZ);
-      borderLines.userData.initialOpacity = 1.0;
-      areaGroup.add(borderLines);
-
-      [{ x: Math.round(minX), z: Math.round(minZ) },
-       { x: Math.round(maxX), z: Math.round(minZ) },
-       { x: Math.round(minX), z: Math.round(maxZ) },
-       { x: Math.round(maxX), z: Math.round(maxZ) }].forEach(c => {
-        const cornerLabel = createCornerLabel(`(${c.x}, ${c.z})`, areaColor);
-        cornerLabel.position.set(c.x, 1.0, c.z);
-        areaGroup.add(cornerLabel);
-      });
+      const areaCenterX = (bounds.minX + bounds.maxX) / 2;
 
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
       const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
-      areaTitleMesh.position.set(areaCenterX, 0.10, maxZ - CONFIG.areaPadding / 2);
+      areaTitleMesh.position.set(areaCenterX, 0.10, bounds.maxZ - CONFIG.areaPadding / 2);
       areaTitleMesh.userData = { ...areaSummary, initialOpacity: 1.0 };
 
       areaGroup.add(areaTitleMesh);
       areaLabels.push(areaTitleMesh);
-      interactiveObjects.push(areaTitleMesh); // <-- Регистрируем метку зоны как интерактивную
+      interactiveObjects.push(areaTitleMesh);
       warehouseGroup.add(areaGroup);
-
-      currentX += dims.totalWidth + CONFIG.areaGap;
     });
   }
 

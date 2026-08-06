@@ -1,23 +1,102 @@
+window.Warehouse = window.Warehouse || {};
+
 (function() {
   const { CONFIG, SceneSetup, Builder, CameraController, UIController } = window.Warehouse;
   const { scene, camera, renderer, controls, raycaster, mouse, warehouseGroup } = SceneSetup;
   const { colors } = CONFIG;
 
-  let selectedMesh = null;
-  let originalMaterial = null;
+// --- Unified Selection Manager ---
+  const Selection = {
+    selectedMesh: null,
+    originalMaterial: null,
+    originalScale: null,
 
+    clear() {
+      if (this.selectedMesh) {
+        if (this.originalMaterial) {
+          this.selectedMesh.material = this.originalMaterial;
+        }
+        if (this.originalScale) {
+          this.selectedMesh.scale.copy(this.originalScale);
+        }
+      }
+      this.selectedMesh = null;
+      this.originalMaterial = null;
+      this.originalScale = null;
+
+      // Сброс информационной панели
+      const infoContent = document.getElementById('info-content');
+      if (infoContent) {
+        const lang = (CONFIG && CONFIG.defaultLang) || 'en';
+        const defaultText = (window.Warehouse.i18n && window.Warehouse.i18n[lang]?.defaultInfoText)
+          || 'Click on a cell, row, or area to view details.';
+        infoContent.textContent = defaultText;
+      }
+    },
+
+    select(mesh) {
+      if (!mesh) {
+        this.clear();
+        return;
+      }
+
+      if (this.selectedMesh === mesh) return;
+
+      this.clear();
+
+      if (mesh.userData && mesh.userData.type) {
+        this.selectedMesh = mesh;
+        this.originalMaterial = mesh.material;
+        this.originalScale = mesh.scale.clone();
+
+        const type = mesh.userData.type;
+
+        if (type === 'cell') {
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: colors.selection || 0xfadb14,
+            roughness: 0.2,
+            metalness: 0.5,
+            emissive: 0x333300
+          });
+        } else if (type === 'area' || type === 'row') {
+          const highlightMat = mesh.material.clone();
+          if (highlightMat.color) {
+            highlightMat.color.setHex(colors.selection || 0xfadb14);
+          }
+          if (highlightMat.emissive) {
+            highlightMat.emissive.setHex(0x444400);
+          }
+          mesh.material = highlightMat;
+
+          mesh.scale.multiplyScalar(1.15);
+        }
+      }
+
+      if (mesh.userData && UIController && UIController.displayInfo) {
+        UIController.displayInfo(mesh.userData);
+      }
+    }
+  };
+
+  // Export Selection manager to window.Warehouse
+  window.Warehouse.Selection = Selection;
+
+  // --- Pointer Interaction Handler ---
   function onPointerDown(event) {
-    // Prevent raycasting when clicking UI elements
+    // Prevent raycasting when clicking UI controls or dropdown popups
     if (
       event.target.closest('#sidebar') ||
       event.target.closest('#top-toolbar') ||
       event.target.closest('.canvas-controls-left') ||
-      event.target.closest('.canvas-controls-right')
+      event.target.closest('.canvas-controls-right') ||
+      event.target.closest('.search-dropdown-menu') ||
+      event.target.closest('.floor-dropdown-menu')
     ) return;
 
     const container = document.getElementById('canvas-container');
-    const rect = container.getBoundingClientRect();
+    if (!container) return;
 
+    const rect = container.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
@@ -25,31 +104,21 @@
     const intersects = raycaster.intersectObjects(warehouseGroup.children, true);
 
     if (intersects.length > 0) {
-      const clickedMesh = intersects[0].object;
+      let clickedMesh = intersects[0].object;
 
-      if (selectedMesh && originalMaterial) {
-        selectedMesh.material = originalMaterial;
-        selectedMesh = null;
-        originalMaterial = null;
+      // Travel up to parent node with userData if leaf geometry was hit
+      while (clickedMesh && (!clickedMesh.userData || !clickedMesh.userData.type) && clickedMesh.parent) {
+        clickedMesh = clickedMesh.parent;
       }
 
-      if (clickedMesh.userData && clickedMesh.userData.type === 'cell') {
-        selectedMesh = clickedMesh;
-        originalMaterial = clickedMesh.material.clone();
-
-        clickedMesh.material = new THREE.MeshStandardMaterial({
-          color: colors.selection,
-          roughness: 0.2,
-          metalness: 0.5,
-          emissive: 0x333300
-        });
-      }
-
-      UIController.displayInfo(clickedMesh.userData);
+      Selection.select(clickedMesh);
+    } else {
+      // Clicked on empty space -> clear active highlight
+      Selection.clear();
     }
   }
 
-  // Bind Compass Buttons & Zoom Controls
+  // --- Navigation Controls Binding ---
   function initNavigationControls() {
     document.querySelectorAll('.compass-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -102,6 +171,9 @@
   function renderWarehouseForFloor(floorNumber) {
     if (!rawWarehouseData) return;
 
+    // Clear active selection before re-building 3D mesh objects
+    Selection.clear();
+
     // Filter areas that belong to the selected floor
     const filteredAreas = (rawWarehouseData.areas || []).filter(
       area => Number(area.floor) === Number(floorNumber)
@@ -121,6 +193,7 @@
 
     // Populate zone / area dropdown options for this specific floor
     UIController.populateAreas(filteredAreas, 'all', (selectedArea) => {
+      Selection.clear();
       if (selectedArea === 'all') {
         if (Builder.setFocusedArea) {
           Builder.setFocusedArea(null);

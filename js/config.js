@@ -36,7 +36,7 @@ window.Warehouse.CONFIG = {
   // --- Grid & Layout Gaps (meters) ---
   cellGap: 0.5,
   rowGap: 15.0,
-  areaGap: 25.0,        // Minimum gap between areas
+  areaGap: 0.0,        // Minimum gap between areas
   areaPadding: 8.0,      // Inner margin inside an area border
   originX: 15,           // Offset of the first area from the left wall
   originZ: 15,           // Offset of the first area from the top wall
@@ -44,8 +44,8 @@ window.Warehouse.CONFIG = {
   // --- Warehouse Building Outline (L-shaped Polygon coordinates in meters: [X, Z]) ---
   buildingPolygon: [
     { x: 0,   z: 0 },
-    { x: 420, z: 0 },
-    { x: 420, z: 180 },
+    { x: 620, z: 0 },
+    { x: 620, z: 180 },
     { x: 280, z: 180 },
     { x: 280, z: 530 },
     { x: 0,   z: 530 }

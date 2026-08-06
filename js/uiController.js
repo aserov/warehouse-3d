@@ -165,11 +165,12 @@ window.Warehouse.UIController = (function() {
   }
 
   /**
-   * Closes all active custom dropdown popups.
+   * Closes all active custom dropdown popups (floors, areas, search results).
    */
   function closeAllDropdowns() {
     document.getElementById('custom-floor-select')?.classList.remove('open');
     document.getElementById('custom-area-select')?.classList.remove('open');
+    document.getElementById('search-dropdown-menu')?.classList.remove('open');
   }
 
   /**
@@ -276,11 +277,148 @@ window.Warehouse.UIController = (function() {
       });
     }
 
-    currentText.textContent = (activeArea === 'all' || !activeArea) ? allAreasText : `${areaPrefix} ${activeArea}`;
+    currentText.textContent = (activeArea === 'all' || !activeArea) ? allAreasText : `${areaPrefix} ${areaName}`;
   }
 
   /**
-   * Binds UI control events (toggles, camera views, custom dropdown listeners).
+   * Triggers standard application object selection logic via Warehouse.Selection
+   */
+  function triggerStandardSelection(mesh) {
+    if (!mesh) return;
+
+    const Selection = window.Warehouse && window.Warehouse.Selection;
+    if (Selection && typeof Selection.select === 'function') {
+      Selection.select(mesh);
+    }
+  }
+
+  /**
+   * Initializes Cell Search input and dropdown autocompletion logic.
+   */
+  function initCellSearch() {
+    const searchInput = document.getElementById('cell-search-input');
+    const searchDropdown = document.getElementById('search-dropdown-menu');
+    const clearBtn = document.getElementById('search-clear-btn');
+
+    if (!searchInput || !searchDropdown) return;
+
+    const performSearch = () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      if (clearBtn) {
+        clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+      }
+
+      if (!query) {
+        searchDropdown.classList.remove('open');
+        searchDropdown.innerHTML = '';
+        return;
+      }
+
+      // Filter cell objects from Builder interactive items
+      const interactive = (Builder && Builder.interactiveObjects) ? Builder.interactiveObjects : [];
+      const matchingCells = interactive.filter(obj => {
+        if (!obj || !obj.userData || obj.userData.type !== 'cell') return false;
+
+        const userData = obj.userData;
+        const cell = userData.data || {};
+
+        const searchableText = [
+          cell.number,
+          cell.place,
+          userData.cellNumber,
+          userData.areaName,
+          userData.rowName,
+          userData.levelName
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        return searchableText.includes(query);
+      });
+
+      searchDropdown.innerHTML = '';
+
+      if (matchingCells.length === 0) {
+        const noResult = document.createElement('div');
+        noResult.className = 'search-item';
+        noResult.style.cursor = 'default';
+        noResult.style.color = '#64748b';
+        noResult.textContent = t('noResults');
+        searchDropdown.appendChild(noResult);
+      } else {
+        matchingCells.slice(0, 20).forEach(mesh => {
+          const userData = mesh.userData;
+          const cell = userData.data || {};
+          const cellTitle = cell.number || userData.cellNumber || '';
+
+          const item = document.createElement('div');
+          item.className = 'search-item';
+          item.innerHTML = `
+            <span><strong>${cellTitle}</strong></span>
+            <span class="search-item-sub">${userData.areaName || ''} / ${userData.rowName || ''}</span>
+          `;
+
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            // 1. Populate input text with chosen cell code
+            if (cellTitle) {
+              searchInput.value = cellTitle;
+            }
+
+            // 2. Trigger standard selection logic (highlights mesh with standard selection material)
+            triggerStandardSelection(mesh);
+
+            // 3. Focus camera with comfortable padding distance
+            if (typeof THREE !== 'undefined' && mesh) {
+              const box = new THREE.Box3().setFromObject(mesh);
+              const paddedBox = box.clone().expandByScalar(25);
+
+              const SceneSetupRef = (window.Warehouse && window.Warehouse.SceneSetup) || (typeof SceneSetup !== 'undefined' ? SceneSetup : null);
+              const CameraControllerRef = (window.Warehouse && window.Warehouse.CameraController) || (typeof CameraController !== 'undefined' ? CameraController : null);
+
+              if (SceneSetupRef && typeof SceneSetupRef.focusOnBounds === 'function') {
+                SceneSetupRef.focusOnBounds(paddedBox);
+              } else if (CameraControllerRef) {
+                if (typeof CameraControllerRef.focusOnBounds === 'function') {
+                  CameraControllerRef.focusOnBounds(paddedBox);
+                } else if (typeof CameraControllerRef.focusOnObject === 'function') {
+                  CameraControllerRef.focusOnObject(mesh);
+                }
+              }
+            }
+
+            closeAllDropdowns();
+          });
+
+          searchDropdown.appendChild(item);
+        });
+      }
+
+      searchDropdown.classList.add('open');
+    };
+
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.trim().length > 0) {
+        performSearch();
+      }
+    });
+
+    clearBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      searchDropdown.classList.remove('open');
+      searchDropdown.innerHTML = '';
+      if (window.Warehouse && window.Warehouse.Selection) {
+        window.Warehouse.Selection.clear();
+      }
+      searchInput.focus();
+    });
+  }
+
+  /**
+   * Binds UI control events (toggles, camera views, custom dropdown listeners, cell search).
    */
   function initEvents() {
     // 3D Scene Label Toggles
@@ -338,6 +476,9 @@ window.Warehouse.UIController = (function() {
       closeAllDropdowns();
     });
 
+    // Initialize Cell Search Handlers
+    initCellSearch();
+
     // View Mode Switcher (2D / 3D / Reset)
     const btn2D = document.getElementById('btn-2d');
     const btn3D = document.getElementById('btn-3d');
@@ -362,11 +503,21 @@ window.Warehouse.UIController = (function() {
     btnReset?.addEventListener('click', () => {
       closeAllDropdowns();
 
-      // 1. Reset UI text and zone list
+      // Clear search input
+      const searchInput = document.getElementById('cell-search-input');
+      const clearBtn = document.getElementById('search-clear-btn');
+      if (searchInput) searchInput.value = '';
+      if (clearBtn) clearBtn.style.display = 'none';
+
+      // 1. Clear selection highlight & reset sidebar info
+      if (window.Warehouse && window.Warehouse.Selection) {
+        window.Warehouse.Selection.clear();
+      }
+
+      // 2. Reset UI text and zone list
       const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
-      const allAreasText = lang === 'ru' ? 'Все зоны' : 'All Areas';
       const currentAreaText = document.getElementById('area-current-text');
-      if (currentAreaText) currentAreaText.textContent = allAreasText;
+      if (currentAreaText) currentAreaText.textContent = t('allAreas');
 
       const areaMenu = document.getElementById('area-dropdown-menu');
       if (areaMenu) {
@@ -375,12 +526,12 @@ window.Warehouse.UIController = (function() {
         });
       }
 
-      // 2. Reset highlight/opacity of elements
+      // 3. Reset highlight/opacity of elements
       if (Builder && typeof Builder.setFocusedArea === 'function') {
         Builder.setFocusedArea(null);
       }
 
-      // 3. Reset camera position (ALWAYS executed)
+      // 4. Reset camera position
       if (CameraController && typeof CameraController.resetView === 'function') {
         CameraController.resetView();
       }

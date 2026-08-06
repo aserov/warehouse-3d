@@ -8,6 +8,7 @@ window.Warehouse.Builder = (function() {
   const rowLabels = [];
   const levelLabels = [];
   const areaLabels = [];
+  const interactiveObjects = [];
 
   /**
    * Generates canvas text sprite for coordinates and corner tags.
@@ -48,6 +49,7 @@ window.Warehouse.Builder = (function() {
     rowLabels.length = 0;
     levelLabels.length = 0;
     areaLabels.length = 0;
+    interactiveObjects.length = 0;
 
     document.querySelectorAll('.area-label-element, .row-label-element').forEach(el => el.remove());
 
@@ -233,6 +235,7 @@ window.Warehouse.Builder = (function() {
             };
 
             levelGroup.add(cellMesh);
+            interactiveObjects.push(cellMesh);
           });
 
           const levelText = `${levelData.level}`;
@@ -262,6 +265,7 @@ window.Warehouse.Builder = (function() {
 
         rowGroup.add(floorRowLabel);
         rowLabels.push(floorRowLabel);
+        interactiveObjects.push(floorRowLabel); // <-- Регистрируем метку ряда как интерактивную
         areaGroup.add(rowGroup);
       });
 
@@ -270,7 +274,6 @@ window.Warehouse.Builder = (function() {
       const areaCenterX = minX + dims.totalWidth / 2;
       const areaCenterZ = minZ + dims.totalDepth / 2;
 
-      // Area background plane
       const areaRectGeo = new THREE.PlaneGeometry(dims.totalWidth, dims.totalDepth);
       const areaRectMat = new THREE.MeshBasicMaterial({
         color: areaColor,
@@ -285,7 +288,6 @@ window.Warehouse.Builder = (function() {
       areaRectMesh.userData.initialOpacity = 0.07;
       areaGroup.add(areaRectMesh);
 
-      // Area border lines
       const borderMat = new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3, transparent: true, opacity: 1.0 });
       const borderLines = new THREE.LineSegments(new THREE.EdgesGeometry(areaRectGeo), borderMat);
       borderLines.rotation.x = -Math.PI / 2;
@@ -293,7 +295,6 @@ window.Warehouse.Builder = (function() {
       borderLines.userData.initialOpacity = 1.0;
       areaGroup.add(borderLines);
 
-      // Corner tags
       [{ x: Math.round(minX), z: Math.round(minZ) },
        { x: Math.round(maxX), z: Math.round(minZ) },
        { x: Math.round(minX), z: Math.round(maxZ) },
@@ -303,7 +304,6 @@ window.Warehouse.Builder = (function() {
         areaGroup.add(cornerLabel);
       });
 
-      // Main Area title label
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
       const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
       areaTitleMesh.position.set(areaCenterX, 0.10, maxZ - CONFIG.areaPadding / 2);
@@ -311,6 +311,7 @@ window.Warehouse.Builder = (function() {
 
       areaGroup.add(areaTitleMesh);
       areaLabels.push(areaTitleMesh);
+      interactiveObjects.push(areaTitleMesh); // <-- Регистрируем метку зоны как интерактивную
       warehouseGroup.add(areaGroup);
 
       currentX += dims.totalWidth + CONFIG.areaGap;
@@ -350,5 +351,5 @@ window.Warehouse.Builder = (function() {
     }
   }
 
-  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels };
+  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels, interactiveObjects };
 })();

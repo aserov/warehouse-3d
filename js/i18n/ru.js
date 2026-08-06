@@ -18,7 +18,11 @@ window.Warehouse.i18n.ru = {
   row: 'Ряд',
   level: 'Ярус',
   cell: 'Ячейка',
-  
+
+  // Контроллы
+  noResults: 'Ничего не найдено',
+  allAreas: 'Все зоны',
+
   // Заголовки и секции
   areaSummary: 'Сводка по зоне',
   rowSummary: 'Сводка по ряду',
@@ -26,7 +30,7 @@ window.Warehouse.i18n.ru = {
   infoTitle: 'Информация',
   settingsTitle: 'Настройки',
   helpTitle: 'Управление',
-  
+
   // Метрики
   totalRows: 'Всего рядов',
   totalLevels: 'Всего ярусов',

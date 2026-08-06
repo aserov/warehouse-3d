@@ -19,6 +19,10 @@ window.Warehouse.i18n.en = {
   level: 'Level',
   cell: 'Cell',
 
+  // Controlls
+  noResults: 'No result',
+  allAreas: 'All areas',
+
   // Headers & Sections
   areaSummary: 'Area Summary',
   rowSummary: 'Row Summary',

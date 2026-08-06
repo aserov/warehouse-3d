@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warehouse 3D</title>
-  
+
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
   <div id="main-layout">
     <!-- Canvas Area -->
     <main id="canvas-container">
-      
+
       <!-- Left Canvas Overlay Controls (Compass & Zoom) -->
       <div class="canvas-controls-left">
         <!-- Compass Widget -->
@@ -54,18 +54,47 @@
         </div>
       </div>
 
-      <!-- Right Canvas Overlay Controls (View Modes & Reset) -->
+      <!-- Right Canvas Overlay Controls (Floor Selector, View Modes & Reset) -->
       <div class="canvas-controls-right">
         <div class="view-mode-widget">
+
+          <!-- Custom Floor Selector Dropdown -->
+          <div class="custom-floor-select" id="custom-floor-select">
+            <button type="button" class="floor-select-btn" id="floor-select-btn">
+              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21h18"></path>
+                <path d="M5 21V7l8-4v18"></path>
+                <path d="M19 21V11l-6-3"></path>
+                <path d="M9 9h2"></path>
+                <path d="M9 13h2"></path>
+                <path d="M9 17h2"></path>
+              </svg>
+              <span class="floor-current-text" id="floor-current-text">Loading...</span>
+              <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu Popup (dynamin populte) -->
+            <div class="floor-dropdown-menu" id="floor-dropdown-menu"></div>
+          </div>
+
+          <div class="view-mode-divider"></div>
+
+          <!-- View Mode Buttons -->
           <button id="btn-view-2d" class="view-mode-btn" title="2D Top View">2D</button>
           <button id="btn-view-3d" class="view-mode-btn active" title="3D Perspective">3D</button>
+
           <div class="view-mode-divider"></div>
+
+          <!-- Reset View Button -->
           <button id="btn-view-reset" class="view-mode-btn icon-btn" title="Reset Camera View">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
               <path d="M3 3v5h5"></path>
             </svg>
           </button>
+
         </div>
       </div>
 
@@ -73,7 +102,7 @@
 
     <!-- Right Sidebar -->
     <aside id="sidebar">
-      
+
       <!-- Section 1: Information -->
       <section class="sidebar-section info-section">
         <h3 class="section-title" data-i18n="infoTitle">Information</h3>

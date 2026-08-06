@@ -1,0 +1,178 @@
+{
+  "areas": [
+    {
+      "area": 2,
+      "areaName": "MF",
+      "floor": 1,
+      "rows": [
+        {
+          "row": 1,
+          "rowName": "MF-01",
+          "levels": [
+            {
+              "level": 1,
+              "levelName": "MF-01-01",
+              "cells": [
+                {"place": 1, "number": "MF-01-01-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 9996, "active": 1},
+                {"place": 2, "number": "MF-01-01-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 7798, "active": 0},
+                {"place": 3, "number": "MF-01-01-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "MF-01-01-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 2,
+              "levelName": "MF-01-02",
+              "cells": [
+                {"place": 1, "number": "MF-01-02-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "MF-01-02-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "MF-01-02-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "MF-01-02-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            }
+          ]
+        },
+        {
+          "row": 2,
+          "rowName": "MF-02",
+          "levels": [
+            {
+              "level": 1,
+              "levelName": "MF-02-01",
+              "cells": [
+                {"place": 1, "number": "MF-02-01-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "MF-02-01-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "MF-02-01-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "MF-02-01-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 2,
+              "levelName": "MF-02-02",
+              "cells": [
+                {"place": 1, "number": "MF-02-02-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "MF-02-02-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "MF-02-02-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "MF-02-02-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+          ]
+        },
+      ]
+    },
+    {
+      "area": 3,
+      "areaName": "RB",
+      "floor": 1,
+      "rows": [
+        {
+          "row": 1,
+          "rowName": "RB-01",
+          "levels": [
+            {
+              "level": 1,
+              "levelName": "RB-01-01",
+              "cells": [
+                {"place": 1, "number": "RB-01-01-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-01-01-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-01-01-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-01-01-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 2,
+              "levelName": "RB-01-02",
+              "cells": [
+                {"place": 1, "number": "RB-01-02-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-01-02-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-01-02-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-01-02-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 3,
+              "levelName": "RB-01-03",
+              "cells": [
+                {"place": 1, "number": "RB-01-03-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-01-03-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-01-03-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-01-03-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+          ]
+        },
+        {
+          "row": 2,
+          "rowName": "RB-02",
+          "levels": [
+            {
+              "level": 1,
+              "levelName": "RB-02-01",
+              "cells": [
+                {"place": 1, "number": "RB-02-01-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-02-01-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-02-01-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-02-01-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 2,
+              "levelName": "RB-02-02",
+              "cells": [
+                {"place": 1, "number": "RB-02-02-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-02-02-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-02-02-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-02-02-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 3,
+              "levelName": "RB-02-03",
+              "cells": [
+                {"place": 1, "number": "RB-02-03-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-02-03-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-02-03-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-02-03-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+          ]
+        },
+        {
+          "row": 3,
+          "rowName": "RB-03",
+          "levels": [
+            {
+              "level": 1,
+              "levelName": "RB-03-01",
+              "cells": [
+                {"place": 1, "number": "RB-03-01-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-03-01-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-03-01-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-03-01-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 2,
+              "levelName": "RB-03-02",
+              "cells": [
+                {"place": 1, "number": "RB-03-02-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-03-02-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-03-02-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-03-02-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+            {
+              "level": 3,
+              "levelName": "RB-03-03",
+              "cells": [
+                {"place": 1, "number": "RB-03-03-01", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 2, "number": "RB-03-03-02", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 3, "number": "RB-03-03-03", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1},
+                {"place": 4, "number": "RB-03-03-04", "width": 10000, "height": 10000, "depth": 10000, "volume": 1000000000000, "weight": 1000, "freeWeight": 10000, "active": 1}
+              ]
+            },
+          ]
+        },
+      ]
+    }
+  ]
+}

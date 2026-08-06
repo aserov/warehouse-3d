@@ -3,6 +3,10 @@ window.Warehouse = window.Warehouse || {};
 window.Warehouse.UIController = (function() {
   const { CONFIG, Utils, Builder, CameraController } = window.Warehouse;
 
+  /**
+   * Renders details card in sidebar when an object (area, row, cell) is selected.
+   * @param {Object} userData - Metadata associated with the clicked 3D mesh.
+   */
   function displayInfo(userData) {
     const infoContent = document.getElementById('info-content');
     if (!infoContent || !userData || !userData.type) return;
@@ -70,6 +74,9 @@ window.Warehouse.UIController = (function() {
     }
   }
 
+  /**
+   * Applies active language translations to elements with data-i18n attribute.
+   */
   function applyTranslations() {
     const currentLang = CONFIG.defaultLang || 'en';
     const dictionary = window.Warehouse.i18n[currentLang] || window.Warehouse.i18n.en;
@@ -90,6 +97,9 @@ window.Warehouse.UIController = (function() {
     });
   }
 
+  /**
+   * Initializes real-time clock updating in top toolbar.
+   */
   function startClock() {
     const clockEl = document.getElementById('toolbar-clock');
     if (!clockEl) return;
@@ -130,6 +140,9 @@ window.Warehouse.UIController = (function() {
     setInterval(updateTime, 1000);
   }
 
+  /**
+   * Displays modal error overlay when loading fails.
+   */
   function showErrorUI(title, details) {
     let errorBox = document.getElementById('error-banner') || document.createElement('div');
     errorBox.id = 'error-banner';
@@ -144,8 +157,55 @@ window.Warehouse.UIController = (function() {
     errorBox.classList.add('visible');
   }
 
+  /**
+   * Dynamically populates floor selector dropdown items based on backend data.
+   * @param {Array<number|string>} floors - List of available floor numbers.
+   * @param {number|string} activeFloor - Currently selected floor.
+   * @param {Function} onFloorChange - Callback invoked when a floor is clicked.
+   */
+  function populateFloors(floors, activeFloor, onFloorChange) {
+    const floorMenu = document.getElementById('floor-dropdown-menu');
+    const currentText = document.getElementById('floor-current-text');
+    if (!floorMenu || !currentText) return;
+
+    floorMenu.innerHTML = '';
+
+    // Determine localized floor prefix
+    const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
+    const floorPrefix = lang === 'ru' ? 'Этаж' : 'Floor';
+
+    floors.forEach(floor => {
+      const item = document.createElement('div');
+      item.className = `floor-option ${Number(floor) === Number(activeFloor) ? 'active' : ''}`;
+      item.setAttribute('data-value', floor);
+      item.textContent = `${floorPrefix} ${floor}`;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        floorMenu.querySelectorAll('.floor-option').forEach(opt => opt.classList.remove('active'));
+        item.classList.add('active');
+
+        currentText.textContent = `${floorPrefix} ${floor}`;
+        document.getElementById('custom-floor-select')?.classList.remove('open');
+
+        if (typeof onFloorChange === 'function') {
+          onFloorChange(floor);
+        }
+      });
+
+      floorMenu.appendChild(item);
+    });
+
+    // Set initial text on button
+    currentText.textContent = `${floorPrefix} ${activeFloor}`;
+  }
+
+  /**
+   * Binds UI control events (toggles, camera views, dropdown listeners).
+   */
   function initEvents() {
-    // Label Toggles
+    // 3D Scene Label Toggles
     document.getElementById('toggle-area-labels')?.addEventListener('change', (e) => {
       Builder.areaLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
@@ -158,7 +218,7 @@ window.Warehouse.UIController = (function() {
       Builder.levelLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
-    // Compass & Zoom Visibility Toggles
+    // Compass & Zoom Overlay Toggles
     document.getElementById('toggle-compass')?.addEventListener('change', (e) => {
       const compassWidget = document.getElementById('compass-widget');
       if (compassWidget) compassWidget.style.display = e.target.checked ? 'flex' : 'none';
@@ -169,7 +229,22 @@ window.Warehouse.UIController = (function() {
       if (zoomWidget) zoomWidget.style.display = e.target.checked ? 'flex' : 'none';
     });
 
-    // View Mode Buttons (2D / 3D / Reset)
+    // Floor Selector Toggle & Outside Click Listener
+    const floorSelect = document.getElementById('custom-floor-select');
+    const floorBtn = document.getElementById('floor-select-btn');
+
+    if (floorSelect && floorBtn) {
+      floorBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        floorSelect.classList.toggle('open');
+      });
+
+      document.addEventListener('click', () => {
+        floorSelect.classList.remove('open');
+      });
+    }
+
+    // View Mode Switcher (2D / 3D / Reset)
     const btn2D = document.getElementById('btn-view-2d');
     const btn3D = document.getElementById('btn-view-3d');
     const btnReset = document.getElementById('btn-view-reset');
@@ -177,25 +252,25 @@ window.Warehouse.UIController = (function() {
     btn2D?.addEventListener('click', () => {
       btn2D.classList.add('active');
       btn3D?.classList.remove('active');
-      if (window.Warehouse.CameraController && window.Warehouse.CameraController.set2DView) {
-        window.Warehouse.CameraController.set2DView();
+      if (CameraController && CameraController.set2DView) {
+        CameraController.set2DView();
       }
     });
 
     btn3D?.addEventListener('click', () => {
       btn3D.classList.add('active');
       btn2D?.classList.remove('active');
-      if (window.Warehouse.CameraController && window.Warehouse.CameraController.set3DView) {
-        window.Warehouse.CameraController.set3DView();
+      if (CameraController && CameraController.set3DView) {
+        CameraController.set3DView();
       }
     });
 
     btnReset?.addEventListener('click', () => {
-      if (window.Warehouse.CameraController && window.Warehouse.CameraController.resetView) {
-        window.Warehouse.CameraController.resetView();
+      if (CameraController && CameraController.resetView) {
+        CameraController.resetView();
       }
     });
   }
 
-  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents };
+  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents, populateFloors };
 })();

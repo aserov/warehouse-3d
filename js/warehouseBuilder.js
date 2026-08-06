@@ -9,6 +9,9 @@ window.Warehouse.Builder = (function() {
   const levelLabels = [];
   const areaLabels = [];
 
+  /**
+   * Generates canvas text sprite for coordinates and corner tags.
+   */
   function createCornerLabel(text, color = 0x2c3e50) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -37,6 +40,65 @@ window.Warehouse.Builder = (function() {
     return sprite;
   }
 
+  /**
+   * Completely clears existing warehouse objects, labels, and disposes GPU resources.
+   */
+  function clearWarehouse() {
+    // 1. Reset tracking arrays without breaking references
+    rowLabels.length = 0;
+    levelLabels.length = 0;
+    areaLabels.length = 0;
+
+    // 2. Remove DOM elements if CSS2D labels are present
+    document.querySelectorAll('.area-label-element, .row-label-element').forEach(el => el.remove());
+
+    // 3. Helper function to recursively dispose object graphics resources
+    const disposeObject = (obj) => {
+      if (!obj) return;
+      if (obj.geometry) {
+        obj.geometry.dispose();
+      }
+      if (obj.material) {
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach(mat => {
+            if (mat.map) mat.map.dispose();
+            mat.dispose();
+          });
+        } else {
+          if (obj.material.map) obj.material.map.dispose();
+          obj.material.dispose();
+        }
+      }
+    };
+
+    // 4. Clean warehouseGroup contents thoroughly
+    if (warehouseGroup) {
+      while (warehouseGroup.children.length > 0) {
+        const child = warehouseGroup.children[0];
+        warehouseGroup.remove(child);
+        child.traverse(disposeObject);
+      }
+    }
+
+    // 5. Clean any direct scene children tagged as warehouse objects
+    if (scene) {
+      const objectsToRemove = [];
+      scene.children.forEach(child => {
+        if (child.userData && child.userData.isWarehouseObject) {
+          objectsToRemove.push(child);
+        }
+      });
+
+      objectsToRemove.forEach(obj => {
+        scene.remove(obj);
+        obj.traverse(disposeObject);
+      });
+    }
+  }
+
+  /**
+   * Builds building floor perimeter and boundary lines.
+   */
   function createBuildingOutline(polygonPoints) {
     if (!polygonPoints || polygonPoints.length < 3) return;
 
@@ -51,39 +113,45 @@ window.Warehouse.Builder = (function() {
     const floorMat = new THREE.MeshStandardMaterial({
       color: colors.buildingFloor,
       roughness: 0.8,
-      shininess: 10,  
+      shininess: 10,
       side: THREE.DoubleSide
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = Math.PI / 2;
     floorMesh.position.y = -0.01;
-    scene.add(floorMesh);
+    floorMesh.userData.isWarehouseObject = true;
+    warehouseGroup.add(floorMesh);
 
     const points3D = polygonPoints.map(p => new THREE.Vector3(p.x, 0.2, p.z));
     points3D.push(new THREE.Vector3(polygonPoints[0].x, 0.2, polygonPoints[0].z));
 
     const lineGeo = new THREE.BufferGeometry().setFromPoints(points3D);
     const lineMat = new THREE.LineBasicMaterial({ color: colors.buildingWall, linewidth: 4 });
-    scene.add(new THREE.Line(lineGeo, lineMat));
+    const outlineLine = new THREE.Line(lineGeo, lineMat);
+    outlineLine.userData.isWarehouseObject = true;
+    warehouseGroup.add(outlineLine);
 
     polygonPoints.forEach(point => {
       const labelText = `(${point.x}, ${point.z})`;
       const labelSprite = createCornerLabel(labelText, colors.buildingWall);
       labelSprite.position.set(point.x, 2.0, point.z);
-      scene.add(labelSprite);
+      labelSprite.userData.isWarehouseObject = true;
+      warehouseGroup.add(labelSprite);
     });
   }
 
+  /**
+   * Main builder method rendering floor areas, racks, and labels.
+   * @param {Object} data - Filtered floor warehouse data.
+   */
   function buildWarehouse(data) {
+    clearWarehouse();
+
+    if (!data || !data.areas) return;
+
     const t = Utils.t.bind(Utils);
 
-    while (warehouseGroup.children.length > 0) {
-      warehouseGroup.remove(warehouseGroup.children[0]);
-    }
-    rowLabels.length = 0;
-    levelLabels.length = 0;
-    areaLabels.length = 0;
-
+    // Build floor building outline
     createBuildingOutline(CONFIG.buildingPolygon);
 
     let currentX = CONFIG.originX;
@@ -173,16 +241,17 @@ window.Warehouse.Builder = (function() {
           const levelText = `${levelData.level}`;
           const labelCenterY = currentYOffset + (levelMaxHeight / 2);
 
+          // Level indicators are added directly to levelGroup so they clear automatically with the scene
           const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
           leftLevelMesh.rotation.y = -Math.PI / 2;
           leftLevelMesh.position.set(firstCellX - 0.05, labelCenterY, zOffset + rowCellDepth / 2);
-          scene.add(leftLevelMesh);
+          levelGroup.add(leftLevelMesh);
           levelLabels.push(leftLevelMesh);
 
           const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
           rightLevelMesh.rotation.y = Math.PI / 2;
           rightLevelMesh.position.set(lastCellX + 0.05, labelCenterY, zOffset + rowCellDepth / 2);
-          scene.add(rightLevelMesh);
+          levelGroup.add(rightLevelMesh);
           levelLabels.push(rightLevelMesh);
 
           rowGroup.add(levelGroup);
@@ -203,18 +272,21 @@ window.Warehouse.Builder = (function() {
       const areaCenterX = minX + dims.totalWidth / 2;
       const areaCenterZ = minZ + dims.totalDepth / 2;
 
+      // Area background plane
       const areaRectGeo = new THREE.PlaneGeometry(dims.totalWidth, dims.totalDepth);
       const areaRectMat = new THREE.MeshBasicMaterial({ color: areaColor, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
       const areaRectMesh = new THREE.Mesh(areaRectGeo, areaRectMat);
       areaRectMesh.rotation.x = -Math.PI / 2;
       areaRectMesh.position.set(areaCenterX, 0.01, areaCenterZ);
-      scene.add(areaRectMesh);
+      areaGroup.add(areaRectMesh);
 
+      // Area borders
       const borderLines = new THREE.LineSegments(new THREE.EdgesGeometry(areaRectGeo), new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3 }));
       borderLines.rotation.x = -Math.PI / 2;
       borderLines.position.set(areaCenterX, 0.02, areaCenterZ);
-      scene.add(borderLines);
+      areaGroup.add(borderLines);
 
+      // Area corner labels
       [{ x: Math.round(minX), z: Math.round(minZ) },
        { x: Math.round(maxX), z: Math.round(minZ) },
        { x: Math.round(minX), z: Math.round(maxZ) },
@@ -224,6 +296,7 @@ window.Warehouse.Builder = (function() {
         areaGroup.add(cornerLabel);
       });
 
+      // Main Area title label
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
       const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
       areaTitleMesh.position.set(areaCenterX, 0.03, maxZ - CONFIG.areaPadding / 2);

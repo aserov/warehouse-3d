@@ -9,9 +9,9 @@
   function onPointerDown(event) {
     // Prevent raycasting when clicking UI elements
     if (
-      event.target.closest('#sidebar') || 
-      event.target.closest('#top-toolbar') || 
-      event.target.closest('.canvas-controls-left') || 
+      event.target.closest('#sidebar') ||
+      event.target.closest('#top-toolbar') ||
+      event.target.closest('.canvas-controls-left') ||
       event.target.closest('.canvas-controls-right')
     ) return;
 
@@ -60,7 +60,7 @@
 
     document.getElementById('zoom-in-btn')?.addEventListener('click', CameraController.zoomIn);
     document.getElementById('zoom-out-btn')?.addEventListener('click', CameraController.zoomOut);
-    
+
     document.getElementById('zoom-slider')?.addEventListener('input', (e) => {
       CameraController.setZoomFromSlider(parseFloat(e.target.value));
     });
@@ -89,23 +89,67 @@
 
   window.addEventListener('resize', updateCanvasSize);
 
-  // Fetch Data
+  let rawWarehouseData = null;
+
+  /**
+   * Renders the warehouse scene for a specific floor.
+   * @param {number|string} floorNumber - The floor number to filter and render.
+   */
+  function renderWarehouseForFloor(floorNumber) {
+    if (!rawWarehouseData) return;
+
+    // Filter areas that belong to the selected floor
+    const filteredAreas = (rawWarehouseData.areas || []).filter(
+      area => Number(area.floor) === Number(floorNumber)
+    );
+
+    const filteredData = {
+      ...rawWarehouseData,
+      areas: filteredAreas
+    };
+
+    // Rebuild scene with filtered floor data
+    Warehouse.Builder.buildWarehouse(filteredData);
+    Warehouse.CameraController.fitCameraToWarehouse();
+    if (typeof updateCanvasSize === 'function') {
+      updateCanvasSize();
+    }
+  }
+
+  // Fetch Data & Dynamic Floor Initialization
   fetch('data/cells-full.json')
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      if (!data || (Array.isArray(data) && data.length === 0)) {
+      if (!data || !data.areas || !Array.isArray(data.areas) || data.areas.length === 0) {
         throw new Error('Received empty or invalid JSON data structure.');
       }
-      Builder.buildWarehouse(data);
-      CameraController.fitCameraToWarehouse();
-      updateCanvasSize();
+
+      rawWarehouseData = data;
+
+      // Extract unique floor numbers from backend response and sort ascending
+      const uniqueFloors = [...new Set(data.areas.map(a => Number(a.floor)).filter(Boolean))].sort((a, b) => a - b);
+
+      if (uniqueFloors.length === 0) {
+        throw new Error('No floor data found in JSON.');
+      }
+
+      // Select the first available floor by default
+      const initialFloor = uniqueFloors[0];
+
+      // Initialize floor dropdown selector UI
+      Warehouse.UIController.populateFloors(uniqueFloors, initialFloor, (selectedFloor) => {
+        renderWarehouseForFloor(selectedFloor);
+      });
+
+      // Initial render for default floor
+      renderWarehouseForFloor(initialFloor);
     })
     .catch(err => {
       console.error("Error loading cells-full.json:", err);
-      UIController.showErrorUI('Failed to load warehouse data', err.message);
+      Warehouse.UIController.showErrorUI('Failed to load warehouse data', err.message);
     });
 
   // Render Loop

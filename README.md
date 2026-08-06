@@ -19,9 +19,8 @@ Due to browser Security Policies (CORS), modern browsers block `fetch()` request
 
 ### Prerequisites
 * **Node.js** (v14 or higher) — [Download Node.js](https://nodejs.org/)
-* Or **Python 3**
 
-### Option 1: Using Node.js (`npx serve`)
+### Option: Using Node.js (`npx serve`)
 Run the following command in the project root directory:
 
 ```bash

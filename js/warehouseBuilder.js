@@ -51,6 +51,7 @@ window.Warehouse.Builder = (function() {
     const floorMat = new THREE.MeshStandardMaterial({
       color: colors.buildingFloor,
       roughness: 0.8,
+      shininess: 10,  
       side: THREE.DoubleSide
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);

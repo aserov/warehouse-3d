@@ -2,6 +2,9 @@ window.Warehouse = window.Warehouse || {};
 window.Warehouse.i18n = window.Warehouse.i18n || {};
 
 window.Warehouse.i18n.ru = {
+  // Приложение
+  appTitle: '3D Склад',
+
   // Единицы измерения
   units: {
     weight: 'кг',
@@ -16,11 +19,13 @@ window.Warehouse.i18n.ru = {
   level: 'Ярус',
   cell: 'Ячейка',
   
-  // Заголовки и подзаголовки
+  // Заголовки и секции
   areaSummary: 'Сводка по зоне',
   rowSummary: 'Сводка по ряду',
   cellDetails: 'Детали ячейки',
   infoTitle: 'Информация',
+  settingsTitle: 'Настройки',
+  helpTitle: 'Управление',
   
   // Метрики
   totalRows: 'Всего рядов',
@@ -41,8 +46,15 @@ window.Warehouse.i18n.ru = {
   toggleView: '2D / 3D Вид',
   showRowLabels: 'Отображать ряды',
   showLevelLabels: 'Отображать ярусы',
-  showInfoPanel: 'Показать панель информации',
+  showAreaLabels: 'Показать зоны',
+  showCompass: 'Показывать компас',
+  showZoom: 'Показывать зум',
   defaultInfoText: 'Кликните на ячейку, ряд или зону для просмотра деталей.',
+
+  // Справка по управлению
+  helpRotate: 'Вращение: ЛКМ + Перетаскивание',
+  helpPan: 'Панорама: ПКМ + Перетаскивание',
+  helpZoom: 'Масштаб: Колесико мыши',
 
   // Ошибки
   errorTitle: 'Ошибка загрузки данных склада',

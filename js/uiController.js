@@ -1,19 +1,11 @@
 window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.UIController = (function() {
-  const { CONFIG, Utils, Builder } = window.Warehouse;
-  const infoContent = document.getElementById('info-content');
-  const infoPanel = document.getElementById('info-panel');
-  const toggleInfoCheckbox = document.getElementById('toggle-info-panel');
-  const closeInfoBtn = document.getElementById('close-info-panel');
+  const { CONFIG, Utils, Builder, CameraController } = window.Warehouse;
 
   function displayInfo(userData) {
-    if (!userData || !userData.type) return;
-
-    if (!toggleInfoCheckbox.checked) {
-      toggleInfoCheckbox.checked = true;
-      toggleInfoCheckbox.dispatchEvent(new Event('change'));
-    }
+    const infoContent = document.getElementById('info-content');
+    if (!infoContent || !userData || !userData.type) return;
 
     const t = Utils.t.bind(Utils);
     const getUnit = Utils.getUnit.bind(Utils);
@@ -80,27 +72,62 @@ window.Warehouse.UIController = (function() {
 
   function applyTranslations() {
     const currentLang = CONFIG.defaultLang || 'en';
-    const t = window.Warehouse.i18n[currentLang] || window.Warehouse.i18n.en;
+    const dictionary = window.Warehouse.i18n[currentLang] || window.Warehouse.i18n.en;
 
-    const toggleBtnText = document.getElementById('toggle2DBtnText');
-    if (toggleBtnText) toggleBtnText.textContent = t.toggleView;
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.getAttribute('data-i18n');
+      const translatedText = dictionary[key];
 
-    ['row-labels', 'level-labels', 'info-panel'].forEach(id => {
-      const label = document.querySelector(`#toggle-${id}`)?.parentElement;
-      if (label) {
-        const input = label.querySelector('input');
-        const key = id === 'row-labels' ? 'showRowLabels' : id === 'level-labels' ? 'showLevelLabels' : 'showInfoPanel';
-        label.textContent = ' ' + t[key];
-        label.prepend(input);
+      if (!translatedText) return;
+
+      const input = element.querySelector('input');
+      if (input) {
+        element.textContent = ' ' + translatedText;
+        element.prepend(input);
+      } else {
+        element.textContent = translatedText;
       }
     });
+  }
 
-    const infoTitle = document.querySelector('#info-panel h3');
-    if (infoTitle) infoTitle.textContent = t.infoTitle;
+  function startClock() {
+    const clockEl = document.getElementById('toolbar-clock');
+    if (!clockEl) return;
 
-    if (infoContent && !infoContent.dataset.custom) {
-      infoContent.textContent = t.defaultInfoText;
+    function updateTime() {
+      const lang = CONFIG.defaultLang || 'en';
+      const now = new Date();
+
+      const days = lang === 'ru'
+        ? ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+        : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+      const months = lang === 'ru'
+        ? ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+        : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const dayName = days[now.getDay()];
+      const monthName = months[now.getMonth()];
+      const dayNum = String(now.getDate()).padStart(2, '0');
+      const year = now.getFullYear();
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+
+      let timeZoneStr = 'Berlin Standard Time';
+      try {
+        const timeZoneMatch = Intl.DateTimeFormat(lang, { timeZoneName: 'long' })
+          .formatToParts(now)
+          .find(p => p.type === 'timeZoneName');
+        if (timeZoneMatch) timeZoneStr = timeZoneMatch.value;
+      } catch (e) {}
+
+      clockEl.textContent = `${dayName} ${monthName} ${dayNum} ${year} ${hours}:${mins}:${secs} (${timeZoneStr})`;
     }
+
+    updateTime();
+    setInterval(updateTime, 1000);
   }
 
   function showErrorUI(title, details) {
@@ -118,30 +145,57 @@ window.Warehouse.UIController = (function() {
   }
 
   function initEvents() {
-    toggleInfoCheckbox.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        infoPanel.style.display = 'block';
-        setTimeout(() => { infoPanel.style.opacity = '1'; infoPanel.style.transform = 'translateX(0)'; }, 10);
-      } else {
-        infoPanel.style.opacity = '0';
-        infoPanel.style.transform = 'translateX(20px)';
-        setTimeout(() => { infoPanel.style.display = 'none'; }, 300);
-      }
+    // Label Toggles
+    document.getElementById('toggle-area-labels')?.addEventListener('change', (e) => {
+      Builder.areaLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
-    closeInfoBtn.addEventListener('click', () => {
-      toggleInfoCheckbox.checked = false;
-      toggleInfoCheckbox.dispatchEvent(new Event('change'));
-    });
-
-    document.getElementById('toggle-row-labels').addEventListener('change', (e) => {
+    document.getElementById('toggle-row-labels')?.addEventListener('change', (e) => {
       Builder.rowLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
-    document.getElementById('toggle-level-labels').addEventListener('change', (e) => {
+    document.getElementById('toggle-level-labels')?.addEventListener('change', (e) => {
       Builder.levelLabels.forEach(mesh => mesh.visible = e.target.checked);
+    });
+
+    // Compass & Zoom Visibility Toggles
+    document.getElementById('toggle-compass')?.addEventListener('change', (e) => {
+      const compassWidget = document.getElementById('compass-widget');
+      if (compassWidget) compassWidget.style.display = e.target.checked ? 'flex' : 'none';
+    });
+
+    document.getElementById('toggle-zoom')?.addEventListener('change', (e) => {
+      const zoomWidget = document.getElementById('zoom-widget');
+      if (zoomWidget) zoomWidget.style.display = e.target.checked ? 'flex' : 'none';
+    });
+
+    // View Mode Buttons (2D / 3D / Reset)
+    const btn2D = document.getElementById('btn-view-2d');
+    const btn3D = document.getElementById('btn-view-3d');
+    const btnReset = document.getElementById('btn-view-reset');
+
+    btn2D?.addEventListener('click', () => {
+      btn2D.classList.add('active');
+      btn3D?.classList.remove('active');
+      if (window.Warehouse.CameraController && window.Warehouse.CameraController.set2DView) {
+        window.Warehouse.CameraController.set2DView();
+      }
+    });
+
+    btn3D?.addEventListener('click', () => {
+      btn3D.classList.add('active');
+      btn2D?.classList.remove('active');
+      if (window.Warehouse.CameraController && window.Warehouse.CameraController.set3DView) {
+        window.Warehouse.CameraController.set3DView();
+      }
+    });
+
+    btnReset?.addEventListener('click', () => {
+      if (window.Warehouse.CameraController && window.Warehouse.CameraController.resetView) {
+        window.Warehouse.CameraController.resetView();
+      }
     });
   }
 
-  return { displayInfo, applyTranslations, showErrorUI, initEvents };
+  return { displayInfo, applyTranslations, startClock, showErrorUI, initEvents };
 })();

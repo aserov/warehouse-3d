@@ -2,6 +2,9 @@ window.Warehouse = window.Warehouse || {};
 window.Warehouse.i18n = window.Warehouse.i18n || {};
 
 window.Warehouse.i18n.en = {
+  // Application
+  appTitle: 'Warehouse 3D',
+  
   // Units
   units: {
     weight: 'kg',
@@ -16,11 +19,13 @@ window.Warehouse.i18n.en = {
   level: 'Level',
   cell: 'Cell',
   
-  // Headers & Subtitles
+  // Headers & Sections
   areaSummary: 'Area Summary',
   rowSummary: 'Row Summary',
   cellDetails: 'Cell Details',
   infoTitle: 'Information',
+  settingsTitle: 'Settings',
+  helpTitle: 'Navigation Help',
   
   // Metrics
   totalRows: 'Total Rows',
@@ -41,8 +46,15 @@ window.Warehouse.i18n.en = {
   toggleView: '2D / 3D View',
   showRowLabels: 'Show Row Labels',
   showLevelLabels: 'Show Level Labels',
-  showInfoPanel: 'Show Information Panel',
+  showAreaLabels: 'Show Area Labels',
+  showCompass: 'Show Compass',
+  showZoom: 'Show Zoom',
   defaultInfoText: 'Click on a cell, row, or area to view details.',
+
+  // Help section
+  helpRotate: 'Rotate: Left click + Drag',
+  helpPan: 'Pan: Right click + Drag',
+  helpZoom: 'Zoom: Mouse wheel',
 
   // Errors & Alerts
   errorTitle: 'Failed to load warehouse data',

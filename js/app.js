@@ -7,10 +7,19 @@
   let originalMaterial = null;
 
   function onPointerDown(event) {
-    if (event.target.closest('#info-panel') || event.target.closest('#controls-panel')) return;
+    // Prevent raycasting when clicking UI elements
+    if (
+      event.target.closest('#sidebar') || 
+      event.target.closest('#top-toolbar') || 
+      event.target.closest('.canvas-controls-left') || 
+      event.target.closest('.canvas-controls-right')
+    ) return;
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const container = document.getElementById('canvas-container');
+    const rect = container.getBoundingClientRect();
+
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(warehouseGroup.children, true);
@@ -40,17 +49,45 @@
     }
   }
 
+  // Bind Compass Buttons & Zoom Controls
+  function initNavigationControls() {
+    document.querySelectorAll('.compass-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const angle = parseFloat(e.target.getAttribute('data-angle'));
+        if (!isNaN(angle)) CameraController.rotateToCardinal(angle);
+      });
+    });
+
+    document.getElementById('zoom-in-btn')?.addEventListener('click', CameraController.zoomIn);
+    document.getElementById('zoom-out-btn')?.addEventListener('click', CameraController.zoomOut);
+    
+    document.getElementById('zoom-slider')?.addEventListener('input', (e) => {
+      CameraController.setZoomFromSlider(parseFloat(e.target.value));
+    });
+  }
+
   UIController.initEvents();
-  document.getElementById('toggle2DBtn').addEventListener('click', CameraController.toggle2DView);
+  initNavigationControls();
+
   window.addEventListener('pointerdown', onPointerDown);
 
-  document.addEventListener('DOMContentLoaded', UIController.applyTranslations);
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  document.addEventListener('DOMContentLoaded', () => {
+    UIController.applyTranslations();
+    UIController.startClock();
   });
+
+  function updateCanvasSize() {
+    const container = document.getElementById('canvas-container');
+    if (!container) return;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  window.addEventListener('resize', updateCanvasSize);
 
   // Fetch Data
   fetch('data/cells-full.json')
@@ -64,6 +101,7 @@
       }
       Builder.buildWarehouse(data);
       CameraController.fitCameraToWarehouse();
+      updateCanvasSize();
     })
     .catch(err => {
       console.error("Error loading cells-full.json:", err);
@@ -74,6 +112,7 @@
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
+    CameraController.updateCompass();
     renderer.render(scene, camera);
   }
   animate();

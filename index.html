@@ -9,42 +9,109 @@
 </head>
 <body>
 
-  <div id="canvas-container"></div>
-
-  <!-- Left Control Panel -->
-  <div id="controls-panel">
-    <button id="toggle2DBtn" class="btn-toggle-view">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <!-- Top Static Toolbar -->
+  <header id="top-toolbar">
+    <div class="toolbar-brand">
+      <svg class="cube-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
         <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
         <line x1="12" y1="22.08" x2="12" y2="12"></line>
       </svg>
-      <span id="toggle2DBtnText">2D / 3D View</span>
-    </button>
+      <span class="toolbar-title" data-i18n="appTitle">Warehouse 3D</span>
+    </div>
+    <div class="toolbar-time" id="toolbar-clock">
+      Loading time...
+    </div>
+  </header>
 
-    <div class="divider"></div>
+  <!-- Main Layout Container -->
+  <div id="main-layout">
+    <!-- Canvas Area -->
+    <main id="canvas-container">
+      
+      <!-- Left Canvas Overlay Controls (Compass & Zoom) -->
+      <div class="canvas-controls-left">
+        <!-- Compass Widget -->
+        <div class="compass-widget" id="compass-widget">
+          <div class="compass-dial">
+            <button class="compass-btn btn-n" data-angle="0" title="North (0°)">N</button>
+            <button class="compass-btn btn-e" data-angle="90" title="East (90°)">E</button>
+            <button class="compass-btn btn-s" data-angle="180" title="South (180°)">S</button>
+            <button class="compass-btn btn-w" data-angle="270" title="West (270°)">W</button>
+            <div class="compass-center">
+              <div class="compass-arrow" id="compass-arrow"></div>
+            </div>
+          </div>
+        </div>
 
-    <label><input type="checkbox" id="toggle-row-labels" checked> Show Row Labels</label>
-    <label><input type="checkbox" id="toggle-level-labels" checked> Show Level Labels</label>
-    <label><input type="checkbox" id="toggle-info-panel" checked> Show Information Panel</label>
+        <!-- Zoom Controls -->
+        <div class="zoom-widget" id="zoom-widget">
+          <button id="zoom-out-btn" class="zoom-btn" title="Zoom Out">−</button>
+          <div class="zoom-slider-container">
+            <input type="range" id="zoom-slider" min="0" max="100" value="50" class="zoom-slider">
+          </div>
+          <button id="zoom-in-btn" class="zoom-btn" title="Zoom In">+</button>
+        </div>
+      </div>
+
+      <!-- Right Canvas Overlay Controls (View Modes & Reset) -->
+      <div class="canvas-controls-right">
+        <div class="view-mode-widget">
+          <button id="btn-view-2d" class="view-mode-btn" title="2D Top View">2D</button>
+          <button id="btn-view-3d" class="view-mode-btn active" title="3D Perspective">3D</button>
+          <div class="view-mode-divider"></div>
+          <button id="btn-view-reset" class="view-mode-btn icon-btn" title="Reset Camera View">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside id="sidebar">
+      
+      <!-- Section 1: Information -->
+      <section class="sidebar-section info-section">
+        <h3 class="section-title" data-i18n="infoTitle">Information</h3>
+        <div id="info-content" data-i18n="defaultInfoText">Click on a cell, row, or area to view details.</div>
+      </section>
+
+      <!-- Section 2: Settings -->
+      <section class="sidebar-section settings-section">
+        <h3 class="section-title" data-i18n="settingsTitle">Settings</h3>
+        <div class="checkbox-group">
+          <label data-i18n="showAreaLabels"><input type="checkbox" id="toggle-area-labels" checked> Show Area Labels</label>
+          <label data-i18n="showRowLabels"><input type="checkbox" id="toggle-row-labels" checked> Show Row Labels</label>
+          <label data-i18n="showLevelLabels"><input type="checkbox" id="toggle-level-labels" checked> Show Level Labels</label>
+          <label data-i18n="showCompass"><input type="checkbox" id="toggle-compass" checked> Show Compass</label>
+          <label data-i18n="showZoom"><input type="checkbox" id="toggle-zoom" checked> Show Zoom</label>
+        </div>
+      </section>
+
+      <!-- Section 3: Help -->
+      <section class="sidebar-section help-section">
+        <h3 class="section-title" data-i18n="helpTitle">Navigation Help</h3>
+        <div class="help-list">
+          <div data-i18n="helpRotate">Rotate: Left click + Drag</div>
+          <div data-i18n="helpPan">Pan: Right click + Drag</div>
+          <div data-i18n="helpZoom">Zoom: Mouse wheel</div>
+        </div>
+      </section>
+
+    </aside>
   </div>
 
-  <!-- Right Information Panel -->
-  <div id="info-panel">
-    <button id="close-info-panel" title="Close Panel">&times;</button>
-    <h3>Information</h3>
-    <div id="info-content">Click on a cell, row, or area to view details.</div>
-  </div>
-
-  <!-- Libraries -->
+  <!-- Libraries & Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-  <!-- i18n -->
   <script src="js/i18n/ru.js"></script>
   <script src="js/i18n/en.js"></script>
 
-  <!-- Application Modules -->
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/sceneSetup.js"></script>

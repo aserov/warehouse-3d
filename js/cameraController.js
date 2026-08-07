@@ -1,10 +1,11 @@
 window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.CameraController = (function() {
-  const { CONFIG, SceneSetup } = window.Warehouse;
-  const { camera, controls, warehouseGroup } = SceneSetup;
+  const { CONFIG, SceneSetup, FPSController } = window.Warehouse;
+  const { camera, controls, warehouseGroup, renderer } = SceneSetup;
 
   let is2DView = false;
+  let isFPSView = false;
   const saved3DCameraPos = new THREE.Vector3();
   const saved3DTarget = new THREE.Vector3();
 
@@ -12,6 +13,68 @@ window.Warehouse.CameraController = (function() {
   let minCamDist = 50;
   let maxCamDist = 1200;
 
+  // Initialize FPS Controller callback if available
+  if (FPSController) {
+    FPSController.init(camera, renderer?.domElement || document.body, () => {
+      onFPSExit();
+    });
+  }
+
+  /* --- FPS Mode Integration --- */
+  /* --- FPS Mode Integration --- */
+  function enterFPSMode() {
+    if (isFPSView) return;
+
+    if (is2DView) {
+      is2DView = false;
+      controls.enableRotate = true;
+    }
+
+    // Save current 3D position and target to restore on exit
+    saved3DCameraPos.copy(camera.position);
+    saved3DTarget.copy(controls.target);
+
+    isFPSView = true;
+    controls.enabled = false; // Disable OrbitControls while in FPS mode
+
+    // Calculate warehouse center (min + max) / 2
+    let centerX = 210, centerZ = 260; // Default fallback
+
+    if (CONFIG.buildingPolygon && CONFIG.buildingPolygon.length > 0) {
+      const xs = CONFIG.buildingPolygon.map(p => p.x);
+      const zs = CONFIG.buildingPolygon.map(p => p.z);
+      centerX = (Math.min(...xs) + Math.max(...xs)) / 2;
+      centerZ = (Math.min(...zs) + Math.max(...zs)) / 2;
+    } else if (warehouseGroup) {
+      const boundingBox = new THREE.Box3().setFromObject(warehouseGroup);
+      const center = new THREE.Vector3();
+      boundingBox.getCenter(center);
+      centerX = center.x;
+      centerZ = center.z;
+    }
+
+    // Pass calculated center coordinates to FPSController
+    FPSController?.enter(centerX, centerZ);
+  }
+
+  function onFPSExit() {
+    if (!isFPSView) return;
+
+    isFPSView = false;
+
+    // Position OrbitControls target 10 units in front of current camera view direction
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    controls.target.copy(camera.position).add(forward.multiplyScalar(10));
+    controls.enabled = true;
+    controls.update();
+
+    if (window.setViewMode) {
+      window.setViewMode('3D');
+    }
+  }
+
+  /* --- Base Camera Controls --- */
   function fitCameraToWarehouse() {
     const boundingBox = new THREE.Box3().setFromObject(warehouseGroup);
     const center = new THREE.Vector3();
@@ -55,6 +118,7 @@ window.Warehouse.CameraController = (function() {
   }
 
   function set2DView() {
+    if (isFPSView) FPSController?.exit();
     if (is2DView) return;
     is2DView = true;
 
@@ -74,6 +138,7 @@ window.Warehouse.CameraController = (function() {
   }
 
   function set3DView() {
+    if (isFPSView) FPSController?.exit();
     if (!is2DView) return;
     is2DView = false;
 
@@ -82,6 +147,8 @@ window.Warehouse.CameraController = (function() {
   }
 
   function resetView() {
+    if (isFPSView) FPSController?.exit();
+
     if (is2DView) {
       is2DView = false;
       controls.enableRotate = true;
@@ -122,7 +189,7 @@ window.Warehouse.CameraController = (function() {
   }
 
   function rotateToCardinal(angleDegrees) {
-    if (is2DView) return;
+    if (is2DView || isFPSView) return;
 
     const rad = (angleDegrees * Math.PI) / 180;
     const target = controls.target.clone();
@@ -141,6 +208,8 @@ window.Warehouse.CameraController = (function() {
 
   /* --- Interactive Zoom Functions --- */
   function zoomByFactor(factor) {
+    if (isFPSView) return;
+
     const target = controls.target;
     const offset = camera.position.clone().sub(target);
     offset.multiplyScalar(factor);
@@ -153,6 +222,8 @@ window.Warehouse.CameraController = (function() {
   }
 
   function setZoomFromSlider(percentValue) {
+    if (isFPSView) return;
+
     const target = controls.target;
     const currentDir = camera.position.clone().sub(target).normalize();
     const targetDist = maxCamDist - ((percentValue / 100) * (maxCamDist - minCamDist));
@@ -166,6 +237,7 @@ window.Warehouse.CameraController = (function() {
     toggle2DView,
     set2DView,
     set3DView,
+    enterFPSMode,
     resetView,
     updateCompass,
     rotateToCardinal,

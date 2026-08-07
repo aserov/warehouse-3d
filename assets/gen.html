@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scanner HD PNG Generator</title>
+</head>
+<body>
+  <canvas id="canvas" width="900" height="900" style="display:none;"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, 900, 900);
+
+    ctx.save();
+    // Scale and position
+    ctx.translate(500, 520);
+    ctx.rotate(-0.25);
+    ctx.scale(1.5, 1.5); // HD scaling
+
+    // 1. Scanner handle
+    const handleGrad = ctx.createLinearGradient(-40, 100, 40, 250);
+    handleGrad.addColorStop(0, '#1e293b');
+    handleGrad.addColorStop(1, '#0f172a');
+
+    ctx.fillStyle = handleGrad;
+    ctx.beginPath();
+    ctx.roundRect(-30, 80, 60, 180, [15, 15, 30, 30]);
+    ctx.fill();
+
+    // Rubber grip
+    ctx.fillStyle = '#334155';
+    ctx.beginPath();
+    ctx.roundRect(-24, 120, 48, 120, 8);
+    ctx.fill();
+
+    // 2. Main body
+    const bodyGrad = ctx.createLinearGradient(-70, -60, 70, 80);
+    bodyGrad.addColorStop(0, '#3b82f6');
+    bodyGrad.addColorStop(0.6, '#1d4ed8');
+    bodyGrad.addColorStop(1, '#1e40af');
+
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.roundRect(-75, -50, 150, 140, [24, 24, 12, 12]);
+    ctx.fill();
+
+    // Protective bumper
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-80, -60, 160, 35, [16, 16, 8, 8]);
+    ctx.fill();
+
+    // 3. Laser emitter
+    const tipGrad = ctx.createLinearGradient(-110, -50, -75, -50);
+    tipGrad.addColorStop(0, '#ef4444');
+    tipGrad.addColorStop(1, '#991b1b');
+
+    ctx.fillStyle = tipGrad;
+    ctx.beginPath();
+    ctx.roundRect(-105, -45, 30, 85, [8, 4, 4, 8]);
+    ctx.fill();
+
+    // Glass highlight
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.beginPath();
+    ctx.roundRect(-102, -35, 6, 65, 3);
+    ctx.fill();
+
+    // 4. Display screen
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath();
+    ctx.roundRect(-40, 10, 80, 40, 6);
+    ctx.fill();
+
+    // LED status indicator
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath();
+    ctx.arc(20, -25, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
+    ctx.beginPath();
+    ctx.arc(20, -25, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Screen text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('Scaning...', -35, 35);
+
+    // 5. Trigger
+    ctx.fillStyle = '#f97316';
+    ctx.beginPath();
+    ctx.roundRect(-50, 85, 22, 45, [8, 2, 2, 8]);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Auto-download PNG image
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.download = 'scanner-hand.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }, 100);
+  </script>
+</body>
+</html>

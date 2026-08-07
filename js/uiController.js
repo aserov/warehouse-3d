@@ -504,25 +504,49 @@ window.Warehouse.UIController = (function() {
     // Initialize Cell Search Handlers
     initCellSearch();
 
-    // View Mode Switcher (2D / 3D / Reset)
-    const btn2D = document.getElementById('btn-2d');
-    const btn3D = document.getElementById('btn-3d');
-    const btnReset = document.getElementById('btn-reset-view');
+    // View Mode Switcher
+    const viewModes = {
+      '2D': document.getElementById('btn-2d'),
+      '3D': document.getElementById('btn-3d'),
+      'FPS': document.getElementById('btn-fps'),
+    };
 
-    btn2D?.addEventListener('click', () => {
-      btn2D.classList.add('active');
-      btn3D?.classList.remove('active');
-      if (CameraController && CameraController.set2DView) {
-        CameraController.set2DView();
+    const btnReset = document.getElementById('btn-reset-view');
+    const fpsOverlay = document.getElementById('fps-scanner-overlay');
+
+    function setViewMode(targetMode) {
+      // 1. Highlight active UI button
+      Object.entries(viewModes).forEach(([mode, button]) => {
+        button?.classList.toggle('active', mode === targetMode);
+      });
+
+      // 2. Show/Hide FPS UI overlay
+      fpsOverlay?.classList.toggle('hidden', targetMode !== 'FPS');
+
+      // 3. Switch camera logic
+      switch (targetMode) {
+        case '2D':
+          window.Warehouse.CameraController?.set2DView();
+          break;
+        case '3D':
+          window.Warehouse.CameraController?.set3DView();
+          break;
+        case 'FPS':
+          window.Warehouse.CameraController?.enterFPSMode();
+          break;
       }
+    }
+
+    // Global hook for FPS exit on ESC
+    window.setViewMode = setViewMode;
+
+    // Bind clicks
+    Object.entries(viewModes).forEach(([mode, button]) => {
+      button?.addEventListener('click', () => setViewMode(mode));
     });
 
-    btn3D?.addEventListener('click', () => {
-      btn3D.classList.add('active');
-      btn2D?.classList.remove('active');
-      if (CameraController && CameraController.set3DView) {
-        CameraController.set3DView();
-      }
+    btnReset?.addEventListener('click', () => {
+      window.Warehouse.CameraController?.resetView();
     });
 
     btnReset?.addEventListener('click', () => {

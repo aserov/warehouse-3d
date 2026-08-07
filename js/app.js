@@ -298,10 +298,22 @@ window.Warehouse = window.Warehouse || {};
 
   function animate() {
     requestAnimationFrame(animate);
-    controls.update();
-    if (CameraController && CameraController.updateCompass) {
-      CameraController.updateCompass();
+
+    const fpsController = window.Warehouse?.FPSController;
+    const isFPSActive = fpsController && fpsController.isFPS();
+
+    if (isFPSActive) {
+      // 1. In FPS mode: update ONLY WASD movement (OrbitControls MUST be paused)
+      fpsController.update();
+    } else {
+      // 2. In Orbit mode (2D / 3D): update orbit controls and compass
+      controls.update();
+
+      if (window.Warehouse.CameraController?.updateCompass) {
+        window.Warehouse.CameraController.updateCompass();
+      }
     }
+
     renderer.render(scene, camera);
   }
   animate();

@@ -824,3 +824,90 @@ body {
 .sidebar-section.collapsed .section-content {
   display: none;
 }
+
+/* FPS overlay container */
+.fps-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.fps-overlay.hidden {
+  display: none !important;
+}
+
+/* Center crosshair */
+.fps-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Scanner hand container - anchored to bottom right */
+.scanner-hand {
+  position: absolute;
+  bottom: -10px;
+  right: -20px;
+  pointer-events: none;
+  transform-origin: bottom right;
+  animation: fpsHandIdle 4s ease-in-out infinite;
+}
+
+/* Scanner image sizing and styling */
+.scanner-img {
+  width: 520px;
+  max-width: 40vw;
+  height: auto;
+  display: block;
+  filter: drop-shadow(-12px -8px 20px rgba(0, 0, 0, 0.4));
+}
+
+/* Exit hint UI */
+.fps-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: inherit;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.fps-hint kbd {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Idle breathing animation */
+@keyframes fpsHandIdle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-0.5deg);
+  }
+}

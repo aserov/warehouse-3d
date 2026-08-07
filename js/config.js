@@ -11,7 +11,15 @@ window.Warehouse.CONFIG = {
     far: 2000,
     maxPolarAngle: Math.PI / 2 - 0.03, // Blocks camera from looking under floor (~88 deg)
     minDistance: 2,
-    maxDistance: 1200
+    maxDistance: 1200,
+
+    fps: {
+      eyeHeight: 2.0,          // Human eye level (in meters)
+      moveSpeed: 20.0,         // Base movement speed (increased)
+      sprintMultiplier: 2.0,   // Speed multiplier on Left Shift
+      lookSensitivity: 0.002,  // Mouse sensitivity
+      transitionDuration: 600  // Transition duration to FPS mode (ms)
+    }
   },
 
   // --- Area Focus & Dimming Settings ---

@@ -14,14 +14,15 @@ window.Warehouse.i18n.ru = {
   },
 
   // Термины
+  allAreas: 'Все зоны',
   area: 'Зона',
   row: 'Ряд',
   level: 'Ярус',
   cell: 'Ячейка',
+  floor: 'Этаж',
 
   // Контроллы
   noResults: 'Ничего не найдено',
-  allAreas: 'Все зоны',
 
   // Заголовки и секции
   areaSummary: 'Сводка по зоне',

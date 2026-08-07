@@ -194,9 +194,7 @@ window.Warehouse.UIController = (function() {
 
     floorMenu.innerHTML = '';
 
-    const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
-    const floorPrefix = lang === 'ru' ? 'Этаж' : 'Floor';
-
+    const floorPrefix = t("floor");
     floors.forEach(floor => {
       const item = document.createElement('div');
       item.className = `floor-option ${Number(floor) === Number(activeFloor) ? 'active' : ''}`;
@@ -236,9 +234,8 @@ window.Warehouse.UIController = (function() {
 
     areaMenu.innerHTML = '';
 
-    const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
-    const allAreasText = lang === 'ru' ? 'Все зоны' : 'All Areas';
-    const areaPrefix = lang === 'ru' ? 'Зона' : 'Area';
+    const allAreasText = t("allAreas");
+    const areaPrefix = t("area");;
 
     // Default "All Areas" option
     const allOption = document.createElement('div');

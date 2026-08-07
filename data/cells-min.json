@@ -1,6 +1,522 @@
 {
-  "areas": [
-    { "area": 2, "areaName": "MF", "floor": 1, "rows": [] },
-    { "area": 3, "areaName": "RB", "floor": 1, "rows": [] }
+  "warehouses": [
+    {
+      "warehouse": 1,
+      "warehouseName": "WR #2",
+      "measurement": "m",
+      "polygon": [
+        {
+          "x": 0,
+          "z": 60
+        },
+        {
+          "x": 100,
+          "z": 60
+        },
+        {
+          "x": 100,
+          "z": 0
+        },
+        {
+          "x": 400,
+          "z": 0
+        },
+        {
+          "x": 400,
+          "z": 180
+        },
+        {
+          "x": 280,
+          "z": 180
+        },
+        {
+          "x": 280,
+          "z": 620
+        },
+        {
+          "x": 0,
+          "z": 620
+        }
+      ],
+      "areas": [
+        {
+          "area": 2,
+          "areaName": "MF",
+          "floor": 1,
+          "measurement": "m",
+          "polygon": [
+            {
+              "x": 0,
+              "z": 60
+            },
+            {
+              "x": 100,
+              "z": 60
+            },
+            {
+              "x": 100,
+              "z": 0
+            },
+            {
+              "x": 400,
+              "z": 0
+            },
+            {
+              "x": 400,
+              "z": 180
+            },
+            {
+              "x": 0,
+              "z": 180
+            }
+          ],
+          "rows": [
+            {
+              "row": 1,
+              "rowName": "MF-01",
+              "direction": "LTR",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 110,
+                  "z": 0
+                },
+                {
+                  "x": 110,
+                  "z": 15
+                },
+                {
+                  "x": 350,
+                  "z": 15
+                },
+                {
+                  "x": 350,
+                  "z": 0
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "MF-01-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-01-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-01-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-01-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "MF-01-01-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "MF-01-01-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "MF-01-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-01-02-01",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-01-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 0
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-01-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "MF-01-02-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "row": 2,
+              "rowName": "MF-02",
+              "direction": "TTB",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 0,
+                  "z": 75
+                },
+                {
+                  "x": 15,
+                  "z": 75
+                },
+                {
+                  "x": 15,
+                  "z": 120
+                },
+                {
+                  "x": 0,
+                  "z": 120
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "MF-02-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-02-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-02-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-02-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "MF-02-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-02-02-01",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-02-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-02-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "row": 1,
+              "rowName": "MF-03",
+              "direction": "RTL",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 110,
+                  "z": 45
+                },
+                {
+                  "x": 110,
+                  "z": 60
+                },
+                {
+                  "x": 300,
+                  "z": 60
+                },
+                {
+                  "x": 300,
+                  "z": 45
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "MF-03-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-03-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-03-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-03-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "MF-03-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "MF-03-02-01",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "MF-03-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "MF-03-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "area": 3,
+          "areaName": "RB",
+          "floor": 1,
+          "rows": [],
+          "polygon": [
+            {
+              "x": 0,
+              "z": 180
+            },
+            {
+              "x": 280,
+              "z": 180
+            },
+            {
+              "x": 280,
+              "z": 520
+            },
+            {
+              "x": 0,
+              "z": 520
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "warehouse": 2,
+      "warehouseName": "WR #5",
+      "floorCount": 2,
+      "measurement": "m",
+      "polygon": [
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": 400,
+          "z": 0
+        },
+        {
+          "x": 400,
+          "z": 600
+        },
+        {
+          "x": 0,
+          "z": 600
+        }
+      ],
+      "areas": [
+        {
+          "area": 4,
+          "areaName": "RB",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 0,
+              "z": 0
+            },
+            {
+              "x": 400,
+              "z": 0
+            },
+            {
+              "x": 400,
+              "z": 100
+            },
+            {
+              "x": 0,
+              "z": 100
+            }
+          ],
+          "rows": []
+        },
+        {
+          "area": 5,
+          "areaName": "RR",
+          "floor": 1,
+          "polygon": [
+            {
+              "x": 0,
+              "z": 100
+            },
+            {
+              "x": 400,
+              "z": 100
+            },
+            {
+              "x": 400,
+              "z": 600
+            },
+            {
+              "x": 0,
+              "z": 600
+            }
+          ],
+          "rows": []
+        }
+      ]
+    }
   ]
 }

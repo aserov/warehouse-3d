@@ -139,15 +139,22 @@ window.Warehouse.Builder = (function() {
   }
 
   /**
-   * Builds an area's visual shape (fill + border) directly from its own polygon,
-   * mirroring createBuildingOutline's approach so areas can be non-rectangular too.
-   * Adds the resulting meshes into the given areaGroup (not warehouseGroup directly,
-   * since areas are grouped per-area for focus/dim/selection purposes).
-   * @param {THREE.Group} areaGroup
+   * Builds a shape (fill + border + per-vertex corner labels) directly from a polygon,
+   * at the given y-heights. Shared by areas and rows so both can be non-rectangular
+   * and rendered straight from server-provided polygons.
+   * @param {THREE.Group} targetGroup
    * @param {Array<{x:number,z:number}>} polygonPoints
-   * @param {number} areaColor - hex color used for both fill and border
+   * @param {number} color - hex color used for fill, border and corner labels
+   * @param {{fillY:number, lineY:number, fillOpacity:number, lineWidth:number}} [opts]
    */
-  function createAreaShape(areaGroup, polygonPoints, areaColor) {
+  function drawPolygonShape(targetGroup, polygonPoints, color, opts = {}) {
+    const {
+      fillY = 0.05,
+      lineY = 0.08,
+      fillOpacity = 0.07,
+      lineWidth = 3
+    } = opts;
+
     const shape = new THREE.Shape();
     shape.moveTo(polygonPoints[0].x, polygonPoints[0].z);
     for (let i = 1; i < polygonPoints.length; i++) {
@@ -157,31 +164,67 @@ window.Warehouse.Builder = (function() {
 
     const fillGeo = new THREE.ShapeGeometry(shape);
     const fillMat = new THREE.MeshBasicMaterial({
-      color: areaColor,
+      color,
       transparent: true,
-      opacity: 0.07,
+      opacity: fillOpacity,
       depthWrite: false,
       side: THREE.DoubleSide
     });
     const fillMesh = new THREE.Mesh(fillGeo, fillMat);
     fillMesh.rotation.x = Math.PI / 2;
-    fillMesh.position.y = 0.05;
-    fillMesh.userData.initialOpacity = 0.07;
-    areaGroup.add(fillMesh);
+    fillMesh.position.y = fillY;
+    fillMesh.userData.initialOpacity = fillOpacity;
+    targetGroup.add(fillMesh);
 
-    const points3D = polygonPoints.map(p => new THREE.Vector3(p.x, 0.08, p.z));
-    points3D.push(new THREE.Vector3(polygonPoints[0].x, 0.08, polygonPoints[0].z));
+    const points3D = polygonPoints.map(p => new THREE.Vector3(p.x, lineY, p.z));
+    points3D.push(new THREE.Vector3(polygonPoints[0].x, lineY, polygonPoints[0].z));
 
     const lineGeo = new THREE.BufferGeometry().setFromPoints(points3D);
-    const lineMat = new THREE.LineBasicMaterial({ color: areaColor, linewidth: 3, transparent: true, opacity: 1.0 });
+    const lineMat = new THREE.LineBasicMaterial({ color, linewidth: lineWidth, transparent: true, opacity: 1.0 });
     const borderLine = new THREE.Line(lineGeo, lineMat);
     borderLine.userData.initialOpacity = 1.0;
-    areaGroup.add(borderLine);
+    targetGroup.add(borderLine);
 
     polygonPoints.forEach(point => {
-      const cornerLabel = createCornerLabel(`(${Math.round(point.x)}, ${Math.round(point.z)})`, areaColor);
-      cornerLabel.position.set(point.x, 1.0, point.z);
-      areaGroup.add(cornerLabel);
+      const cornerLabel = createCornerLabel(`(${Math.round(point.x)}, ${Math.round(point.z)})`, color);
+      cornerLabel.position.set(point.x, lineY + 0.92, point.z);
+      targetGroup.add(cornerLabel);
+    });
+  }
+
+  /**
+   * Builds an area's visual shape (fill + border) directly from its own polygon,
+   * mirroring createBuildingOutline's approach so areas can be non-rectangular too.
+   * Adds the resulting meshes into the given areaGroup (not warehouseGroup directly,
+   * since areas are grouped per-area for focus/dim/selection purposes).
+   * @param {THREE.Group} areaGroup
+   * @param {Array<{x:number,z:number}>} polygonPoints
+   * @param {number} areaColor - hex color used for both fill and border
+   */
+  function createAreaShape(areaGroup, polygonPoints, areaColor) {
+    drawPolygonShape(areaGroup, polygonPoints, areaColor, {
+      fillY: 0.05,
+      lineY: 0.08,
+      fillOpacity: 0.07,
+      lineWidth: 3
+    });
+  }
+
+  /**
+   * Builds a row's visual outline (fill + border + corner labels) directly from its own
+   * polygon, same approach as createAreaShape but drawn slightly above the area shape so
+   * row borders stay visible on top of it. Drawn as-is, even if the row polygon extends
+   * beyond its area or the building outline - misconfiguration should be visible.
+   * @param {THREE.Group} rowGroup
+   * @param {Array<{x:number,z:number}>} polygonPoints
+   * @param {number} rowColor
+   */
+  function createRowShape(rowGroup, polygonPoints, rowColor) {
+    drawPolygonShape(rowGroup, polygonPoints, rowColor, {
+      fillY: 0.06,
+      lineY: 0.09,
+      fillOpacity: 0.12,
+      lineWidth: 2
     });
   }
 
@@ -215,10 +258,6 @@ window.Warehouse.Builder = (function() {
       }
 
       const bounds = LayoutEngine.getPolygonBounds(areaData.polygon);
-      const dims = LayoutEngine.calculateAreaDimensions(areaData);
-
-      const areaOffsetX = bounds.minX + CONFIG.areaPadding;
-      const startZ = bounds.minZ + CONFIG.areaPadding;
 
       const areaGroup = new THREE.Group();
       areaGroup.name = `Area_${areaData.areaName}`;
@@ -231,7 +270,21 @@ window.Warehouse.Builder = (function() {
 
       const areaColor = Utils.getAreaColor(areaIdx, areaData);
 
-      areaData.rows.forEach((rowData, rowIdx) => {
+      areaData.rows.forEach((rowData) => {
+        // No polygon at all - skip this row silently, let them configure it (same as areas).
+        if (!rowData.polygon) {
+          console.warn(`[Warehouse] Row "${rowData.rowName}" in area "${areaData.areaName}" has no polygon, skipping.`);
+          return;
+        }
+
+        // Polygon present but malformed (< 3 points) - real config error, surface it.
+        if (!LayoutEngine.isValidPolygon(rowData.polygon)) {
+          const details = `Row "${rowData.rowName}" [row=${rowData.row}] in area "${areaData.areaName}" has an invalid polygon (needs at least 3 points).`;
+          console.error(`[Warehouse] ${details}`);
+          if (UI && UI.showErrorUI) UI.showErrorUI('Row configuration error', details);
+          return;
+        }
+
         const rowGroup = new THREE.Group();
         rowGroup.name = `Row_${rowData.rowName}`;
 
@@ -241,6 +294,13 @@ window.Warehouse.Builder = (function() {
         const rowSummary = { type: 'row', rowName: rowData.rowName, areaName: areaData.areaName, totalLevels: rowData.levels.length, ...rowMetrics };
         rowGroup.userData = rowSummary;
 
+        const rowBounds = LayoutEngine.getPolygonBounds(rowData.polygon);
+
+        // TODO: временно отключено - раскладка cells/levels внутри ряда переделывается
+        // под rowData.direction (LTR/RTL/TTB/BTT) и полигон ряда вместо старого
+        // авто-layout "сверху вниз с гэпом". Пока рисуем только контур ряда и его тайтл,
+        // чтобы визуально проверить полигон.
+        /*
         const sampleCell = rowData.levels[0]?.cells[0];
         const rowCellDepth = sampleCell ? (sampleCell.depth * CONFIG.scaleFactor) : 10;
         const zOffset = startZ + rowIdx * (rowCellDepth + CONFIG.rowGap);
@@ -307,9 +367,15 @@ window.Warehouse.Builder = (function() {
           rowGroup.add(levelGroup);
           currentYOffset += levelMaxHeight + CONFIG.cellGap;
         });
+        */
 
+        // Draw the row's own shape (fill + border + per-vertex corner labels) from its
+        // polygon, drawn as-is even if it extends beyond the area or building outline.
+        createRowShape(rowGroup, rowData.polygon, areaColor);
+
+        // Row title: placed to the right of the row polygon's bottom-right corner (maxX, maxZ).
         const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
-        floorRowLabel.position.set(areaOffsetX + dims.maxRowX + 18, 0.09, zOffset + 5);
+        floorRowLabel.position.set(rowBounds.maxX + 12, 0.09, rowBounds.maxZ);
         floorRowLabel.userData = { ...rowSummary, initialOpacity: 1.0 };
 
         rowGroup.add(floorRowLabel);

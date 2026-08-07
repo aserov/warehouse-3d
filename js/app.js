@@ -276,7 +276,7 @@ window.Warehouse = window.Warehouse || {};
     renderWarehouseForFloor(initialFloor);
   }
 
-  fetch('data/cells-min-new.json')
+  fetch('data/cells-min.json')
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();

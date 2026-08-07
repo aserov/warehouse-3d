@@ -52,7 +52,6 @@ window.Warehouse.CONFIG = {
     gridBorder: 0x8c9b9e,
     areaPalette: [
       "#d32f2f", // Red
-      "#3f51b5", // Indigo
       "#2e7d32", // Emerald Green
       "#ef6c00", // Warm Orange
       "#8e24aa", // Purple

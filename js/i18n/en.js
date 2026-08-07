@@ -14,14 +14,15 @@ window.Warehouse.i18n.en = {
   },
 
   // Terms
+  allAreas: 'All areas',
   area: 'Area',
   row: 'Row',
   level: 'Level',
   cell: 'Cell',
+  floor: 'Floor',
 
   // Controlls
   noResults: 'No result',
-  allAreas: 'All areas',
 
   // Headers & Sections
   areaSummary: 'Area Summary',

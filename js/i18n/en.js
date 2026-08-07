@@ -10,7 +10,8 @@ window.Warehouse.i18n.en = {
     weight: 'kg',
     length: 'm',
     dimension: 'mm',
-    volume: 'm³'
+    volume: 'm³',
+    area: 'm²'
   },
 
   // Terms
@@ -20,6 +21,7 @@ window.Warehouse.i18n.en = {
   level: 'Level',
   cell: 'Cell',
   floor: 'Floor',
+  warehouse: 'Warehouse',
 
   // Controlls
   noResults: 'No result',
@@ -27,12 +29,14 @@ window.Warehouse.i18n.en = {
   // Headers & Sections
   areaSummary: 'Area Summary',
   rowSummary: 'Row Summary',
+  levelSummary: 'Level Summary',
   cellDetails: 'Cell Details',
   infoTitle: 'Information',
   settingsTitle: 'Settings',
   helpTitle: 'Navigation Help',
 
   // Metrics
+  totalAreas: 'Total Areas',
   totalRows: 'Total Rows',
   totalLevels: 'Total Levels',
   totalCells: 'Total Cells',
@@ -46,12 +50,18 @@ window.Warehouse.i18n.en = {
   active: 'ACTIVE',
   inactive: 'INACTIVE',
   position: 'Position',
+  polygonArea: 'Total Area',
+  usedArea: 'Used Area',
+  utilization: 'Utilization',
+  direction: 'Direction',
+  orientation: 'Orientation',
 
   // UI Controls & Buttons
   toggleView: '2D / 3D View',
   showRowLabels: 'Show Row Labels',
   showLevelLabels: 'Show Level Labels',
   showAreaLabels: 'Show Area Labels',
+  showFloorLabels: 'Show Floor Labels',
   showCornerLabels: 'Show Corner Coordinates',
   showCompass: 'Show Compass',
   showCanvasViewer: 'Show Canvas Viewer',

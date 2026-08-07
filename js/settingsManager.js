@@ -4,6 +4,7 @@ window.Warehouse.SettingsManager = (function() {
   const SETTINGS_KEY = 'warehouse_ui_settings';
 
   const SETTING_CHECKBOX_IDS = [
+    'toggle-floor-labels',
     'toggle-area-labels',
     'toggle-row-labels',
     'toggle-level-labels',
@@ -48,6 +49,7 @@ window.Warehouse.SettingsManager = (function() {
 
     // 1. 3D Canvas Labels
     if (Builder) {
+      toggleGroup('toggle-floor-labels', Builder.floorLabels);
       toggleGroup('toggle-area-labels', Builder.areaLabels);
       toggleGroup('toggle-row-labels', Builder.rowLabels);
       toggleGroup('toggle-level-labels', Builder.levelLabels);

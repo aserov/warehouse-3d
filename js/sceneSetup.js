@@ -25,9 +25,19 @@ window.Warehouse.SceneSetup = (function() {
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.maxPolarAngle = camCfg.maxPolarAngle;
+
+  controls.maxPolarAngle = Math.min(camCfg.maxPolarAngle || Math.PI / 2, Math.PI / 2 - 0.02);
   controls.minDistance = camCfg.minDistance;
   controls.maxDistance = camCfg.maxDistance;
+
+  controls.addEventListener('change', () => {
+    if (controls.target.y < 0) {
+      controls.target.y = 0;
+    }
+    if (camera.position.y < 0.5) {
+      camera.position.y = 0.5;
+    }
+  });
 
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();

@@ -9,6 +9,7 @@ window.Warehouse.Builder = (function() {
   const levelLabels = [];
   const areaLabels = [];
   const cornerLabels = [];
+  const floorLabels = [];
   const interactiveObjects = [];
 
   // Floor-level summary (warehouse + floor combined, since only one floor is ever
@@ -55,6 +56,8 @@ window.Warehouse.Builder = (function() {
     rowLabels.length = 0;
     levelLabels.length = 0;
     areaLabels.length = 0;
+    floorLabels.length = 0;
+    cornerLabels.length = 0;
     interactiveObjects.length = 0;
     floorSummary = null;
 
@@ -292,6 +295,7 @@ window.Warehouse.Builder = (function() {
         type: 'area',
         areaName: areaData.areaName,
         floor: areaData.floor,
+        warehouseName: data.warehouseName,
         totalRows: areaData.rows.length,
         polygonArea: LayoutEngine.getPolygonArea(areaData.polygon),
         usedArea: 0, // filled in below once all rows are processed
@@ -342,6 +346,8 @@ window.Warehouse.Builder = (function() {
           type: 'row',
           rowName: rowData.rowName,
           areaName: areaData.areaName,
+          floor: areaData.floor,
+          warehouseName: data.warehouseName,
           totalLevels: rowData.levels.length,
           direction,
           orientation,
@@ -370,6 +376,7 @@ window.Warehouse.Builder = (function() {
             levelName: levelData.levelName,
             rowName: rowData.rowName,
             areaName: areaData.areaName,
+            floor: areaData.floor,
             direction,
             orientation,
             ...levelMetrics
@@ -460,6 +467,15 @@ window.Warehouse.Builder = (function() {
           const levelText = `${levelData.level}`;
           const labelCenterY = currentYOffset + (levelMaxHeight / 2);
 
+          // Fill in the fields that could only be computed once the cells loop above
+          // finished (levelSummary and levelGroup.userData already reference this same
+          // object, so this update is visible to both). Done before the label meshes
+          // below are created so their own userData copies pick up the final values.
+          levelSummary.level = levelData.level;
+          levelSummary.footprint = levelFootprint;
+          levelSummary.maxCellHeight = levelMaxHeight;
+          levelFootprints[levelData.level] = levelFootprint;
+
           // Pick the spatial extremes regardless of which end place=1 started from,
           // so labels always sit on the actual left/right (or top/bottom) edge.
           if (firstCellPos && lastCellPos) {
@@ -482,16 +498,18 @@ window.Warehouse.Builder = (function() {
               const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               leftLevelMesh.rotation.y = -Math.PI / 2;
               leftLevelMesh.position.set(leftEdgeX - 0.05, labelCenterY, leftPos.z);
-              leftLevelMesh.userData.initialOpacity = 1.0;
+              Object.assign(leftLevelMesh.userData, levelSummary, { initialOpacity: 1.0 });
               levelGroup.add(leftLevelMesh);
               levelLabels.push(leftLevelMesh);
+              interactiveObjects.push(leftLevelMesh);
 
               const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               rightLevelMesh.rotation.y = Math.PI / 2;
               rightLevelMesh.position.set(rightEdgeX + 0.05, labelCenterY, rightPos.z);
-              rightLevelMesh.userData.initialOpacity = 1.0;
+              Object.assign(rightLevelMesh.userData, levelSummary, { initialOpacity: 1.0 });
               levelGroup.add(rightLevelMesh);
               levelLabels.push(rightLevelMesh);
+              interactiveObjects.push(rightLevelMesh);
             } else {
               // Vertical rows: labels go on the top/bottom edge instead of left/right, so
               // no side rotation is applied (the plane's default facing already reads
@@ -506,28 +524,21 @@ window.Warehouse.Builder = (function() {
 
               const topLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               topLevelMesh.position.set(topPos.x, labelCenterY, topEdgeZ - 0.05);
-              topLevelMesh.userData.initialOpacity = 1.0;
+              Object.assign(topLevelMesh.userData, levelSummary, { initialOpacity: 1.0 });
               levelGroup.add(topLevelMesh);
               levelLabels.push(topLevelMesh);
+              interactiveObjects.push(topLevelMesh);
 
               const bottomLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               bottomLevelMesh.position.set(bottomPos.x, labelCenterY, bottomEdgeZ + 0.05);
-              bottomLevelMesh.userData.initialOpacity = 1.0;
+              Object.assign(bottomLevelMesh.userData, levelSummary, { initialOpacity: 1.0 });
               levelGroup.add(bottomLevelMesh);
               levelLabels.push(bottomLevelMesh);
+              interactiveObjects.push(bottomLevelMesh);
             }
           }
 
           rowGroup.add(levelGroup);
-
-          // Fill in the fields that could only be computed once the cells loop above
-          // finished (levelSummary and levelGroup.userData already reference this same
-          // object, so this update is visible to both).
-          levelSummary.level = levelData.level;
-          levelSummary.footprint = levelFootprint;
-          levelSummary.maxCellHeight = levelMaxHeight;
-          levelFootprints[levelData.level] = levelFootprint;
-
           currentYOffset += levelMaxHeight + CONFIG.cellGap;
         });
 
@@ -616,6 +627,21 @@ window.Warehouse.Builder = (function() {
     };
     warehouseGroup.userData = floorSummary;
 
+    // Building title label: warehouseName + floor number, placed outside the building
+    // footprint on its bottom edge (maxZ), centered horizontally. Clickable, shows the
+    // same floorSummary as the building outline itself isn't a single clickable mesh.
+    const buildingBounds = LayoutEngine.getPolygonBounds(CONFIG.buildingPolygon);
+    const buildingCenterX = (buildingBounds.minX + buildingBounds.maxX) / 2;
+    const buildingColorHex = `#${colors.buildingWall.toString(16).padStart(6, '0')}`;
+
+    const warehouseLabelText = `${floorSummary.warehouseName || ''} (${t('floor')} ${floorSummary.floor ?? '—'})`;
+    const warehouseTitleMesh = Utils.createFloorLabelMesh(warehouseLabelText, buildingColorHex, 90, 20, 150);
+    warehouseTitleMesh.position.set(buildingCenterX, 0.11, buildingBounds.maxZ + 15);
+    warehouseTitleMesh.userData = { ...floorSummary, initialOpacity: 1.0 };
+
+    warehouseGroup.add(warehouseTitleMesh);
+    floorLabels.push(warehouseTitleMesh);
+    interactiveObjects.push(warehouseTitleMesh);
 
     // Apply active UI settings (hide/show labels) after objects are created
     if (window.Warehouse.SettingsManager) {
@@ -665,5 +691,5 @@ window.Warehouse.Builder = (function() {
     return floorSummary;
   }
 
-  return { buildWarehouse, setFocusedArea, getFloorSummary, rowLabels, levelLabels, areaLabels, cornerLabels, interactiveObjects };
+  return { buildWarehouse, setFocusedArea, getFloorSummary, rowLabels, levelLabels, areaLabels, cornerLabels, floorLabels, interactiveObjects };
 })();

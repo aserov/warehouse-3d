@@ -11,7 +11,14 @@ window.Warehouse.UIController = (function() {
   const formatNum = (num, decimals) => (Utils && Utils.formatNumber ? Utils.formatNumber(num, decimals) : num);
 
   /**
-   * Renders details card in sidebar when an object (area, row, cell) is selected.
+   * Formats a used/total area pair as a percentage string (e.g. "42.3"). Guards against
+   * division by zero (returns "0" when the total area is 0 or missing).
+   */
+  const utilizationPct = (used, total) => (total > 0 ? formatNum((used / total) * 100, 1) : '0');
+
+  /**
+   * Renders details card in sidebar when an object (area, row, level, cell, or the
+   * building/floor title) is selected.
    * @param {Object} userData - Metadata associated with the clicked 3D mesh.
    */
   function displayInfo(userData) {
@@ -21,18 +28,44 @@ window.Warehouse.UIController = (function() {
     const unitVol = getUnit('volume');
     const unitWeight = getUnit('weight');
     const unitDim = getUnit('dimension');
+    const unitArea = getUnit('area');
 
-    if (userData.type === 'area') {
+    if (userData.type === 'floor') {
+      infoContent.innerHTML = `
+        <div class="info-card type-floor">
+          <h3 class="info-card-header">🏢 ${t('warehouse')}: ${userData.warehouseName}</h3>
+          <div class="info-card-subtitle">${t('floor')}: <strong>${userData.floor}</strong></div>
+          <hr class="info-card-divider">
+          <div class="info-card-list">
+            <div>${t('totalAreas')}: <strong>${userData.totalAreas}</strong></div>
+            <div>${t('totalRows')}: <strong>${userData.totalRows}</strong></div>
+            <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
+            <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
+            <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('totalFreeWeight')}: <strong>${formatNum(userData.totalFreeWeight)} ${unitWeight}</strong></div>
+            <div>${t('polygonArea')}: <strong>${formatNum(userData.polygonArea)} ${unitArea}</strong></div>
+            <div>${t('usedArea')}: <strong>${formatNum(userData.usedArea)} ${unitArea}</strong></div>
+            <div>${t('utilization')}: <strong>${utilizationPct(userData.usedArea, userData.polygonArea)}%</strong></div>
+          </div>
+          <div class="info-badge-list">
+            <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
+            <div class="info-badge-item ${userData.inactiveCells > 0 ? 'inactive' : 'neutral'}"><span>${t('inactiveCells')}</span><span class="badge-tag">${userData.inactiveCells}</span></div>
+          </div>
+        </div>`;
+    } else if (userData.type === 'area') {
       infoContent.innerHTML = `
         <div class="info-card type-area">
           <h3 class="info-card-header">📦 ${t('area')}: ${userData.areaName}</h3>
-          <div class="info-card-subtitle">${t('areaSummary')}</div>
+          <div class="info-card-subtitle">${t('warehouse')}: <strong>${userData.warehouseName}</strong> · ${t('floor')}: <strong>${userData.floor}</strong></div>
           <hr class="info-card-divider">
           <div class="info-card-list">
             <div>${t('totalRows')}: <strong>${userData.totalRows}</strong></div>
             <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
             <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
             <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('polygonArea')}: <strong>${formatNum(userData.polygonArea)} ${unitArea}</strong></div>
+            <div>${t('usedArea')}: <strong>${formatNum(userData.usedArea)} ${unitArea}</strong></div>
+            <div>${t('utilization')}: <strong>${utilizationPct(userData.usedArea, userData.polygonArea)}%</strong></div>
           </div>
           <div class="info-badge-list">
             <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
@@ -43,13 +76,37 @@ window.Warehouse.UIController = (function() {
       infoContent.innerHTML = `
         <div class="info-card type-row">
           <h3 class="info-card-header">📊 ${t('row')}: ${userData.rowName}</h3>
-          <div class="info-card-subtitle">${t('area')}: <strong>${userData.areaName}</strong></div>
+          <div class="info-card-subtitle">${t('warehouse')}: <strong>${userData.warehouseName}</strong> · ${t('floor')}: <strong>${userData.floor}</strong> · ${t('area')}: <strong>${userData.areaName}</strong></div>
           <hr class="info-card-divider">
           <div class="info-card-list">
             <div>${t('totalLevels')}: <strong>${userData.totalLevels}</strong></div>
             <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
             <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
             <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('direction')}: <strong>${userData.direction}</strong></div>
+            <div>${t('polygonArea')}: <strong>${formatNum(userData.polygonArea)} ${unitArea}</strong></div>
+            <div>${t('usedArea')}: <strong>${formatNum(userData.usedArea)} ${unitArea}</strong></div>
+            <div>${t('utilization')}: <strong>${utilizationPct(userData.usedArea, userData.polygonArea)}%</strong></div>
+          </div>
+          <div class="info-badge-list">
+            <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
+            <div class="info-badge-item ${userData.inactiveCells > 0 ? 'inactive' : 'neutral'}"><span>${t('inactiveCells')}</span><span class="badge-tag">${userData.inactiveCells}</span></div>
+          </div>
+        </div>`;
+    } else if (userData.type === 'level') {
+      infoContent.innerHTML = `
+        <div class="info-card type-level">
+          <h3 class="info-card-header">🧱 ${t('level')}: ${userData.levelName}</h3>
+          <div class="info-card-subtitle">${t('floor')}: <strong>${userData.floor}</strong> · ${t('area')}: <strong>${userData.areaName}</strong> · ${t('row')}: <strong>${userData.rowName}</strong></div>
+          <hr class="info-card-divider">
+          <div class="info-card-list">
+            <div>${t('totalCells')}: <strong>${userData.totalCells}</strong></div>
+            <div>${t('totalVolume')}: <strong>${formatNum(userData.totalVolume)} ${unitVol}</strong></div>
+            <div>${t('totalMaxWeight')}: <strong>${formatNum(userData.totalWeight)} ${unitWeight}</strong></div>
+            <div>${t('totalFreeWeight')}: <strong>${formatNum(userData.totalFreeWeight)} ${unitWeight}</strong></div>
+            <div>${t('polygonArea')}: <strong>${formatNum(userData.footprint)} ${unitArea}</strong></div>
+            <div>${t('direction')}: <strong>${userData.direction}</strong></div>
+            <div>${t('orientation')}: <strong>${userData.orientation}</strong></div>
           </div>
           <div class="info-badge-list">
             <div class="info-badge-item active"><span>${t('activeCells')}</span><span class="badge-tag">${userData.activeCells}</span></div>
@@ -62,7 +119,7 @@ window.Warehouse.UIController = (function() {
       infoContent.innerHTML = `
         <div class="info-card type-cell">
           <h3 class="info-card-header">🏷️ ${t('cell')}: ${cell.number}</h3>
-          <div class="info-card-subtitle">${t('area')}: <strong>${userData.areaName}</strong> | ${t('row')}: <strong>${userData.rowName}</strong> | ${t('level')}: <strong>${userData.levelName}</strong></div>
+          <div class="info-card-subtitle">${t('area')}: <strong>${userData.areaName}</strong> · ${t('row')}: <strong>${userData.rowName}</strong> · ${t('level')}: <strong>${userData.levelName}</strong></div>
           <div class="info-status-row">
             <span>${t('status')}:</span>
             <span class="badge-tag ${cell.active ? 'tag-active' : 'tag-inactive'}">${cell.active ? t('active') : t('inactive')}</span>
@@ -411,6 +468,10 @@ window.Warehouse.UIController = (function() {
    */
   function initEvents() {
     // 3D Scene Label Toggles
+    document.getElementById('toggle-floor-labels')?.addEventListener('change', (e) => {
+      if (Builder && Builder.floorLabels) Builder.floorLabels.forEach(mesh => mesh.visible = e.target.checked);
+    });
+
     document.getElementById('toggle-area-labels')?.addEventListener('change', (e) => {
       if (Builder && Builder.areaLabels) Builder.areaLabels.forEach(mesh => mesh.visible = e.target.checked);
     });

@@ -10,7 +10,8 @@ window.Warehouse.i18n.ru = {
     weight: 'кг',
     length: 'м',
     dimension: 'мм',
-    volume: 'м³'
+    volume: 'м³',
+    area: 'м²'
   },
 
   // Термины
@@ -20,6 +21,7 @@ window.Warehouse.i18n.ru = {
   level: 'Ярус',
   cell: 'Ячейка',
   floor: 'Этаж',
+  warehouse: 'Склад',
 
   // Контроллы
   noResults: 'Ничего не найдено',
@@ -27,12 +29,14 @@ window.Warehouse.i18n.ru = {
   // Заголовки и секции
   areaSummary: 'Сводка по зоне',
   rowSummary: 'Сводка по ряду',
+  levelSummary: 'Сводка по ярусу',
   cellDetails: 'Детали ячейки',
   infoTitle: 'Информация',
   settingsTitle: 'Настройки',
   helpTitle: 'Управление',
 
   // Метрики
+  totalAreas: 'Всего зон',
   totalRows: 'Всего рядов',
   totalLevels: 'Всего ярусов',
   totalCells: 'Всего ячеек',
@@ -46,15 +50,21 @@ window.Warehouse.i18n.ru = {
   active: 'АКТИВНА',
   inactive: 'НЕАКТИВНА',
   position: 'Позиция',
+  polygonArea: 'Общая площадь',
+  usedArea: 'Занятая площадь',
+  utilization: 'Заполненность',
+  direction: 'Направление',
+  orientation: 'Ориентация',
 
   // Элементы управления UI
   toggleView: '2D / 3D Вид',
   showRowLabels: 'Отображать ряды',
   showLevelLabels: 'Отображать ярусы',
   showAreaLabels: 'Показать зоны',
+  showFloorLabels: 'Показать этажи',
   showCornerLabels: 'Показывать координаты углов',
   showCompass: 'Показывать компас',
-  showCanvasViewer: 'Показывать 2D \ 3D',
+  showCanvasViewer: 'Показывать виды отображения склада',
   showZoom: 'Показывать зум',
   defaultInfoText: 'Кликните на ячейку, ряд или зону для просмотра деталей.',
 

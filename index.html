@@ -34,10 +34,10 @@
         <!-- Compass Widget -->
         <div class="compass-widget" id="compass-widget">
           <div class="compass-dial">
-            <button class="compass-btn btn-n" data-angle="0" title="North (0°)">N</button>
-            <button class="compass-btn btn-e" data-angle="90" title="East (90°)">E</button>
+            <button class="compass-btn btn-e" data-angle="270" title="East (90°)">E</button>
             <button class="compass-btn btn-s" data-angle="180" title="South (180°)">S</button>
-            <button class="compass-btn btn-w" data-angle="270" title="West (270°)">W</button>
+            <button class="compass-btn btn-w" data-angle="90" title="West (270°)">W</button>
+            <button class="compass-btn btn-n" data-angle="0" title="North (0°)">N</button>
             <div class="compass-center">
               <div class="compass-arrow" id="compass-arrow"></div>
             </div>
@@ -188,6 +188,7 @@
           </svg>
         </h3>
         <div class="section-content checkbox-group">
+          <label data-i18n="showFloorLabels"><input type="checkbox" id="toggle-floor-labels" checked> Show Floor Labels</label>
           <label data-i18n="showAreaLabels"><input type="checkbox" id="toggle-area-labels" checked> Show Area Labels</label>
           <label data-i18n="showRowLabels"><input type="checkbox" id="toggle-row-labels" checked> Show Row Labels</label>
           <label data-i18n="showLevelLabels"><input type="checkbox" id="toggle-level-labels" checked> Show Level Labels</label>

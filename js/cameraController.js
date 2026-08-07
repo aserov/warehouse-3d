@@ -66,6 +66,11 @@ window.Warehouse.CameraController = (function() {
     const forward = new THREE.Vector3();
     camera.getWorldDirection(forward);
     controls.target.copy(camera.position).add(forward.multiplyScalar(10));
+
+    if (controls.target.y < 0) {
+      controls.target.y = 0;
+    }
+
     controls.enabled = true;
     controls.update();
 

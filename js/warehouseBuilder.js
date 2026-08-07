@@ -11,6 +11,11 @@ window.Warehouse.Builder = (function() {
   const cornerLabels = [];
   const interactiveObjects = [];
 
+  // Floor-level summary (warehouse + floor combined, since only one floor is ever
+  // rendered at a time). Reassigned wholesale on every build, so it's exposed via a
+  // getter rather than a stable array reference like the label lists above.
+  let floorSummary = null;
+
   /**
    * Generates canvas text sprite for coordinates and corner tags.
    */
@@ -51,6 +56,7 @@ window.Warehouse.Builder = (function() {
     levelLabels.length = 0;
     areaLabels.length = 0;
     interactiveObjects.length = 0;
+    floorSummary = null;
 
     document.querySelectorAll('.area-label-element, .row-label-element').forEach(el => el.remove());
 
@@ -245,6 +251,20 @@ window.Warehouse.Builder = (function() {
 
     createBuildingOutline(CONFIG.buildingPolygon);
 
+    // Floor-level totals (warehouse + floor combined, since this build only ever
+    // renders one floor at a time - see buildWarehouse's docstring). Accumulated as
+    // each area is processed below, then assembled into floorSummary once done.
+    let floorTotalAreas = 0;
+    let floorTotalRows = 0;
+    let floorUsedArea = 0;
+    let floorAreasPolygonArea = 0;
+    let floorTotalCells = 0;
+    let floorActiveCells = 0;
+    let floorInactiveCells = 0;
+    let floorTotalWeight = 0;
+    let floorTotalFreeWeight = 0;
+    let floorTotalVolume = 0;
+
     data.areas.forEach((areaData, areaIdx) => {
       // No polygon at all - just skip this area and its contents silently, let them configure it.
       if (!areaData.polygon) {
@@ -268,7 +288,16 @@ window.Warehouse.Builder = (function() {
       const areaCells = [];
       areaData.rows.forEach(r => r.levels.forEach(l => areaCells.push(...l.cells)));
       const areaMetrics = Utils.calculateMetrics(areaCells);
-      const areaSummary = { type: 'area', areaName: areaData.areaName, totalRows: areaData.rows.length, ...areaMetrics };
+      const areaSummary = {
+        type: 'area',
+        areaName: areaData.areaName,
+        floor: areaData.floor,
+        totalRows: areaData.rows.length,
+        polygonArea: LayoutEngine.getPolygonArea(areaData.polygon),
+        usedArea: 0, // filled in below once all rows are processed
+        rowsPolygonArea: 0, // filled in below once all rows are processed
+        ...areaMetrics
+      };
       areaGroup.userData = areaSummary;
 
       const areaColor = Utils.getAreaColor(areaIdx, areaData);
@@ -316,9 +345,16 @@ window.Warehouse.Builder = (function() {
           totalLevels: rowData.levels.length,
           direction,
           orientation,
+          polygonArea: LayoutEngine.getPolygonArea(rowData.polygon),
+          usedArea: 0, // filled in below once ground-level footprint is known
           ...rowMetrics
         };
         rowGroup.userData = rowSummary;
+
+        // Ground-floor footprint (used for rowSummary.usedArea) is defined by the lowest
+        // `level` number only - upper levels stack vertically above it and don't consume
+        // additional floor space, regardless of how many cells they have.
+        const levelFootprints = {};
 
         let currentYOffset = 0;
 
@@ -341,6 +377,7 @@ window.Warehouse.Builder = (function() {
           levelGroup.userData = levelSummary;
 
           let levelMaxHeight = 0;
+          let levelFootprint = 0;
           let firstCellPos = null;
           let lastCellPos = null;
 
@@ -362,6 +399,8 @@ window.Warehouse.Builder = (function() {
             // for vertical rows is only which physical axis (X or Z) each one is applied to.
             const axisSize = w;
             const crossSize = d;
+            const cellFootprint = axisSize * crossSize;
+            levelFootprint += cellFootprint;
 
             const offsetAlongAxis = cursor;
             cursor += axisSize + CONFIG.cellGap;
@@ -410,6 +449,7 @@ window.Warehouse.Builder = (function() {
               levelName: levelData.levelName,
               direction,
               orientation,
+              footprint: cellFootprint,
               initialOpacity: baseOpacity
             };
 
@@ -479,8 +519,26 @@ window.Warehouse.Builder = (function() {
           }
 
           rowGroup.add(levelGroup);
+
+          // Fill in the fields that could only be computed once the cells loop above
+          // finished (levelSummary and levelGroup.userData already reference this same
+          // object, so this update is visible to both).
+          levelSummary.level = levelData.level;
+          levelSummary.footprint = levelFootprint;
+          levelSummary.maxCellHeight = levelMaxHeight;
+          levelFootprints[levelData.level] = levelFootprint;
+
           currentYOffset += levelMaxHeight + CONFIG.cellGap;
         });
+
+        // Row's used floor area = footprint of its lowest (ground) level only.
+        const levelNumbers = Object.keys(levelFootprints).map(Number);
+        rowSummary.usedArea = levelNumbers.length > 0
+          ? levelFootprints[Math.min(...levelNumbers)]
+          : 0;
+
+        areaSummary.usedArea += rowSummary.usedArea;
+        areaSummary.rowsPolygonArea += rowSummary.polygonArea;
 
         // Draw the row's own shape (fill + border + per-vertex corner labels) from its
         // polygon, drawn as-is even if it extends beyond the area or building outline.
@@ -488,7 +546,16 @@ window.Warehouse.Builder = (function() {
 
         // Row title: placed to the right of the row polygon's bottom-right corner (maxX, maxZ).
         const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
-        floorRowLabel.position.set(rowBounds.maxX + 18, 0.09, rowBounds.maxZ);
+
+        const labelBox = new THREE.Box3().setFromObject(floorRowLabel);
+        const labelHeight = labelBox.max.z - labelBox.min.z;
+
+        floorRowLabel.position.set(
+          rowBounds.maxX + 10,
+          0.09,
+          rowBounds.maxZ - (labelHeight / 2)
+        );
+
         floorRowLabel.userData = { ...rowSummary, initialOpacity: 1.0 };
 
         rowGroup.add(floorRowLabel);
@@ -513,7 +580,42 @@ window.Warehouse.Builder = (function() {
       areaLabels.push(areaTitleMesh);
       interactiveObjects.push(areaTitleMesh);
       warehouseGroup.add(areaGroup);
+
+      floorTotalAreas += 1;
+      floorTotalRows += areaData.rows.length;
+      floorUsedArea += areaSummary.usedArea;
+      floorAreasPolygonArea += areaSummary.polygonArea;
+      floorTotalCells += areaMetrics.totalCells;
+      floorActiveCells += areaMetrics.activeCells;
+      floorInactiveCells += areaMetrics.inactiveCells;
+      floorTotalWeight += areaMetrics.totalWeight;
+      floorTotalFreeWeight += areaMetrics.totalFreeWeight;
+      floorTotalVolume += areaMetrics.totalVolume;
     });
+
+    // Floor summary combines warehouse + floor identity (since only one floor is ever
+    // rendered at a time, see the docstring above) with totals aggregated across every
+    // area drawn on it. Not tied to a clickable 3D object, so it's exposed separately
+    // via getFloorSummary() rather than through userData on a mesh.
+    floorSummary = {
+      type: 'floor',
+      warehouseId: data.warehouse,
+      warehouseName: data.warehouseName,
+      floor: data.areas[0] ? data.areas[0].floor : null,
+      totalAreas: floorTotalAreas,
+      totalRows: floorTotalRows,
+      polygonArea: LayoutEngine.getPolygonArea(CONFIG.buildingPolygon),
+      usedArea: floorUsedArea,
+      areasPolygonArea: floorAreasPolygonArea,
+      totalCells: floorTotalCells,
+      activeCells: floorActiveCells,
+      inactiveCells: floorInactiveCells,
+      totalWeight: floorTotalWeight,
+      totalFreeWeight: floorTotalFreeWeight,
+      totalVolume: floorTotalVolume
+    };
+    warehouseGroup.userData = floorSummary;
+
 
     // Apply active UI settings (hide/show labels) after objects are created
     if (window.Warehouse.SettingsManager) {
@@ -554,5 +656,14 @@ window.Warehouse.Builder = (function() {
     }
   }
 
-  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels, cornerLabels, interactiveObjects };
+  /**
+   * Returns the summary for the currently rendered floor (warehouse + floor combined).
+   * Reassigned wholesale on every buildWarehouse() call, so exposed as a getter rather
+   * than a stable reference - null if buildWarehouse hasn't run yet or found no areas.
+   */
+  function getFloorSummary() {
+    return floorSummary;
+  }
+
+  return { buildWarehouse, setFocusedArea, getFloorSummary, rowLabels, levelLabels, areaLabels, cornerLabels, interactiveObjects };
 })();

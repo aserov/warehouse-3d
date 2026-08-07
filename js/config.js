@@ -27,9 +27,7 @@ window.Warehouse.CONFIG = {
   },
 
   // --- Grid & Layout Gaps (meters) ---
-  cellGap: 0.5,
-  rowGap: 15.0,
-  areaGap: 0.0,          // Minimum gap between areas
+  cellGap: 0.2,
   areaPadding: 10.0,      // Inner margin inside an area border
   originX: 0,           // Offset of the first area from the left wall
   originZ: 0,           // Offset of the first area from the top wall

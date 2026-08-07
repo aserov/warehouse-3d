@@ -90,5 +90,27 @@ window.Warehouse.LayoutEngine = {
     const maxZ = Math.max(...zs);
 
     return { minX, maxX, minZ, maxZ, width: maxX - minX, depth: maxZ - minZ };
+  },
+
+  /**
+   * Computes the area of a polygon using the shoelace formula. Coordinates are used
+   * as-is (same units already used to position the polygon in the scene), so the
+   * result is in square scene-units (square meters, given current data). Shared by
+   * areas and rows (and the building outline) so any of them can report their own
+   * footprint regardless of whether they're rectangular.
+   * @param {Array<{x:number,z:number}>} polygon
+   * @returns {number} Polygon area (always non-negative, independent of winding order).
+   */
+  getPolygonArea(polygon) {
+    if (!Array.isArray(polygon) || polygon.length < 3) return 0;
+
+    let sum = 0;
+    for (let i = 0; i < polygon.length; i++) {
+      const p1 = polygon[i];
+      const p2 = polygon[(i + 1) % polygon.length];
+      sum += p1.x * p2.z - p2.x * p1.z;
+    }
+
+    return Math.abs(sum) / 2;
   }
 };

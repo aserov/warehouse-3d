@@ -422,7 +422,217 @@
           "area": 3,
           "areaName": "RB",
           "floor": 1,
-          "rows": [],
+          "rows": [
+            {
+              "row": 1,
+              "rowName": "RB-01",
+              "direction": "LTR",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 10,
+                  "z": 190
+                },
+                {
+                  "x": 270,
+                  "z": 190
+                },
+                {
+                  "x": 270,
+                  "z": 200
+                },
+                {
+                  "x": 10,
+                  "z": 200
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "RB-01-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-01-01-01",
+                      "measurement": "mm",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-01-01-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-01-01-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-01-01-04",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-01-01-05",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-01-01-06",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-01-01-07",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "RB-01-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-01-02-01",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-01-02-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-01-02-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-01-02-04",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-01-02-05",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 3,
+                  "levelName": "RB-01-03",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-01-03-01",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-01-03-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-01-03-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
           "polygon": [
             {
               "x": 0,

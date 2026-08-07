@@ -246,11 +246,11 @@ window.Warehouse = window.Warehouse || {};
     CONFIG.buildingPolygon = warehouse.polygon;
 
     // Determine target scaling factor using measurement unit or explicit scale
-    CONFIG.scaleFactor = Utils.getScaleFactor(warehouse.measurement, warehouse.scale);
+    const warehouseScale = Utils.getScaleFactor(warehouse.measurement);
 
     // Rebuild floor grid according to calculated polygon geometry and scale
     if (SceneSetup.updateGridForPolygon) {
-      SceneSetup.updateGridForPolygon(warehouse.polygon, CONFIG.scaleFactor);
+      SceneSetup.updateGridForPolygon(warehouse.polygon, warehouseScale);
     }
 
     const uniqueFloors = [...new Set((warehouse.areas || []).map(a => Number(a.floor)).filter(Boolean))].sort((a, b) => a - b);

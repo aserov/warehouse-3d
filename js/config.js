@@ -4,11 +4,6 @@ window.Warehouse.CONFIG = {
   // --- Language Settings ---
   defaultLang: 'en', // 'ru' | 'en'
 
-  // --- Scale & Physics ---
-  // Fallback used ONLY when a warehouse from the server doesn't provide its own `scale`.
-  // Not a source of truth anymore - each warehouse should send its own scale.
-  scaleFactor: 0.001, // 10000 mm in JSON -> 10 units (meters)
-
   // --- Camera & View Controls ---
   camera: {
     fov: 60,

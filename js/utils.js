@@ -3,7 +3,7 @@ window.Warehouse = window.Warehouse || {};
 window.Warehouse.Utils = {
   /**
    * Calculates the scale factor converting scene units to meters.
-   * Priority: explicit scale property > measurement string unit > fallback CONFIG scaleFactor.
+   * Priority: explicit scale property > measurement string unit.
    * @param {string} [measurement] - Unit string ('m', 'cm', 'sm', 'mm').
    * @param {number} [explicitScale] - Direct scale factor specified in warehouse config.
    * @returns {number} Scale factor for coordinate conversion.
@@ -26,7 +26,7 @@ window.Warehouse.Utils = {
       }
     }
 
-    return window.Warehouse.CONFIG.scaleFactor || 0.001;
+    return 1;
   },
 
   // Get localized string by key

@@ -288,38 +288,96 @@ window.Warehouse.Builder = (function() {
         const rowGroup = new THREE.Group();
         rowGroup.name = `Row_${rowData.rowName}`;
 
+        const rowBounds = LayoutEngine.getPolygonBounds(rowData.polygon);
+
+        // Row direction controls both the layout axis and the starting corner cells are
+        // placed from. LTR/RTL lay cells out horizontally (along X); TTB/BTT lay cells out
+        // vertically (along Z), in which case width/depth are swapped for positioning
+        // purposes (the cell's depth becomes its size along the layout axis).
+        const validDirections = ['LTR', 'RTL', 'TTB', 'BTT'];
+        let direction = rowData.direction;
+        if (!validDirections.includes(direction)) {
+          console.warn(`[Warehouse] Row "${rowData.rowName}" has missing/invalid direction "${rowData.direction}", defaulting to LTR.`);
+          direction = 'LTR';
+        }
+        const isVertical = direction === 'TTB' || direction === 'BTT';
+        const orientation = isVertical ? 'vertical' : 'horizontal';
+
         const rowCells = [];
         rowData.levels.forEach(l => rowCells.push(...l.cells));
         const rowMetrics = Utils.calculateMetrics(rowCells);
-        const rowSummary = { type: 'row', rowName: rowData.rowName, areaName: areaData.areaName, totalLevels: rowData.levels.length, ...rowMetrics };
+        const rowSummary = {
+          type: 'row',
+          rowName: rowData.rowName,
+          areaName: areaData.areaName,
+          totalLevels: rowData.levels.length,
+          direction,
+          orientation,
+          ...rowMetrics
+        };
         rowGroup.userData = rowSummary;
 
-        const rowBounds = LayoutEngine.getPolygonBounds(rowData.polygon);
-
-        // TODO: временно отключено - раскладка cells/levels внутри ряда переделывается
-        // под rowData.direction (LTR/RTL/TTB/BTT) и полигон ряда вместо старого
-        // авто-layout "сверху вниз с гэпом". Пока рисуем только контур ряда и его тайтл,
-        // чтобы визуально проверить полигон.
-        /*
-        const sampleCell = rowData.levels[0]?.cells[0];
-        const rowCellDepth = sampleCell ? (sampleCell.depth * CONFIG.scaleFactor) : 10;
-        const zOffset = startZ + rowIdx * (rowCellDepth + CONFIG.rowGap);
         let currentYOffset = 0;
 
         rowData.levels.forEach((levelData) => {
           const levelGroup = new THREE.Group();
           levelGroup.name = `Level_${levelData.levelName}`;
-          let firstCellX = 0, lastCellX = 0, levelMaxHeight = 0;
 
-          levelData.cells.forEach((cellData, cellIdx) => {
-            const w = cellData.width * CONFIG.scaleFactor;
-            const h = cellData.height * CONFIG.scaleFactor;
-            const d = cellData.depth * CONFIG.scaleFactor;
+          // Level summary/userData - not clickable yet, but prepared for later so we don't
+          // have to revisit this once level click/summary UI is wired up.
+          const levelMetrics = Utils.calculateMetrics(levelData.cells);
+          const levelSummary = {
+            type: 'level',
+            levelName: levelData.levelName,
+            rowName: rowData.rowName,
+            areaName: areaData.areaName,
+            direction,
+            orientation,
+            ...levelMetrics
+          };
+          levelGroup.userData = levelSummary;
+
+          let levelMaxHeight = 0;
+          let firstCellPos = null;
+          let lastCellPos = null;
+
+          // Layout cells in `place` order regardless of the order they appear in the data.
+          const sortedCells = [...levelData.cells].sort((a, b) => a.place - b.place);
+
+          // Running distance from the row's starting corner along the layout axis.
+          let cursor = 0;
+
+          sortedCells.forEach((cellData, cellIdx) => {
+            const cellScale = Utils.getScaleFactor(cellData.measurement);
+            const w = cellData.width * cellScale;
+            const h = cellData.height * cellScale;
+            const d = cellData.depth * cellScale;
             levelMaxHeight = Math.max(levelMaxHeight, h);
 
-            const xOffset = (cellData.place - 1) * (w + CONFIG.cellGap);
-            if (cellIdx === 0) firstCellX = areaOffsetX + xOffset;
-            lastCellX = areaOffsetX + xOffset + w;
+            // Size along the layout axis vs. the cross axis - swapped for vertical rows.
+            const axisSize = isVertical ? d : w;
+            const crossSize = isVertical ? w : d;
+
+            const offsetAlongAxis = cursor;
+            cursor += axisSize + CONFIG.cellGap;
+
+            let posX, posZ;
+            if (!isVertical) {
+              // Horizontal: axis = X, cross = Z anchored at the row's top edge (minZ).
+              posX = direction === 'LTR'
+                ? rowBounds.minX + offsetAlongAxis + axisSize / 2
+                : rowBounds.maxX - offsetAlongAxis - axisSize / 2;
+              posZ = rowBounds.minZ + crossSize / 2;
+            } else {
+              // Vertical: axis = Z, cross = X anchored at the row's left edge (minX).
+              posZ = direction === 'TTB'
+                ? rowBounds.minZ + offsetAlongAxis + axisSize / 2
+                : rowBounds.maxZ - offsetAlongAxis - axisSize / 2;
+              posX = rowBounds.minX + crossSize / 2;
+            }
+
+            if (cellIdx === 0) firstCellPos = { x: posX, z: posZ };
+            lastCellPos = { x: posX, z: posZ };
 
             const baseOpacity = cellData.active ? 0.9 : 0.4;
             const geometry = new THREE.BoxGeometry(w, h, d);
@@ -332,7 +390,7 @@ window.Warehouse.Builder = (function() {
             });
 
             const cellMesh = new THREE.Mesh(geometry, material);
-            cellMesh.position.set(areaOffsetX + xOffset + w / 2, currentYOffset + h / 2, zOffset + d / 2);
+            cellMesh.position.set(posX, currentYOffset + h / 2, posZ);
             cellMesh.userData = {
               type: 'cell',
               data: cellData,
@@ -340,6 +398,8 @@ window.Warehouse.Builder = (function() {
               areaSummary,
               rowName: rowData.rowName,
               levelName: levelData.levelName,
+              direction,
+              orientation,
               initialOpacity: baseOpacity
             };
 
@@ -350,24 +410,50 @@ window.Warehouse.Builder = (function() {
           const levelText = `${levelData.level}`;
           const labelCenterY = currentYOffset + (levelMaxHeight / 2);
 
-          const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
-          leftLevelMesh.rotation.y = -Math.PI / 2;
-          leftLevelMesh.position.set(firstCellX - 0.05, labelCenterY, zOffset + rowCellDepth / 2);
-          leftLevelMesh.userData.initialOpacity = 1.0;
-          levelGroup.add(leftLevelMesh);
-          levelLabels.push(leftLevelMesh);
+          // Pick the spatial extremes regardless of which end place=1 started from,
+          // so labels always sit on the actual left/right (or top/bottom) edge.
+          if (firstCellPos && lastCellPos) {
+            if (!isVertical) {
+              const leftPos = firstCellPos.x <= lastCellPos.x ? firstCellPos : lastCellPos;
+              const rightPos = firstCellPos.x <= lastCellPos.x ? lastCellPos : firstCellPos;
 
-          const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
-          rightLevelMesh.rotation.y = Math.PI / 2;
-          rightLevelMesh.position.set(lastCellX + 0.05, labelCenterY, zOffset + rowCellDepth / 2);
-          rightLevelMesh.userData.initialOpacity = 1.0;
-          levelGroup.add(rightLevelMesh);
-          levelLabels.push(rightLevelMesh);
+              const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
+              leftLevelMesh.rotation.y = -Math.PI / 2;
+              leftLevelMesh.position.set(rowBounds.minX - 0.05, labelCenterY, leftPos.z);
+              leftLevelMesh.userData.initialOpacity = 1.0;
+              levelGroup.add(leftLevelMesh);
+              levelLabels.push(leftLevelMesh);
+
+              const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
+              rightLevelMesh.rotation.y = Math.PI / 2;
+              rightLevelMesh.position.set(rowBounds.maxX + 0.05, labelCenterY, rightPos.z);
+              rightLevelMesh.userData.initialOpacity = 1.0;
+              levelGroup.add(rightLevelMesh);
+              levelLabels.push(rightLevelMesh);
+            } else {
+              // Vertical rows: labels go on the top/bottom edge instead of left/right, so
+              // no side rotation is applied (the plane's default facing already reads
+              // correctly when approached along Z).
+              const topPos = firstCellPos.z <= lastCellPos.z ? firstCellPos : lastCellPos;
+              const bottomPos = firstCellPos.z <= lastCellPos.z ? lastCellPos : firstCellPos;
+
+              const topLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
+              topLevelMesh.position.set(topPos.x, labelCenterY, rowBounds.minZ - 0.05);
+              topLevelMesh.userData.initialOpacity = 1.0;
+              levelGroup.add(topLevelMesh);
+              levelLabels.push(topLevelMesh);
+
+              const bottomLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
+              bottomLevelMesh.position.set(bottomPos.x, labelCenterY, rowBounds.maxZ + 0.05);
+              bottomLevelMesh.userData.initialOpacity = 1.0;
+              levelGroup.add(bottomLevelMesh);
+              levelLabels.push(bottomLevelMesh);
+            }
+          }
 
           rowGroup.add(levelGroup);
           currentYOffset += levelMaxHeight + CONFIG.cellGap;
         });
-        */
 
         // Draw the row's own shape (fill + border + per-vertex corner labels) from its
         // polygon, drawn as-is even if it extends beyond the area or building outline.
@@ -375,7 +461,7 @@ window.Warehouse.Builder = (function() {
 
         // Row title: placed to the right of the row polygon's bottom-right corner (maxX, maxZ).
         const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
-        floorRowLabel.position.set(rowBounds.maxX + 12, 0.09, rowBounds.maxZ);
+        floorRowLabel.position.set(rowBounds.maxX + 18, 0.09, rowBounds.maxZ);
         floorRowLabel.userData = { ...rowSummary, initialOpacity: 1.0 };
 
         rowGroup.add(floorRowLabel);

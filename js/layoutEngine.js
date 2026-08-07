@@ -12,7 +12,8 @@ window.Warehouse.LayoutEngine = {
 
       rowData.levels.forEach((levelData) => {
         levelData.cells.forEach((cellData) => {
-          const w = cellData.width * CONFIG.scaleFactor;
+          const cellScale = Utils.getScaleFactor(cellData.measurement)
+          const w = cellData.width * cellScale;
           const xOffset = (cellData.place - 1) * (w + CONFIG.cellGap);
           maxRowX = Math.max(maxRowX, xOffset + w);
         });

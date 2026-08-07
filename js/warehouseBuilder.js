@@ -8,6 +8,7 @@ window.Warehouse.Builder = (function() {
   const rowLabels = [];
   const levelLabels = [];
   const areaLabels = [];
+  const cornerLabels = [];
   const interactiveObjects = [];
 
   /**
@@ -135,6 +136,7 @@ window.Warehouse.Builder = (function() {
       labelSprite.position.set(point.x, 2.0, point.z);
       labelSprite.userData.isWarehouseObject = true;
       warehouseGroup.add(labelSprite);
+      cornerLabels.push(labelSprite);
     });
   }
 
@@ -189,6 +191,7 @@ window.Warehouse.Builder = (function() {
       const cornerLabel = createCornerLabel(`(${Math.round(point.x)}, ${Math.round(point.z)})`, color);
       cornerLabel.position.set(point.x, lineY + 0.92, point.z);
       targetGroup.add(cornerLabel);
+      cornerLabels.push(cornerLabel);
     });
   }
 
@@ -354,9 +357,11 @@ window.Warehouse.Builder = (function() {
             const d = cellData.depth * cellScale;
             levelMaxHeight = Math.max(levelMaxHeight, h);
 
-            // Size along the layout axis vs. the cross axis - swapped for vertical rows.
-            const axisSize = isVertical ? d : w;
-            const crossSize = isVertical ? w : d;
+            // Size along the layout axis is always the cell's width, and the cross-axis
+            // size is always its depth - this does NOT depend on orientation. What changes
+            // for vertical rows is only which physical axis (X or Z) each one is applied to.
+            const axisSize = w;
+            const crossSize = d;
 
             const offsetAlongAxis = cursor;
             cursor += axisSize + CONFIG.cellGap;
@@ -380,7 +385,12 @@ window.Warehouse.Builder = (function() {
             lastCellPos = { x: posX, z: posZ };
 
             const baseOpacity = cellData.active ? 0.9 : 0.4;
-            const geometry = new THREE.BoxGeometry(w, h, d);
+            // Box geometry dimensions follow the same axis mapping as the position above:
+            // for vertical rows the axis size (width) lands on Z and the cross size (depth)
+            // lands on X, so the physical box must be built with those swapped too.
+            const boxSizeX = isVertical ? crossSize : axisSize;
+            const boxSizeZ = isVertical ? axisSize : crossSize;
+            const geometry = new THREE.BoxGeometry(boxSizeX, h, boxSizeZ);
             const material = new THREE.MeshStandardMaterial({
               color: cellData.active ? areaColor : colors.inactive,
               roughness: 0.3,
@@ -413,20 +423,32 @@ window.Warehouse.Builder = (function() {
           // Pick the spatial extremes regardless of which end place=1 started from,
           // so labels always sit on the actual left/right (or top/bottom) edge.
           if (firstCellPos && lastCellPos) {
+            // Row polygons are intentionally allowed to be larger than the sum of their
+            // cells, so labels must sit at the real edge of the placed cells, not at the
+            // row polygon's bounds. `cursor` still holds "total axis length + one trailing
+            // gap" after the loop above, so subtract that trailing gap to get the true
+            // far edge of the last placed cell.
+            const totalLayoutLength = cursor - CONFIG.cellGap;
+
             if (!isVertical) {
               const leftPos = firstCellPos.x <= lastCellPos.x ? firstCellPos : lastCellPos;
               const rightPos = firstCellPos.x <= lastCellPos.x ? lastCellPos : firstCellPos;
 
+              const startEdgeX = direction === 'LTR' ? rowBounds.minX : rowBounds.maxX;
+              const endEdgeX = direction === 'LTR' ? startEdgeX + totalLayoutLength : startEdgeX - totalLayoutLength;
+              const leftEdgeX = Math.min(startEdgeX, endEdgeX);
+              const rightEdgeX = Math.max(startEdgeX, endEdgeX);
+
               const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               leftLevelMesh.rotation.y = -Math.PI / 2;
-              leftLevelMesh.position.set(rowBounds.minX - 0.05, labelCenterY, leftPos.z);
+              leftLevelMesh.position.set(leftEdgeX - 0.05, labelCenterY, leftPos.z);
               leftLevelMesh.userData.initialOpacity = 1.0;
               levelGroup.add(leftLevelMesh);
               levelLabels.push(leftLevelMesh);
 
               const rightLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               rightLevelMesh.rotation.y = Math.PI / 2;
-              rightLevelMesh.position.set(rowBounds.maxX + 0.05, labelCenterY, rightPos.z);
+              rightLevelMesh.position.set(rightEdgeX + 0.05, labelCenterY, rightPos.z);
               rightLevelMesh.userData.initialOpacity = 1.0;
               levelGroup.add(rightLevelMesh);
               levelLabels.push(rightLevelMesh);
@@ -437,14 +459,19 @@ window.Warehouse.Builder = (function() {
               const topPos = firstCellPos.z <= lastCellPos.z ? firstCellPos : lastCellPos;
               const bottomPos = firstCellPos.z <= lastCellPos.z ? lastCellPos : firstCellPos;
 
+              const startEdgeZ = direction === 'TTB' ? rowBounds.minZ : rowBounds.maxZ;
+              const endEdgeZ = direction === 'TTB' ? startEdgeZ + totalLayoutLength : startEdgeZ - totalLayoutLength;
+              const topEdgeZ = Math.min(startEdgeZ, endEdgeZ);
+              const bottomEdgeZ = Math.max(startEdgeZ, endEdgeZ);
+
               const topLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
-              topLevelMesh.position.set(topPos.x, labelCenterY, rowBounds.minZ - 0.05);
+              topLevelMesh.position.set(topPos.x, labelCenterY, topEdgeZ - 0.05);
               topLevelMesh.userData.initialOpacity = 1.0;
               levelGroup.add(topLevelMesh);
               levelLabels.push(topLevelMesh);
 
               const bottomLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
-              bottomLevelMesh.position.set(bottomPos.x, labelCenterY, rowBounds.maxZ + 0.05);
+              bottomLevelMesh.position.set(bottomPos.x, labelCenterY, bottomEdgeZ + 0.05);
               bottomLevelMesh.userData.initialOpacity = 1.0;
               levelGroup.add(bottomLevelMesh);
               levelLabels.push(bottomLevelMesh);
@@ -487,6 +514,11 @@ window.Warehouse.Builder = (function() {
       interactiveObjects.push(areaTitleMesh);
       warehouseGroup.add(areaGroup);
     });
+
+    // Apply active UI settings (hide/show labels) after objects are created
+    if (window.Warehouse.SettingsManager) {
+      window.Warehouse.SettingsManager.applySettings();
+    }
   }
 
   /**
@@ -522,5 +554,5 @@ window.Warehouse.Builder = (function() {
     }
   }
 
-  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels, interactiveObjects };
+  return { buildWarehouse, setFocusedArea, rowLabels, levelLabels, areaLabels, cornerLabels, interactiveObjects };
 })();

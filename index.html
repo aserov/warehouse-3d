@@ -54,9 +54,25 @@
         </div>
       </div>
 
-      <!-- Right Side Controls (Cell Search, Floor Select, Area Select, 2D | 3D | Reset Widget) -->
+      <!-- Right Side Controls -->
       <div class="canvas-controls-right">
-        <div class="view-mode-widget">
+
+        <!-- Top Widget: Mode Toggle (2D / 3D) & Reset View -->
+        <div class="view-mode-widget mode-toggle-widget" id="canvas-viewer-widget">
+          <button id="btn-2d" class="view-mode-btn">2D</button>
+          <button id="btn-3d" class="view-mode-btn active">3D</button>
+
+          <!-- Reset View Button -->
+          <button id="btn-reset-view" class="view-mode-btn icon-btn" title="Reset View">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Bottom Widget: Filters (Warehouse, Floor, Area, Cell Search) -->
+        <div class="view-mode-widget filters-widget">
 
           <!-- Cell Search Box Widget -->
           <div class="cell-search-widget" id="cell-search-widget">
@@ -75,12 +91,12 @@
 
           <div class="view-mode-divider"></div>
 
-          <!-- Custom Warehouse Dropdown -->
+          <!-- Custom Warehouse Dropdown (Perspective Hangar / Warehouse Icon) -->
           <div class="custom-floor-select" id="custom-warehouse-select">
             <button class="floor-select-btn" id="warehouse-select-btn" type="button">
-              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 8.35V20a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8.35a1 1 0 0 1 .53-.88l8-4.44a1 1 0 0 1 .94 0l8 4.44a1 1 0 0 1 .53.88Z"></path>
-                <path d="M6 21V11h12v10"></path>
+              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 20V10l10-6 10 6v10H2z"></path>
+                <path d="M9 20v-5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5"></path>
               </svg>
               <span class="floor-current-text" id="warehouse-current-text">Warehouse</span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -91,14 +107,13 @@
             <div class="floor-dropdown-menu" id="warehouse-dropdown-menu"></div>
           </div>
 
-          <div class="view-mode-divider"></div>
-
-          <!-- Custom Floor Dropdown -->
+          <!-- Custom Floor Dropdown (Stacked Layers Icon) -->
           <div class="custom-floor-select" id="custom-floor-select">
             <button class="floor-select-btn" id="floor-select-btn" type="button">
-              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 12 12 17 22 12"></polyline>
+                <polyline points="2 17 12 22 22 17"></polyline>
               </svg>
               <span class="floor-current-text" id="floor-current-text">Floor 1</span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -110,15 +125,14 @@
             </div>
           </div>
 
-          <div class="view-mode-divider"></div>
-
-          <!-- Custom Area/Zone Dropdown -->
+          <!-- Custom Area/Zone Dropdown (Quadrants Grid Icon) -->
           <div class="custom-floor-select" id="custom-area-select">
             <button class="floor-select-btn" id="area-select-btn" type="button">
-              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="3" y1="9" x2="21" y2="9"></line>
-                <line x1="9" y1="21" x2="9" y2="9"></line>
+              <svg class="floor-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
               </svg>
               <span class="floor-current-text" id="area-current-text">All Areas</span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,22 +145,6 @@
             </div>
           </div>
 
-          <div class="view-mode-divider"></div>
-
-          <!-- Mode Toggle (2D / 3D) -->
-          <button id="btn-2d" class="view-mode-btn">2D</button>
-          <button id="btn-3d" class="view-mode-btn active">3D</button>
-
-          <div class="view-mode-divider"></div>
-
-          <!-- Reset View Button -->
-          <button id="btn-reset-view" class="view-mode-btn icon-btn" title="Reset View">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-              <path d="M3 3v5h5"/>
-            </svg>
-          </button>
-
         </div>
       </div>
     </main>
@@ -154,28 +152,44 @@
     <!-- Right Sidebar -->
     <aside id="sidebar">
 
-      <!-- Section 1: Information -->
       <section class="sidebar-section info-section">
-        <h3 class="section-title" data-i18n="infoTitle">Information</h3>
-        <div id="info-content" data-i18n="defaultInfoText">Click on a cell, row, or area to view details.</div>
+        <h3 class="section-title">
+          <span data-i18n="infoTitle">Information</span>
+          <svg class="collapse-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </h3>
+        <div class="section-content" id="info-content" data-i18n="defaultInfoText">Click on a cell, row, or area to view details.</div>
       </section>
 
-      <!-- Section 2: Settings -->
-      <section class="sidebar-section settings-section">
-        <h3 class="section-title" data-i18n="settingsTitle">Settings</h3>
-        <div class="checkbox-group">
+      <!-- Section 2: Settings (Collapsed by default) -->
+      <section class="sidebar-section settings-section collapsed">
+        <h3 class="section-title">
+          <span data-i18n="settingsTitle">Settings</span>
+          <svg class="collapse-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </h3>
+        <div class="section-content checkbox-group">
           <label data-i18n="showAreaLabels"><input type="checkbox" id="toggle-area-labels" checked> Show Area Labels</label>
           <label data-i18n="showRowLabels"><input type="checkbox" id="toggle-row-labels" checked> Show Row Labels</label>
           <label data-i18n="showLevelLabels"><input type="checkbox" id="toggle-level-labels" checked> Show Level Labels</label>
+          <label data-i18n="showCornerLabels"><input type="checkbox" id="toggle-corner-labels" checked> Show Corner Coordinates</label>
+          <label data-i18n="showCanvasViewer"><input type="checkbox" id="toggle-canvas-viewer" checked> Show Canvas Viewer</label>
           <label data-i18n="showCompass"><input type="checkbox" id="toggle-compass" checked> Show Compass</label>
           <label data-i18n="showZoom"><input type="checkbox" id="toggle-zoom" checked> Show Zoom</label>
         </div>
       </section>
 
-      <!-- Section 3: Help -->
-      <section class="sidebar-section help-section">
-        <h3 class="section-title" data-i18n="helpTitle">Navigation Help</h3>
-        <div class="help-list">
+      <!-- Section 3: Help (Collapsed by default) -->
+      <section class="sidebar-section help-section collapsed">
+        <h3 class="section-title">
+          <span data-i18n="helpTitle">Navigation Help</span>
+          <svg class="collapse-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </h3>
+        <div class="section-content help-list">
           <div data-i18n="helpRotate">Rotate: Left click + Drag</div>
           <div data-i18n="helpPan">Pan: Right click + Drag</div>
           <div data-i18n="helpZoom">Zoom: Mouse wheel</div>
@@ -198,6 +212,7 @@
   <script src="js/layoutEngine.js"></script>
   <script src="js/warehouseBuilder.js"></script>
   <script src="js/cameraController.js"></script>
+  <script src="js/settingsManager.js"></script>
   <script src="js/uiController.js"></script>
   <script src="js/toolbarClock.js"></script>
   <script src="js/app.js"></script>

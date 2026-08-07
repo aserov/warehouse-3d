@@ -305,4 +305,5 @@ window.Warehouse = window.Warehouse || {};
     renderer.render(scene, camera);
   }
   animate();
+  window.Warehouse.SettingsManager.init();
 })();

@@ -423,7 +423,16 @@ window.Warehouse.UIController = (function() {
       if (Builder && Builder.levelLabels) Builder.levelLabels.forEach(mesh => mesh.visible = e.target.checked);
     });
 
-    // Compass & Zoom Overlay Toggles
+    document.getElementById('toggle-corner-labels')?.addEventListener('change', (e) => {
+      const cornerLabels = window.Warehouse.Builder?.cornerLabels;
+      if (cornerLabels) {
+        cornerLabels.forEach(sprite => {
+          sprite.visible = e.target.checked;
+        });
+      }
+    });
+
+    // Compass, Zoom & Canvas Viewer Overlay Toggles
     document.getElementById('toggle-compass')?.addEventListener('change', (e) => {
       const compassWidget = document.getElementById('compass-widget');
       if (compassWidget) compassWidget.style.display = e.target.checked ? 'flex' : 'none';
@@ -432,6 +441,20 @@ window.Warehouse.UIController = (function() {
     document.getElementById('toggle-zoom')?.addEventListener('change', (e) => {
       const zoomWidget = document.getElementById('zoom-widget');
       if (zoomWidget) zoomWidget.style.display = e.target.checked ? 'flex' : 'none';
+    });
+
+    document.getElementById('toggle-canvas-viewer')?.addEventListener('change', (e) => {
+      const viewerWidget = document.getElementById('canvas-viewer-widget');
+      if (viewerWidget) viewerWidget.style.display = e.target.checked ? 'flex' : 'none';
+    });
+
+    document.querySelectorAll('.sidebar-section .section-title').forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.closest('.sidebar-section');
+        if (section) {
+          section.classList.toggle('collapsed');
+        }
+      });
     });
 
     // Custom Warehouse Dropdown Toggle

@@ -52,7 +52,9 @@ window.Warehouse.i18n.en = {
   showRowLabels: 'Show Row Labels',
   showLevelLabels: 'Show Level Labels',
   showAreaLabels: 'Show Area Labels',
+  showCornerLabels: 'Show Corner Coordinates',
   showCompass: 'Show Compass',
+  showCanvasViewer: 'Show Canvas Viewer',
   showZoom: 'Show Zoom',
   defaultInfoText: 'Click on a cell, row, or area to view details.',
 

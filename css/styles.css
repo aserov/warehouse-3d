@@ -509,6 +509,10 @@ body {
   right: 24px;
   z-index: 20;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
 .view-mode-widget {
@@ -794,4 +798,29 @@ body {
   box-shadow: 0 0 8px rgba(2, 132, 199, 0.5);
 }
 
+/* Collapsible Sidebar Sections */
+.sidebar-section .section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  padding-bottom: 8px;
+}
 
+.sidebar-section .section-title:hover {
+  opacity: 0.85;
+}
+
+.sidebar-section .collapse-icon {
+  transition: transform 0.2s ease;
+}
+
+/* Arrow rotation & content hiding for collapsed state */
+.sidebar-section.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.sidebar-section.collapsed .section-content {
+  display: none;
+}

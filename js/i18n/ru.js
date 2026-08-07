@@ -52,7 +52,9 @@ window.Warehouse.i18n.ru = {
   showRowLabels: 'Отображать ряды',
   showLevelLabels: 'Отображать ярусы',
   showAreaLabels: 'Показать зоны',
+  showCornerLabels: 'Показывать координаты углов',
   showCompass: 'Показывать компас',
+  showCanvasViewer: 'Показывать 2D \ 3D',
   showZoom: 'Показывать зум',
   defaultInfoText: 'Кликните на ячейку, ряд или зону для просмотра деталей.',
 

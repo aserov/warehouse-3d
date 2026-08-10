@@ -147,8 +147,12 @@ window.Warehouse.Utils = {
     return new THREE.Mesh(geometry, material);
   },
 
-  createFloorLabelMesh(text, color, width = 60, height = 20, fontSize = 140) {
+createFloorLabelMesh(text, color, height = 20, fontSize = 140, explicitWidth = null) {
     const texture = this.createTextTexture(text, color, fontSize);
+    const img = texture.image;
+    const aspectRatio = (img && img.height) ? (img.width / img.height) : 3;
+    const width = explicitWidth || (height * aspectRatio);
+
     const geometry = new THREE.PlaneGeometry(width, height);
     const material = new THREE.MeshBasicMaterial({
       map: texture,

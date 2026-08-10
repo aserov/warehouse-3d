@@ -2,7 +2,7 @@ window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.CONFIG = {
   // --- Language Settings ---
-  defaultLang: 'en', // 'ru' | 'en'
+  defaultLang: 'ru', // 'ru' | 'en'
 
   // --- Camera & View Controls ---
   camera: {

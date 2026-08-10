@@ -1,4 +1,4 @@
-window.Warehouse = window.Warehouse || {};
+﻿window.Warehouse = window.Warehouse || {};
 
 window.Warehouse.UIController = (function() {
   const { CONFIG, Utils, Builder, CameraController } = window.Warehouse;
@@ -275,7 +275,7 @@ window.Warehouse.UIController = (function() {
       floorMenu.appendChild(item);
     });
 
-    currentText.textContent = floors.length > 0 ? `${floorPrefix} ${activeFloor}` : '—';
+    currentText.textContent = floors.length > 0 ? `${floorPrefix} ${activeFloor}` : '';
   }
 
   /**
@@ -292,7 +292,7 @@ window.Warehouse.UIController = (function() {
     areaMenu.innerHTML = '';
 
     const allAreasText = t("allAreas");
-    const areaPrefix = t("area");;
+    const areaPrefix = t("area");
 
     // Default "All Areas" option
     const allOption = document.createElement('div');
@@ -464,6 +464,33 @@ window.Warehouse.UIController = (function() {
   }
 
   /**
+   * Toggles icon states and triggers scene resize when entering/exiting Fullscreen mode.
+   */
+  function onFullscreenChange() {
+    const fullscreenBtn = document.getElementById('btn-fullscreen');
+    if (!fullscreenBtn) return;
+
+    const isFullscreen = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+
+    const iconExpand = fullscreenBtn.querySelector('.icon-expand');
+    const iconCompress = fullscreenBtn.querySelector('.icon-compress');
+
+    if (isFullscreen) {
+      if (iconExpand) iconExpand.style.display = 'none';
+      if (iconCompress) iconCompress.style.display = 'block';
+      fullscreenBtn.classList.add('active');
+    } else {
+      if (iconExpand) iconExpand.style.display = 'block';
+      if (iconCompress) iconCompress.style.display = 'none';
+      fullscreenBtn.classList.remove('active');
+    }
+
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 50);
+  }
+
+  /**
    * Binds UI control events (toggles, camera views, custom dropdown listeners, cell search).
    */
   function initEvents() {
@@ -517,6 +544,30 @@ window.Warehouse.UIController = (function() {
         }
       });
     });
+
+    // Fullscreen Toggle Event Listener
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+    btnFullscreen?.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const targetContainer = document.documentElement; 
+        if (targetContainer) {
+          if (targetContainer.requestFullscreen) {
+            targetContainer.requestFullscreen();
+          } else if (targetContainer.webkitRequestFullscreen) { /* Safari */
+            targetContainer.webkitRequestFullscreen();
+          }
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        }
+      }
+    });
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
 
     // Custom Warehouse Dropdown Toggle
     const warehouseSelect = document.getElementById('custom-warehouse-select');
@@ -607,10 +658,6 @@ window.Warehouse.UIController = (function() {
     });
 
     btnReset?.addEventListener('click', () => {
-      window.Warehouse.CameraController?.resetView();
-    });
-
-    btnReset?.addEventListener('click', () => {
       closeAllDropdowns();
 
       // Clear search input
@@ -625,7 +672,6 @@ window.Warehouse.UIController = (function() {
       }
 
       // 2. Reset UI text and zone list
-      const lang = (CONFIG && CONFIG.defaultLang) || 'ru';
       const currentAreaText = document.getElementById('area-current-text');
       if (currentAreaText) currentAreaText.textContent = t('allAreas');
 

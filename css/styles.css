@@ -82,6 +82,67 @@ body {
   display: block;
 }
 
+/* Fullscreen Mode Overrides */
+:fullscreen #top-toolbar,
+:-webkit-full-screen #top-toolbar {
+  display: none !important;
+}
+
+:fullscreen #main-layout,
+:-webkit-full-screen #main-layout {
+  height: 100vh !important;
+}
+
+:fullscreen #canvas-container,
+:-webkit-full-screen #canvas-container {
+  width: 100vw !important;
+  height: 100vh !important;
+  flex: 1 1 100% !important;
+}
+
+:fullscreen #sidebar,
+:-webkit-full-screen #sidebar {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+}
+
+:fullscreen .sidebar-section:not(.info-section),
+:-webkit-full-screen .sidebar-section:not(.info-section) {
+  display: none !important;
+}
+
+:fullscreen .info-section,
+:-webkit-full-screen .info-section {
+  pointer-events: auto !important;
+  width: 320px;
+  background: rgba(22, 28, 42, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+:fullscreen .info-section:empty,
+:fullscreen .info-section:has(.info-content:empty),
+:-webkit-full-screen .info-section:empty,
+:-webkit-full-screen .info-section:has(.info-content:empty) {
+  display: none !important;
+}
+
 /* Compass Widget (Unified Capsule Frame) */
 .compass-widget {
   display: flex;
@@ -881,31 +942,47 @@ body {
   filter: drop-shadow(-12px -8px 20px rgba(0, 0, 0, 0.4));
 }
 
-/* Exit hint UI */
+/* Exit FPS mode hint container */
 .fps-hint {
   position: absolute;
-  bottom: 24px;
+  bottom: 24px; /* Lowered to align perfectly with the bottom toolbar */
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px; /* Matching zoom-widget pill shape */
+  background: rgba(15, 23, 42, 0.85); /* Exact match to zoom-widget background */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.25); /* Exact match to zoom-widget border */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 8px rgba(56, 189, 248, 0.15); /* Shared glow shadow */
   color: #f8fafc;
-  padding: 8px 18px;
-  border-radius: 20px;
   font-size: 13px;
+  font-weight: 500;
   font-family: inherit;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  z-index: 1000;
+  white-space: nowrap;
 }
 
+/* Key badge styling for ESC button */
+.fps-hint .fps-hint-esc,
 .fps-hint kbd {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 189, 248, 0.12); /* Subtle blue tint background */
+  color: #38bdf8; /* Accent blue text color */
+  border: 1px solid rgba(56, 189, 248, 0.4); /* Matching blue border */
+  border-radius: 6px;
+  padding: 2px 7px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.2); /* Soft ambient glow */
 }
 
 /* Idle breathing animation */

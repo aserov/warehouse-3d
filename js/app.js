@@ -54,7 +54,7 @@ window.Warehouse = window.Warehouse || {};
             metalness: 0.5,
             emissive: 0x333300
           });
-        } else if (type === 'area' || type === 'row') {
+        } else if (type === 'area' || type === 'row' || type === 'floor') {
           const highlightMat = mesh.material.clone();
           if (highlightMat.color) {
             highlightMat.color.setHex(colors.selection || 0xfadb14);
@@ -62,10 +62,13 @@ window.Warehouse = window.Warehouse || {};
           if (highlightMat.emissive) {
             highlightMat.emissive.setHex(0x444400);
           }
-          mesh.material = highlightMat;
-
-          mesh.scale.multiplyScalar(1.15);
+          //mesh.material = highlightMat;
+          mesh.scale.multiplyScalar(1.3);
         }
+        else if (type === 'level') {
+         mesh.scale.multiplyScalar(1.3);
+       }
+
       }
 
       if (mesh.userData && UIController && UIController.displayInfo) {
@@ -78,15 +81,31 @@ window.Warehouse = window.Warehouse || {};
   window.Warehouse.Selection = Selection;
 
   // --- Pointer Interaction Handler ---
+  let pointerDownPos = { x: 0, y: 0 };
+
   function onPointerDown(event) {
+    // Record initial coordinates on press to differentiate between a click and camera drag
+    pointerDownPos = { x: event.clientX, y: event.clientY };
+  }
+
+  function onPointerUp(event) {
+    // Ignore clicks on UI overlays
     if (
       event.target.closest('#sidebar') ||
       event.target.closest('#top-toolbar') ||
       event.target.closest('.canvas-controls-left') ||
       event.target.closest('.canvas-controls-right') ||
       event.target.closest('.search-dropdown-menu') ||
-      event.target.closest('.floor-dropdown-menu')
+      event.target.closest('.floor-dropdown-menu') ||
+      event.target.closest('.fps-hint')
     ) return;
+
+    // Calculate distance moved during interaction
+    const deltaX = Math.abs(event.clientX - pointerDownPos.x);
+    const deltaY = Math.abs(event.clientY - pointerDownPos.y);
+
+    // If mouse moved more than 5px, it was a camera rotation/pan drag — do not alter selection
+    if (deltaX > 5 || deltaY > 5) return;
 
     const container = document.getElementById('canvas-container');
     if (!container) return;
@@ -105,11 +124,21 @@ window.Warehouse = window.Warehouse || {};
         clickedMesh = clickedMesh.parent;
       }
 
-      Selection.select(clickedMesh);
-    } else {
-      Selection.clear();
+      // Only switch selection if an actual interactive element (cell, row, area, level) is clicked.
+      // Clicks on floor or background are ignored to keep current selection active.
+      if (
+        clickedMesh &&
+        clickedMesh.userData &&
+        ['cell', 'row', 'area', 'level'].includes(clickedMesh.userData.type)
+      ) {
+        Selection.select(clickedMesh);
+      }
     }
   }
+
+  // Register both pointerdown and pointerup to track click drag status correctly
+  window.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointerup', onPointerUp);
 
   // --- Navigation Controls Binding ---
   function initNavigationControls() {
@@ -134,8 +163,6 @@ window.Warehouse = window.Warehouse || {};
 
   UIController.initEvents();
   initNavigationControls();
-
-  window.addEventListener('pointerdown', onPointerDown);
 
   document.addEventListener('DOMContentLoaded', () => {
     UIController.applyTranslations();

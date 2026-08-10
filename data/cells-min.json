@@ -75,6 +75,7 @@
               "row": 1,
               "rowName": "MF-01",
               "direction": "LTR",
+              "align": "bottom",
               "measurement": "m",
               "polygon": [
                 {
@@ -422,6 +423,32 @@
           "area": 3,
           "areaName": "RB",
           "floor": 1,
+          "polygon": [
+            {
+              "x": 0,
+              "z": 180
+            },
+            {
+              "x": 280,
+              "z": 180
+            },
+            {
+              "x": 280,
+              "z": 260
+            },
+            {
+              "x": 80,
+              "z": 260
+            },
+            {
+              "x": 80,
+              "z": 520
+            },
+            {
+              "x": 0,
+              "z": 520
+            }
+          ],
           "rows": [
             {
               "row": 1,
@@ -631,24 +658,1668 @@
                   ]
                 }
               ]
+            },
+            {
+              "row": 2,
+              "rowName": "RB-02",
+              "direction": "RTL",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 10,
+                  "z": 230
+                },
+                {
+                  "x": 270,
+                  "z": 230
+                },
+                {
+                  "x": 270,
+                  "z": 245
+                },
+                {
+                  "x": 10,
+                  "z": 245
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "RB-02-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-02-01-01",
+                      "measurement": "mm",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-02-01-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-02-01-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-02-01-04",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-02-01-05",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-02-01-06",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-02-01-07",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-02-02-08",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-02-02-09",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 0
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-02-02-10",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "RB-02-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-02-02-01",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-02-02-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-02-02-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-02-02-04",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-02-02-05",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-02-02-06",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-02-02-07",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-02-02-08",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-02-02-09",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 3,
+                  "levelName": "RB-02-03",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-02-03-01",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-02-03-02",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-02-03-03",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 0
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-02-03-04",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-02-03-05",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-02-03-06",
+                      "width": 20000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "row": 3,
+              "rowName": "RB-03",
+              "direction": "TTB",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 10,
+                  "z": 260
+                },
+                {
+                  "x": 25,
+                  "z": 260
+                },
+                {
+                  "x": 25,
+                  "z": 500
+                },
+                {
+                  "x": 10,
+                  "z": 500
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "RB-03-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-03-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-03-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-03-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-03-01-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-03-01-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-03-01-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-03-01-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-03-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-03-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 0
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-03-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RB-03-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RB-03-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 13,
+                      "number": "RB-03-02-13",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "RB-03-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-03-02-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-03-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-03-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-03-02-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-03-02-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-03-02-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-03-02-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-03-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-03-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-03-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RB-03-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RB-03-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 3,
+                  "levelName": "RB-03-03",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-03-03-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-03-03-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-03-03-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-03-03-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-03-03-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-03-03-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-03-03-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-03-03-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-03-03-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-03-03-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "row": 4,
+              "rowName": "RB-04",
+              "direction": "TTB",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 40,
+                  "z": 260
+                },
+                {
+                  "x": 55,
+                  "z": 260
+                },
+                {
+                  "x": 55,
+                  "z": 510
+                },
+                {
+                  "x": 40,
+                  "z": 510
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "RB-04-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-04-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-04-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-04-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-04-01-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-04-01-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-04-01-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-04-01-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-04-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-04-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-04-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RB-04-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RB-04-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 13,
+                      "number": "RB-04-02-13",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 14,
+                      "number": "RB-04-02-14",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 15,
+                      "number": "RB-04-02-15",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "RB-04-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-04-02-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-04-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-04-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-04-02-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-04-02-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-04-02-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-04-02-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-04-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-04-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-04-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RB-04-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RB-04-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 3,
+                  "levelName": "RB-04-03",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RB-04-03-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RB-04-03-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RB-04-03-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RB-04-03-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RB-04-03-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RB-04-03-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RB-04-03-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RB-04-03-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RB-04-03-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RB-04-03-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
             }
-          ],
+          ]
+        },
+        {
+          "area": 6,
+          "areaName": "RR",
+          "floor": 1,
           "polygon": [
             {
               "x": 0,
-              "z": 180
-            },
-            {
-              "x": 280,
-              "z": 180
-            },
-            {
-              "x": 280,
-              "z": 520
+              "z": 620
             },
             {
               "x": 0,
               "z": 520
+            },
+            {
+              "x": 80,
+              "z": 520
+            },
+            {
+              "x": 80,
+              "z": 260
+            },
+            {
+              "x": 280,
+              "z": 260
+            },
+            {
+              "x": 280,
+              "z": 620
+            }
+          ],
+          "rows": [
+            {
+              "row": 3,
+              "rowName": "RR-01",
+              "direction": "BTT",
+              "align": "center",
+              "measurement": "m",
+              "polygon": [
+                {
+                  "x": 240,
+                  "z": 270
+                },
+                {
+                  "x": 260,
+                  "z": 270
+                },
+                {
+                  "x": 260,
+                  "z": 610
+                },
+                {
+                  "x": 240,
+                  "z": 610
+                }
+              ],
+              "levels": [
+                {
+                  "level": 1,
+                  "levelName": "RR-01-01",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RR-01-01-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RR-01-01-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RR-01-01-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RR-01-01-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RR-01-01-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RR-01-01-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RR-01-01-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RR-01-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RR-01-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 0
+                    },
+                    {
+                      "place": 10,
+                      "number": "RR-01-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RR-01-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RR-01-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 13,
+                      "number": "RR-01-02-13",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 2,
+                  "levelName": "RR-01-02",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RR-01-02-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RR-01-02-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RR-01-02-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RR-01-02-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RR-01-02-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RR-01-02-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RR-01-02-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RR-01-02-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RR-01-02-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RR-01-02-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 11,
+                      "number": "RR-01-02-11",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 12,
+                      "number": "RR-01-02-12",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                },
+                {
+                  "level": 3,
+                  "levelName": "RR-01-03",
+                  "cells": [
+                    {
+                      "place": 1,
+                      "number": "RR-01-03-01",
+                      "measurement": "mm",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 2,
+                      "number": "RR-01-03-02",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 3,
+                      "number": "RR-01-03-03",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 4,
+                      "number": "RR-01-03-04",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 5,
+                      "number": "RR-01-03-05",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 6,
+                      "number": "RR-01-03-06",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 7,
+                      "number": "RR-01-03-07",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 8,
+                      "number": "RR-01-03-08",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 9,
+                      "number": "RR-01-03-09",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    },
+                    {
+                      "place": 10,
+                      "number": "RR-01-03-10",
+                      "width": 10000,
+                      "height": 10000,
+                      "depth": 10000,
+                      "measurement": "mm",
+                      "weight": 10000,
+                      "freeWeight": 10000,
+                      "active": 1
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -670,11 +2341,11 @@
         },
         {
           "x": 400,
-          "z": 600
+          "z": 620
         },
         {
           "x": 0,
-          "z": 600
+          "z": 620
         }
       ],
       "areas": [
@@ -705,7 +2376,7 @@
         {
           "area": 5,
           "areaName": "RR",
-          "floor": 1,
+          "floor": 2,
           "polygon": [
             {
               "x": 0,

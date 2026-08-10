@@ -331,13 +331,22 @@ window.Warehouse.Builder = (function() {
         // vertically (along Z), in which case width/depth are swapped for positioning
         // purposes (the cell's depth becomes its size along the layout axis).
         const validDirections = ['LTR', 'RTL', 'TTB', 'BTT'];
-        let direction = rowData.direction;
+        const validAlignments = ['left', 'right', 'top', 'bottom', 'center'];
+
+        let direction = String(rowData.direction || '').toUpperCase();
         if (!validDirections.includes(direction)) {
           console.warn(`[Warehouse] Row "${rowData.rowName}" has missing/invalid direction "${rowData.direction}", defaulting to LTR.`);
           direction = 'LTR';
         }
         const isVertical = direction === 'TTB' || direction === 'BTT';
         const orientation = isVertical ? 'vertical' : 'horizontal';
+
+        // Normalize cross-axis alignment string (handles case-insensitive values)
+        // Defaults: 'top' for horizontal rows, 'left' for vertical rows
+        let align = String(rowData.align || '').toLowerCase();
+        if (!validAlignments.includes(align)) {
+          align = isVertical ? 'left' : 'top';
+        }
 
         const rowCells = [];
         rowData.levels.forEach(l => rowCells.push(...l.cells));
@@ -351,6 +360,7 @@ window.Warehouse.Builder = (function() {
           totalLevels: rowData.levels.length,
           direction,
           orientation,
+          align,
           polygonArea: LayoutEngine.getPolygonArea(rowData.polygon),
           usedArea: 0, // filled in below once ground-level footprint is known
           ...rowMetrics
@@ -368,8 +378,7 @@ window.Warehouse.Builder = (function() {
           const levelGroup = new THREE.Group();
           levelGroup.name = `Level_${levelData.levelName}`;
 
-          // Level summary/userData - not clickable yet, but prepared for later so we don't
-          // have to revisit this once level click/summary UI is wired up.
+          // Level summary/userData - prepared for interaction and summary panels
           const levelMetrics = Utils.calculateMetrics(levelData.cells);
           const levelSummary = {
             type: 'level',
@@ -379,6 +388,7 @@ window.Warehouse.Builder = (function() {
             floor: areaData.floor,
             direction,
             orientation,
+            align,
             ...levelMetrics
           };
           levelGroup.userData = levelSummary;
@@ -402,8 +412,7 @@ window.Warehouse.Builder = (function() {
             levelMaxHeight = Math.max(levelMaxHeight, h);
 
             // Size along the layout axis is always the cell's width, and the cross-axis
-            // size is always its depth - this does NOT depend on orientation. What changes
-            // for vertical rows is only which physical axis (X or Z) each one is applied to.
+            // size is always its depth - this does NOT depend on orientation.
             const axisSize = w;
             const crossSize = d;
             const cellFootprint = axisSize * crossSize;
@@ -414,26 +423,44 @@ window.Warehouse.Builder = (function() {
 
             let posX, posZ;
             if (!isVertical) {
-              // Horizontal: axis = X, cross = Z anchored at the row's top edge (minZ).
+              // --- HORIZONTAL ROW: Layout along X-axis, Cross-axis along Z-axis ---
               posX = direction === 'LTR'
                 ? rowBounds.minX + offsetAlongAxis + axisSize / 2
                 : rowBounds.maxX - offsetAlongAxis - axisSize / 2;
-              posZ = rowBounds.minZ + crossSize / 2;
+
+              // Position along Z-axis based on alignment (top, bottom, or center)
+              if (align === 'bottom') {
+                posZ = rowBounds.maxZ - crossSize / 2;
+              } else if (align === 'center') {
+                // Centering levels and cells directly in the middle of row bounds depth
+                posZ = (rowBounds.minZ + rowBounds.maxZ) / 2;
+              } else {
+                // Default 'top' (anchored to minZ)
+                posZ = rowBounds.minZ + crossSize / 2;
+              }
             } else {
-              // Vertical: axis = Z, cross = X anchored at the row's left edge (minX).
+              // --- VERTICAL ROW: Layout along Z-axis, Cross-axis along X-axis ---
               posZ = direction === 'TTB'
                 ? rowBounds.minZ + offsetAlongAxis + axisSize / 2
                 : rowBounds.maxZ - offsetAlongAxis - axisSize / 2;
-              posX = rowBounds.minX + crossSize / 2;
+
+              // Position along X-axis based on alignment (left, right, or center)
+              if (align === 'right') {
+                posX = rowBounds.maxX - crossSize / 2;
+              } else if (align === 'center') {
+                // Centering levels and cells directly in the middle of row bounds width
+                posX = (rowBounds.minX + rowBounds.maxX) / 2;
+              } else {
+                // Default 'left' (anchored to minX)
+                posX = rowBounds.minX + crossSize / 2;
+              }
             }
 
             if (cellIdx === 0) firstCellPos = { x: posX, z: posZ };
             lastCellPos = { x: posX, z: posZ };
 
             const baseOpacity = cellData.active ? 0.9 : 0.4;
-            // Box geometry dimensions follow the same axis mapping as the position above:
-            // for vertical rows the axis size (width) lands on Z and the cross size (depth)
-            // lands on X, so the physical box must be built with those swapped too.
+            // Box geometry dimensions: swapped for vertical rows to match physical orientation
             const boxSizeX = isVertical ? crossSize : axisSize;
             const boxSizeZ = isVertical ? axisSize : crossSize;
             const geometry = new THREE.BoxGeometry(boxSizeX, h, boxSizeZ);
@@ -456,6 +483,7 @@ window.Warehouse.Builder = (function() {
               levelName: levelData.levelName,
               direction,
               orientation,
+              align,
               footprint: cellFootprint,
               initialOpacity: baseOpacity
             };
@@ -467,23 +495,14 @@ window.Warehouse.Builder = (function() {
           const levelText = `${levelData.level}`;
           const labelCenterY = currentYOffset + (levelMaxHeight / 2);
 
-          // Fill in the fields that could only be computed once the cells loop above
-          // finished (levelSummary and levelGroup.userData already reference this same
-          // object, so this update is visible to both). Done before the label meshes
-          // below are created so their own userData copies pick up the final values.
+          // Update level summary with calculated metrics
           levelSummary.level = levelData.level;
           levelSummary.footprint = levelFootprint;
           levelSummary.maxCellHeight = levelMaxHeight;
           levelFootprints[levelData.level] = levelFootprint;
 
-          // Pick the spatial extremes regardless of which end place=1 started from,
-          // so labels always sit on the actual left/right (or top/bottom) edge.
+          // Position level side labels anchored to the centered cell positions (firstCellPos / lastCellPos)
           if (firstCellPos && lastCellPos) {
-            // Row polygons are intentionally allowed to be larger than the sum of their
-            // cells, so labels must sit at the real edge of the placed cells, not at the
-            // row polygon's bounds. `cursor` still holds "total axis length + one trailing
-            // gap" after the loop above, so subtract that trailing gap to get the true
-            // far edge of the last placed cell.
             const totalLayoutLength = cursor - CONFIG.cellGap;
 
             if (!isVertical) {
@@ -495,6 +514,7 @@ window.Warehouse.Builder = (function() {
               const leftEdgeX = Math.min(startEdgeX, endEdgeX);
               const rightEdgeX = Math.max(startEdgeX, endEdgeX);
 
+              // Side level labels take cross-axis Z directly from centered/aligned cell positions
               const leftLevelMesh = Utils.createSideLevelLabel(levelText, 6, 6);
               leftLevelMesh.rotation.y = -Math.PI / 2;
               leftLevelMesh.position.set(leftEdgeX - 0.05, labelCenterY, leftPos.z);
@@ -511,9 +531,7 @@ window.Warehouse.Builder = (function() {
               levelLabels.push(rightLevelMesh);
               interactiveObjects.push(rightLevelMesh);
             } else {
-              // Vertical rows: labels go on the top/bottom edge instead of left/right, so
-              // no side rotation is applied (the plane's default facing already reads
-              // correctly when approached along Z).
+              // Vertical rows: side level labels take cross-axis X directly from centered/aligned cell positions
               const topPos = firstCellPos.z <= lastCellPos.z ? firstCellPos : lastCellPos;
               const bottomPos = firstCellPos.z <= lastCellPos.z ? lastCellPos : firstCellPos;
 
@@ -551,12 +569,11 @@ window.Warehouse.Builder = (function() {
         areaSummary.usedArea += rowSummary.usedArea;
         areaSummary.rowsPolygonArea += rowSummary.polygonArea;
 
-        // Draw the row's own shape (fill + border + per-vertex corner labels) from its
-        // polygon, drawn as-is even if it extends beyond the area or building outline.
+        // Draw the row's own shape (fill + border + per-vertex corner labels) from its polygon.
         createRowShape(rowGroup, rowData.polygon, areaColor);
 
         // Row title: placed to the right of the row polygon's bottom-right corner (maxX, maxZ).
-        const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 36, 12, 140);
+        const floorRowLabel = Utils.createFloorLabelMesh(rowData.rowName, areaColor, 12, 140, 36);
 
         const labelBox = new THREE.Box3().setFromObject(floorRowLabel);
         const labelHeight = labelBox.max.z - labelBox.min.z;
@@ -576,15 +593,25 @@ window.Warehouse.Builder = (function() {
       });
 
       // Draw the area's own shape (fill + border + per-vertex corner labels) from its polygon.
-      // Drawn regardless of whether it fits inside the building outline - misconfiguration
-      // should be visible, not silently clipped.
       createAreaShape(areaGroup, areaData.polygon, areaColor);
 
-      const areaCenterX = (bounds.minX + bounds.maxX) / 2;
+      const bottomVertices = areaData.polygon.filter(
+        (p) => Math.abs(p.z - bounds.maxZ) < 0.1
+      );
+
+      const bottomMinX = bottomVertices.length
+        ? Math.min(...bottomVertices.map((p) => p.x))
+        : bounds.minX;
+      const bottomMaxX = bottomVertices.length
+        ? Math.max(...bottomVertices.map((p) => p.x))
+        : bounds.maxX;
+
+      const areaBottomCenterX = (bottomMinX + bottomMaxX) / 2;
 
       const labelText = `${t('area').toUpperCase()} ${areaData.areaName}`;
-      const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 64, 16, 150);
-      areaTitleMesh.position.set(areaCenterX, 0.10, bounds.maxZ - CONFIG.areaPadding / 2);
+      const areaTitleMesh = Utils.createFloorLabelMesh(labelText, areaColor, 16, 150);
+      
+      areaTitleMesh.position.set(areaBottomCenterX, 0.10, bounds.maxZ - CONFIG.areaPadding / 2);
       areaTitleMesh.userData = { ...areaSummary, initialOpacity: 1.0 };
 
       areaGroup.add(areaTitleMesh);
@@ -604,10 +631,7 @@ window.Warehouse.Builder = (function() {
       floorTotalVolume += areaMetrics.totalVolume;
     });
 
-    // Floor summary combines warehouse + floor identity (since only one floor is ever
-    // rendered at a time, see the docstring above) with totals aggregated across every
-    // area drawn on it. Not tied to a clickable 3D object, so it's exposed separately
-    // via getFloorSummary() rather than through userData on a mesh.
+    // Floor summary combines warehouse + floor identity with aggregated totals
     floorSummary = {
       type: 'floor',
       warehouseId: data.warehouse,
@@ -627,16 +651,27 @@ window.Warehouse.Builder = (function() {
     };
     warehouseGroup.userData = floorSummary;
 
-    // Building title label: warehouseName + floor number, placed outside the building
-    // footprint on its bottom edge (maxZ), centered horizontally. Clickable, shows the
-    // same floorSummary as the building outline itself isn't a single clickable mesh.
+    // Building title label
     const buildingBounds = LayoutEngine.getPolygonBounds(CONFIG.buildingPolygon);
-    const buildingCenterX = (buildingBounds.minX + buildingBounds.maxX) / 2;
     const buildingColorHex = `#${colors.buildingWall.toString(16).padStart(6, '0')}`;
 
+    const bottomVertices = CONFIG.buildingPolygon.filter(
+      (p) => Math.abs(p.z - buildingBounds.maxZ) < 0.1
+    );
+
+    const bottomMinX = bottomVertices.length
+      ? Math.min(...bottomVertices.map((p) => p.x))
+      : buildingBounds.minX;
+    const bottomMaxX = bottomVertices.length
+      ? Math.max(...bottomVertices.map((p) => p.x))
+      : buildingBounds.maxX;
+
+    const bottomCenterX = (bottomMinX + bottomMaxX) / 2;
+
     const warehouseLabelText = `${floorSummary.warehouseName || ''} (${t('floor')} ${floorSummary.floor ?? '—'})`;
-    const warehouseTitleMesh = Utils.createFloorLabelMesh(warehouseLabelText, buildingColorHex, 90, 20, 150);
-    warehouseTitleMesh.position.set(buildingCenterX, 0.11, buildingBounds.maxZ + 15);
+    const warehouseTitleMesh = Utils.createFloorLabelMesh(warehouseLabelText, buildingColorHex, 20, 120);
+
+    warehouseTitleMesh.position.set(bottomCenterX, 0.11, buildingBounds.maxZ + 10);
     warehouseTitleMesh.userData = { ...floorSummary, initialOpacity: 1.0 };
 
     warehouseGroup.add(warehouseTitleMesh);
@@ -683,9 +718,7 @@ window.Warehouse.Builder = (function() {
   }
 
   /**
-   * Returns the summary for the currently rendered floor (warehouse + floor combined).
-   * Reassigned wholesale on every buildWarehouse() call, so exposed as a getter rather
-   * than a stable reference - null if buildWarehouse hasn't run yet or found no areas.
+   * Returns the summary for the currently rendered floor.
    */
   function getFloorSummary() {
     return floorSummary;

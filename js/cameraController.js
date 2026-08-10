@@ -21,7 +21,6 @@ window.Warehouse.CameraController = (function() {
   }
 
   /* --- FPS Mode Integration --- */
-  /* --- FPS Mode Integration --- */
   function enterFPSMode() {
     if (isFPSView) return;
 
@@ -166,14 +165,6 @@ window.Warehouse.CameraController = (function() {
     fitCameraToWarehouse();
   }
 
-  function toggle2DView() {
-    if (is2DView) {
-      set3DView();
-    } else {
-      set2DView();
-    }
-  }
-
   /* --- Compass & Directional Rotation Logic --- */
   function updateCompass() {
     const compassArrow = document.getElementById('compass-arrow');
@@ -239,7 +230,6 @@ window.Warehouse.CameraController = (function() {
 
   return {
     fitCameraToWarehouse,
-    toggle2DView,
     set2DView,
     set3DView,
     enterFPSMode,

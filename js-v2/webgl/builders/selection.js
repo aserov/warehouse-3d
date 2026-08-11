@@ -9,16 +9,19 @@ WH.webgl.SelectionManager = class {
     this.onChange = onChange;
   }
 
-  clear() {
+  restoreVisual() {
     if (this.selectedObject) {
       const mesh = this.selectedObject;
       if (this.originalMaterial) mesh.material = this.originalMaterial;
       if (this.originalScale) mesh.scale.copy(this.originalScale);
     }
-
     this.selectedObject = null;
     this.originalMaterial = null;
     this.originalScale = null;
+  }
+
+  clear() {
+    this.restoreVisual();
     this.onChange(null);
   }
 
@@ -30,10 +33,13 @@ WH.webgl.SelectionManager = class {
 
     if (this.selectedObject === object) return;
 
-    this.clear();
+    this.restoreVisual();
 
     const userData = object.userData;
-    if (!userData?.type) return;
+    if (!userData?.type) {
+      this.onChange(null);
+      return;
+    }
 
     const mesh = object;
     this.selectedObject = object;

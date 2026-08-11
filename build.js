@@ -51,10 +51,18 @@ const files = [
   'js-v2/canvas/controls/viewModeControl.js',
   'js-v2/canvas/sceneSync.js',
 
+  'js-v2/toolbar/toolbarClock.js',
   'js-v2/sidebar/settingsToggles.js',
   'js-v2/sidebar/settingsStore.js',
   'js-v2/sidebar/accordion.js',
-  'js-v2/toolbar/toolbarClock.js',
+
+  'js-v2/sidebar/info/helper.js',
+  'js-v2/sidebar/info/infoFloor.js',
+  'js-v2/sidebar/info/infoArea.js',
+  'js-v2/sidebar/info/infoRow.js',
+  'js-v2/sidebar/info/infoCell.js',
+  'js-v2/sidebar/info/infoLevel.js',
+  'js-v2/sidebar/infoPanel.js',
 
   'js-v2/app.js'
 ];

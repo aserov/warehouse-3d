@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (WH.ToolbarClock) WH.ToolbarClock.start();
   if (WH.sidebar.SettingsToggles) WH.sidebar.SettingsToggles.init();
   if (WH.sidebar.Accordion) WH.sidebar.Accordion.init();
+  if (WH.sidebar.InfoPanel) WH.sidebar.InfoPanel.init();
   if (WH.canvas.FiltersDropdown) WH.canvas.FiltersDropdown.init();
   if (WH.canvas.CellSearch) WH.canvas.CellSearch.init();
 

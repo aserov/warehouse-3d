@@ -33,15 +33,14 @@ WH.canvas.ViewModeControl = (function() {
   }
 
   function bindFullscreen() {
-    const container = document.getElementById('canvas-container');
+    const fullscreenRoot = document.getElementById('main-layout'); // а не canvas-container
     document.getElementById('btn-fullscreen')?.addEventListener('click', () => {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {
-        container?.requestFullscreen();
+        fullscreenRoot?.requestFullscreen();
       }
     });
-
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
   }
 

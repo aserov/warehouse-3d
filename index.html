@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warehouse 3D</title>
 
-  <!--
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/toolbar.css">
   <link rel="stylesheet" href="css/sidebar.css">
@@ -14,8 +13,10 @@
   <link rel="stylesheet" href="css/controls.css">
   <link rel="stylesheet" href="css/fps.css">
   <link rel="stylesheet" href="css/components.css">
-  -->
-   <link rel="stylesheet" href="dist/warehouse.min.css">
+
+  <!--
+  <link rel="stylesheet" href="dist/warehouse.min.css">
+    -->
 </head>
 <body>
 
@@ -39,11 +40,11 @@
     <!-- Canvas Area -->
     <main id="canvas-container">
 
-    <!-- Canvas Loader Overlay -->
-    <div id="canvas-loader" class="canvas-loader">
-      <div class="spinner"></div>
-      <span class="loader-text">Loading Warehouse...</span>
-    </div>
+      <!-- Canvas Loader Overlay -->
+      <div id="canvas-loader" class="canvas-loader">
+        <div class="spinner"></div>
+        <span class="loader-text">Loading Warehouse...</span>
+      </div>
 
       <!-- Left Canvas Overlay Controls (Compass & Zoom) -->
       <div class="canvas-controls-left">
@@ -245,7 +246,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-  <!--
   <script src="js-v2/i18n/ru.js"></script>
   <script src="js-v2/i18n/en.js"></script>
 
@@ -292,14 +292,23 @@
   <script src="js-v2/canvas/controls/viewModeControl.js"></script>
   <script src="js-v2/canvas/sceneSync.js"></script>
 
+  <script src="js-v2/toolbar/toolbarClock.js"></script>
   <script src="js-v2/sidebar/settingsToggles.js"></script>
   <script src="js-v2/sidebar/settingsStore.js"></script>
   <script src="js-v2/sidebar/accordion.js"></script>
-  <script src="js-v2/toolbar/toolbarClock.js"></script>
+
+  <script src="js-v2/sidebar/info/helpers.js"></script>
+  <script src="js-v2/sidebar/info/infoFloor.js"></script>
+  <script src="js-v2/sidebar/info/infoArea.js"></script>
+  <script src="js-v2/sidebar/info/infoRow.js"></script>
+  <script src="js-v2/sidebar/info/infoLevel.js"></script>
+  <script src="js-v2/sidebar/info/infoCell.js"></script>
+  <script src="js-v2/sidebar/infoPanel.js"></script>
 
   <script src="js-v2/app.js"></script>
-  -->
 
+  <!--
   <script src="dist/app.warehouse.min.js"></script>
+  -->
 </body>
 </html>

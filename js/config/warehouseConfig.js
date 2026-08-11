@@ -1,7 +1,7 @@
 window.WH = window.WH || {};
 WH.config = WH.config || {};
 
-WH.config.defaultLang = 'ru'; // `'en' | 'ru'
+WH.config.defaultLang = 'en'; // `'en' | 'ru'
 
 WH.config.WAREHOUSE_CONFIG = {
   camera: {

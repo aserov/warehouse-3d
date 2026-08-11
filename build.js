@@ -39,6 +39,7 @@ const files = [
 
   'js/ui/errorBanner.js',
   'js/ui/canvasLoader.js',
+  'js/ui/canvasVisibility.js',
 
   'js/api/warehouseMock.js',
   'js/api/warehouseApi.js',

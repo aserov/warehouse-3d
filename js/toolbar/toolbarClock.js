@@ -1,6 +1,7 @@
 window.WH = window.WH || {};
+WH.toolbar = WH.toolbar || {};
 
-WH.ToolbarClock = (function() {
+WH.toolbar.Clock = (function() {
   let intervalId = null;
 
   function updateTime() {

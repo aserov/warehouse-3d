@@ -57,7 +57,7 @@ const files = [
   'js/sidebar/settingsStore.js',
   'js/sidebar/accordion.js',
 
-  'js/sidebar/info/helper.js',
+  'js/sidebar/info/helpers.js',
   'js/sidebar/info/infoFloor.js',
   'js/sidebar/info/infoArea.js',
   'js/sidebar/info/infoRow.js',
@@ -68,7 +68,7 @@ const files = [
   'js/app.js'
 ];
 
-console.log('📦 Reading files...');
+console.log('📦 Reading javascript files...');
 
 let combinedCode = '';
 let loadedCount = 0;
@@ -78,6 +78,7 @@ for (const file of files) {
   if (fs.existsSync(filePath)) {
     combinedCode += fs.readFileSync(filePath, 'utf8') + '\n';
     loadedCount++;
+    console.log('📄 Loaded: ' + file);
   } else {
     console.warn('⚠️  File not found: ' + file);
   }
@@ -134,7 +135,7 @@ minify(combinedCode, {
     // Save source map
     if (result.map) {
       fs.writeFileSync('dist/app.warehouse.min.js.map', result.map);
-      console.log('🗺️  Saved: dist/app.warehouse.min.js.map');
+      console.log('🗺️ Saved: dist/app.warehouse.min.js.map');
     }
     
     const minifiedSize = (result.code.length / 1024).toFixed(2);
@@ -142,7 +143,7 @@ minify(combinedCode, {
     
     console.log('✅ Minified: dist/app.warehouse.min.js (' + minifiedSize + ' KB)');
     console.log('📊 ' + (combinedCode.length / 1024).toFixed(2) + 'KB → ' + minifiedSize + 'KB (' + reduction + '% smaller)');
-    console.log('\n✨ Build complete!');
+    console.log('\n✨ Javascript build complete!');
   } else {
     console.error('❌ Minification failed');
   }

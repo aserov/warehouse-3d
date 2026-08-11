@@ -4,7 +4,7 @@ const path = require('path');
 const CleanCSS = require('clean-css');
 
 // IMPORTANT: Order matters! Must match the order in index.html
-const cssFiles = [
+const files = [
   'css/base.css',
   'css/toolbar.css',
   'css/sidebar.css',
@@ -15,24 +15,24 @@ const cssFiles = [
   'css/components.css'
 ];
 
-console.log('📦 Reading CSS files...');
+console.log('📦 Reading css files...');
 
 let combinedCSS = '';
 let loadedCount = 0;
 
-for (const file of cssFiles) {
+for (const file of files) {
   const filePath = path.join(__dirname, file);
   if (fs.existsSync(filePath)) {
     const content = fs.readFileSync(filePath, 'utf8');
     combinedCSS += content + '\n';
     loadedCount++;
-    console.log('✅ Loaded: ' + file);
+    console.log('📄 Loaded: ' + file);
   } else {
     console.warn('⚠️  File not found: ' + file);
   }
 }
 
-console.log('✅ Loaded ' + loadedCount + ' of ' + cssFiles.length + ' files');
+console.log('✅ Loaded ' + loadedCount + ' of ' + files.length + ' files');
 
 const originalSize = (combinedCSS.length / 1024).toFixed(2);
 console.log('📊 Original size: ' + originalSize + ' KB');

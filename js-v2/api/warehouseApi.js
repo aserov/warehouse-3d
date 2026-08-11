@@ -2,7 +2,7 @@ window.WH = window.WH || {};
 WH.api = WH.api || {};
 
 (function() {
-  function mockDelay(ms = 400) {
+  function mockDelay(ms = 5000) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 

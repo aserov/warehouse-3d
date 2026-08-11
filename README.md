@@ -1,6 +1,6 @@
 # 3D Warehouse Visualization System
 
-An interactive 3D/2D warehouse layout viewer built with **Three.js**. It renders warehouse areas, rows, levels, and individual storage cells dynamically from a JSON configuration file (`cells-full.json`).
+An interactive 3D/2D warehouse layout viewer built with **Three.js**. 
 
 ---
 
@@ -9,19 +9,26 @@ An interactive 3D/2D warehouse layout viewer built with **Three.js**. It renders
 The easiest way to launch the application is using the provided batch file:
 
 1. Double-click **`run-warehouse.bat`**.
-2. The local server will start, and your default web browser will automatically open at `http://localhost:3000`.
+2. The local server will start, and your default web browser will automatically open at `http://localhost:3005`.
 
 ---
 
-## 🛠 Manual Setup & Requirements
+## 📦 Build & Minify
 
-Due to browser Security Policies (CORS), modern browsers block `fetch()` requests when loading JSON files directly via the `file://` protocol. A local static web server is required.
+1. Double-click **`run-build-min-js-css.bat`** to build and minify JavaScript and CSS files.
+2. This creates optimized files in the `dist/` folder.
+
+---
+
+## 🌐 Running Without a Server
+
+You can also open `index.html` directly in your browser.
+
+---
 
 ### Prerequisites
 * **Node.js** (v14 or higher) — [Download Node.js](https://nodejs.org/)
 
-### Option: Using Node.js (`npx serve`)
-Run the following command in the project root directory:
-
+### Run with Node.js
 ```bash
-npx serve -l 3000
+npx serve -l 3005

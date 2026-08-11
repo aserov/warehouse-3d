@@ -1,0 +1,15 @@
+{
+  "name": "warehouse-3d",
+  "version": "1.0.0",
+  "description": "Warehouse 3D Viewer",
+  "type": "commonjs",
+  "scripts": {
+    "build": "node build.js",
+    "build:css": "node build-css.js",
+    "build:all": "npm run build && npm run build:css"
+  },
+  "devDependencies": {
+    "terser": "^5.30.0",
+    "clean-css": "^5.3.3"
+  }
+}

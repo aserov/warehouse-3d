@@ -1,7 +1,7 @@
-window.Warehouse = window.Warehouse || {};
-window.Warehouse.i18n = window.Warehouse.i18n || {};
+window.WH = window.WH || {};
+window.WH.i18n = window.WH.i18n || {};
 
-window.Warehouse.i18n.ru = {
+window.WH.i18n.ru = {
   // Приложение
   appTitle: '3D Склад',
 

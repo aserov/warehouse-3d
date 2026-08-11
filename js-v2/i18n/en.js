@@ -1,7 +1,7 @@
-window.Warehouse = window.Warehouse || {};
-window.Warehouse.i18n = window.Warehouse.i18n || {};
+window.WH = window.WH || {};
+window.WH.i18n = window.WH.i18n || {};
 
-window.Warehouse.i18n.en = {
+window.WH.i18n.en = {
   // Application
   appTitle: 'Warehouse 3D',
 

@@ -120,7 +120,7 @@
                 <path d="M2 20V10l10-6 10 6v10H2z"></path>
                 <path d="M9 20v-5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5"></path>
               </svg>
-              <span class="floor-current-text" id="warehouse-current-text">Warehouse</span>
+              <span class="floor-current-text" id="warehouse-current-text"></span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="m6 9 6 6 6-6"/>
               </svg>
@@ -167,7 +167,7 @@
         </div>
       </div>
 
-      <!-- 2D Overlay: Scanner hand + crosshair -->
+      <!-- FPS: Scanner hand + crosshair -->
       <div id="fps-scanner-overlay" class="fps-overlay hidden">
         <!-- Center crosshair dot -->
         <div class="fps-crosshair"></div>
@@ -238,9 +238,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
+<!-- deprecated
   <script src="js/i18n/ru.js"></script>
   <script src="js/i18n/en.js"></script>
-
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/sceneSetup.js"></script>
@@ -252,6 +252,27 @@
   <script src="js/uiController.js"></script>
   <script src="js/toolbarClock.js"></script>
   <script src="js/app.js"></script>
+-->
 
+  <script src="js-v2/i18n/ru.js"></script>
+  <script src="js-v2/i18n/en.js"></script>
+
+  <script src="js-v2/config/enums.js"></script>
+  <script src="js-v2/config/warehouseConfig.js"></script>
+  <script src="js-v2/config/settingsConfig.js"></script>
+
+  <script src="js-v2/utils/color.js"></script>
+  <script src="js-v2/utils/format.js"></script>
+  <script src="js-v2/utils/scale.js"></script>
+  <script src="js-v2/utils/metrics.js"></script>
+  <script src="js-v2/utils/i18n.js"></script>
+  <script src="js-v2/utils/eventBus.js"></script>
+
+  <script src="js-v2/api/warehouseApi.js"></script>
+  <script src="js-v2/toolbar/toolbarClock.js"></script>
+  <script src="js-v2/sidebar/settingsToggles.js"></script>
+  <script src="js-v2/sidebar/settingsStore.js"></script>
+
+  <script src="js-v2/app.js"></script>
 </body>
 </html>

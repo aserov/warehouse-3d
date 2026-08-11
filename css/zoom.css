@@ -1,0 +1,69 @@
+/* Zoom Widget */
+.zoom-widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 170px;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 8px rgba(56, 189, 248, 0.15);
+}
+
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.zoom-btn:hover {
+  color: #ffffff;
+  transform: scale(1.25);
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+}
+
+.zoom-slider-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.zoom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  background: #7dd3fc;
+}

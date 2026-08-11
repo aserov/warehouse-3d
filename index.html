@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warehouse 3D</title>
 
-  <link rel="stylesheet" href="css/styles.css">
+  <!-- Modular CSS Styles -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/toolbar.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/compass.css">
+  <link rel="stylesheet" href="css/zoom.css">
+  <link rel="stylesheet" href="css/controls.css">
+  <link rel="stylesheet" href="css/fps.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
 
@@ -100,8 +108,6 @@
               <input type="text" id="cell-search-input" placeholder="Search cell..." autocomplete="off">
               <button id="search-clear-btn" class="search-clear-btn" type="button" style="display: none;">✕</button>
             </div>
-
-            <!-- Auto-complete Popup Menu -->
             <div class="search-dropdown-menu" id="search-dropdown-menu"></div>
           </div>
 
@@ -131,14 +137,13 @@
                 <polyline points="2 12 12 17 22 12"></polyline>
                 <polyline points="2 17 12 22 22 17"></polyline>
               </svg>
-              <span class="floor-current-text" id="floor-current-text">Floor 1</span>
+              <span class="floor-current-text" id="floor-current-text"></span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="m6 9 6 6 6-6"/>
               </svg>
             </button>
 
-            <div class="floor-dropdown-menu" id="floor-dropdown-menu">
-            </div>
+            <div class="floor-dropdown-menu" id="floor-dropdown-menu"></div>
           </div>
 
           <!-- Custom Area/Zone Dropdown (Quadrants Grid Icon) -->
@@ -150,15 +155,13 @@
                 <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                 <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
               </svg>
-              <span class="floor-current-text" id="area-current-text">All Areas</span>
+              <span class="floor-current-text" id="area-current-text"></span>
               <svg class="floor-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="m6 9 6 6 6-6"/>
               </svg>
             </button>
 
-            <div class="floor-dropdown-menu" id="area-dropdown-menu">
-              <div class="floor-option active" data-value="all">All Areas</div>
-            </div>
+            <div class="floor-dropdown-menu" id="area-dropdown-menu"></div>
           </div>
 
         </div>
@@ -182,6 +185,7 @@
     <!-- Right Sidebar -->
     <aside id="sidebar">
 
+      <!-- Section 1: information (Expanded by default) -->
       <section class="sidebar-section info-section">
         <h3 class="section-title">
           <span data-i18n="infoTitle">Information</span>

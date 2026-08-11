@@ -1,0 +1,79 @@
+/* Compass Widget (Unified Capsule Frame) */
+.compass-widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  padding: 16px 10px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 8px rgba(56, 189, 248, 0.15);
+}
+
+.compass-dial {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compass-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  padding: 2px;
+  line-height: 1;
+}
+
+.compass-btn:hover {
+  color: #ffffff;
+  transform: scale(1.3);
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+}
+
+.compass-btn.btn-n { top: -6px; left: 50%; transform: translateX(-50%); }
+.compass-btn.btn-e { right: -6px; top: 50%; transform: translateY(-50%); }
+.compass-btn.btn-s { bottom: -6px; left: 50%; transform: translateX(-50%); }
+.compass-btn.btn-w { left: -6px; top: 50%; transform: translateY(-50%); }
+
+.compass-center {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border: 2px solid #0284c7;
+  border-radius: 50%;
+  background: rgba(22, 27, 34, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6), 0 0 8px rgba(56, 189, 248, 0.2);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.compass-center:hover {
+  border-color: #38bdf8;
+}
+
+.compass-arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 22px solid #38bdf8;
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.6));
+  transform-origin: 50% 80%;
+  transition: transform 0.1s linear;
+  margin-top: -4px;
+}

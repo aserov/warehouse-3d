@@ -8,10 +8,10 @@ WH.config.MEASUREMENT = {
 };
 
 WH.config.DIRECTION = {
-  RightToLeft: 'RightToLeft',
   LeftToRight: 'LeftToRight',
+  RightToLeft: 'RightToLeft',
   TopToBottom: 'TopToBottom',
-  BottomToTop: 'BottomToTop'
+  BottomToTop: 'BottomToTop',
 };
 
 WH.config.ALIGN = {
@@ -20,4 +20,9 @@ WH.config.ALIGN = {
   Top: 'Top',
   Bottom: 'Bottom',
   Center: 'Center',
+};
+
+WH.config.ORIENTATION = {
+  Vertical: 'Vertical',
+  Horizontal: 'Horizontal',
 };

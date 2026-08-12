@@ -51,6 +51,7 @@ const files = [
   'js/canvas/controls/compassControl.js',
   'js/canvas/controls/zoomControl.js',
   'js/canvas/controls/viewModeControl.js',
+  'js/canvas/controls/cameraPositionControl.js',
   'js/canvas/sceneSync.js',
 
   'js/toolbar/toolbarClock.js',
@@ -129,19 +130,19 @@ minify(combinedCode, {
     // Save unminified version (for development)
     fs.writeFileSync('dist/app.warehouse.js', combinedCode);
     console.log('✅ Saved: dist/app.warehouse.js (' + (combinedCode.length / 1024).toFixed(2) + ' KB)');
-    
+
     // Save minified version (for production)
     fs.writeFileSync('dist/app.warehouse.min.js', result.code);
-    
+
     // Save source map
     if (result.map) {
       fs.writeFileSync('dist/app.warehouse.min.js.map', result.map);
       console.log('🗺️ Saved: dist/app.warehouse.min.js.map');
     }
-    
+
     const minifiedSize = (result.code.length / 1024).toFixed(2);
     const reduction = (100 - (result.code.length / combinedCode.length * 100)).toFixed(1);
-    
+
     console.log('✅ Minified: dist/app.warehouse.min.js (' + minifiedSize + ' KB)');
     console.log('📊 ' + (combinedCode.length / 1024).toFixed(2) + 'KB → ' + minifiedSize + 'KB (' + reduction + '% smaller)');
     console.log('\n✨ Javascript build complete!');

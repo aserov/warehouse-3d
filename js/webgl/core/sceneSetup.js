@@ -1,7 +1,7 @@
 window.WH = window.WH || {};
 WH.webgl = WH.webgl || {};
 
-WH.webgl.createSceneCore = function(container, onAzimuthChange, onZoomChange) {
+WH.webgl.createSceneCore = function(container, onAzimuthChange, onZoomChange, onCameraChange) {
   const INITIAL_CAMERA_POSITION = new THREE.Vector3(40, 45, 50);
   const { camera: camCfg, colors } = WH.config.WAREHOUSE_CONFIG;
 
@@ -39,6 +39,10 @@ WH.webgl.createSceneCore = function(container, onAzimuthChange, onZoomChange) {
     if (onZoomChange) {
       const percent = WH.webgl.getZoomPercent(camera, controls, camCfg.minDistance, camCfg.maxDistance);
       onZoomChange(percent);
+    }
+
+    if (onCameraChange) {
+      onCameraChange(camera.position.clone(), controls.target.clone());
     }
   });
 

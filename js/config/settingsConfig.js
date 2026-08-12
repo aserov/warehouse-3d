@@ -6,10 +6,11 @@ WH.config.SETTINGS_DEFAULTS = {
   areaLabels: true,
   rowLabels: true,
   levelLabels: true,
-  cornerLabels: true,
+  cornerLabels: false,
   canvasViewer: true,
   compass: true,
   zoom: true,
+  cameraPosition: false,
 };
 
 WH.config.SETTINGS_CHECKBOX_MAP = {
@@ -21,10 +22,12 @@ WH.config.SETTINGS_CHECKBOX_MAP = {
   canvasViewer: 'toggle-canvas-viewer',
   compass: 'toggle-compass',
   zoom: 'toggle-zoom',
+  cameraPosition: 'toggle-camera-position',
 };
 
 WH.config.SETTINGS_DOM_WIDGETS = {
   canvasViewer: 'canvas-viewer-widget',
   compass: 'compass-widget',
   zoom: 'zoom-widget',
+  cameraPosition: 'camera-position-widget',
 };

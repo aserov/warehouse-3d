@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (WH.canvas.CompassControl) WH.canvas.CompassControl.init();
   if (WH.canvas.ZoomControl) WH.canvas.ZoomControl.init();
   if (WH.canvas.ViewModeControl) WH.canvas.ViewModeControl.init();
+  if (WH.canvas.CameraPositionControl) WH.canvas.CameraPositionControl.init();
 });
 
 function __initData() {

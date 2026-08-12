@@ -46,6 +46,16 @@
         <span class="loader-text">Loading Warehouse...</span>
       </div>
 
+      <!-- Camera Coordinates Widget -->
+      <div class="camera-position-widget" id="camera-position-widget">
+        <div class="camera-position-row">
+            <span data-i18n="cameraYouHere">Camera (You here)</span>: <span id="camera-coords">x=0.0; y=0.0; z=0.0</span>
+        </div>
+        <div class="camera-position-row">
+            <span data-i18n="targetFocusOn">Target (Focus On)</span>: <span id="target-coords">x=0.0; y=0.0; z=0.0</span>
+        </div>
+      </div>
+
       <!-- Left Canvas Overlay Controls (Compass & Zoom) -->
       <div class="canvas-controls-left">
         <!-- Compass Widget -->
@@ -221,6 +231,7 @@
           <label data-i18n="showCanvasViewer"><input type="checkbox" id="toggle-canvas-viewer" checked> Show Canvas Viewer</label>
           <label data-i18n="showCompass"><input type="checkbox" id="toggle-compass" checked> Show Compass</label>
           <label data-i18n="showZoom"><input type="checkbox" id="toggle-zoom" checked> Show Zoom</label>
+          <label data-i18n="showCameraPosition"><input type="checkbox" id="toggle-camera-position" checked> Show Camera Position</label>
         </div>
       </section>
 
@@ -292,6 +303,7 @@
   <script src="js/canvas/controls/compassControl.js"></script>
   <script src="js/canvas/controls/zoomControl.js"></script>
   <script src="js/canvas/controls/viewModeControl.js"></script>
+  <script src="js/canvas/controls/cameraPositionControl.js"></script>
   <script src="js/canvas/sceneSync.js"></script>
 
   <script src="js/toolbar/toolbarClock.js"></script>

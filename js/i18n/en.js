@@ -66,12 +66,17 @@ window.WH.i18n.en = {
   showCompass: 'Show Compass',
   showCanvasViewer: 'Show Canvas Viewer',
   showZoom: 'Show Zoom',
+  showCameraPosition: 'Show Camera Position',
   defaultInfoText: 'Click on a cell, row, or area to view details',
 
   // Help section
   helpRotate: 'Rotate: Left click + Drag',
   helpPan: 'Pan: Right click + Drag',
   helpZoom: 'Zoom: Mouse wheel',
+
+  // Camera coords widget
+  cameraYouHere: 'Camera',
+  targetFocusOn: 'Target',
 
   // Errors & Alerts
   errorTitle: 'Failed to load warehouse data',

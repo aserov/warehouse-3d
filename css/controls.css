@@ -292,3 +292,24 @@
   font-weight: 600;
   box-shadow: 0 0 8px rgba(2, 132, 199, 0.5);
 }
+
+/* Camera Coordinates */
+.camera-position-widget {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  padding: 6px 8px;
+  pointer-events: none;
+  white-space: nowrap;
+  flex-direction: column;
+}
+
+.camera-position-widget .camera-position-label {
+  font-weight: bold;
+}

@@ -27,7 +27,8 @@ WH.webgl.SceneController = (function() {
     core = WH.webgl.createSceneCore(
       container,
       (azimuthDeg) => WH.events.emit('scene:azimuthChange', azimuthDeg),
-      (zoomPercent) => WH.events.emit('scene:zoomChange', zoomPercent), // добавить
+      (zoomPercent) => WH.events.emit('scene:zoomChange', zoomPercent),
+      (position, target) => WH.events.emit('scene:cameraChange', { position, target }),
     );
 
     WH.webgl.buildAxes(core.scene);

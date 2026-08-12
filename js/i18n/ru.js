@@ -66,7 +66,12 @@ window.WH.i18n.ru = {
   showCompass: 'Показывать компас',
   showCanvasViewer: 'Показывать виды отображения склада',
   showZoom: 'Показывать зум',
+  showCameraPosition: 'Показывать позицию камеры',
   defaultInfoText: 'Кликните на ячейку, ряд или зону для просмотра деталей',
+
+  // Camera coords widget
+  cameraYouHere: 'Камера',
+  targetFocusOn: 'Фокуисровка',
 
   // Справка по управлению
   helpRotate: 'Вращение: ЛКМ + Перетаскивание',

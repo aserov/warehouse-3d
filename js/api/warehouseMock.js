@@ -35,7 +35,205 @@ const WAREHOUSE_MOCK_DATA = {
             { x: 520, z: 520 },
             { x: 520, z: 620 }
           ],
-          rows: []
+          rows: [
+            {
+              row: 1,
+              rowName: "KK-01",
+              direction: "LeftToRight",
+              align: "Top",
+              measurement: "Meter",
+              polygon: [
+                { x: 400, z: 540 },
+                { x: 500, z: 540 },
+                { x: 500, z: 560 },
+                { x: 400, z: 560 },
+              ],
+              levels: [
+                {
+                  level: 1,
+                  levelName: "KK-01-01",
+                  cells: [
+                    {
+                      place: 1,
+                      number: "KK-01-01-01",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 0,
+                    },
+                    {
+                      place: 2,
+                      number: "KK-01-01-02",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 3,
+                      number: "KK-01-01-03",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 4,
+                      number: "KK-01-01-04",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                  ]
+                },
+                {
+                  level: 2,
+                  levelName: "KK-01-02",
+                  cells: [
+                    {
+                      place: 1,
+                      number: "KK-01-02-01",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 2,
+                      number: "KK-01-02-02",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    }
+                  ]
+                },
+              ]
+            },
+            {
+              row: 2,
+              rowName: "KK-02",
+              direction: "RightToLeft",
+              align: "Top",
+              measurement: "Meter",
+              polygon: [
+                { x: 400, z: 580 },
+                { x: 500, z: 580 },
+                { x: 500, z: 600 },
+                { x: 400, z: 600 },
+              ],
+              levels: [
+                {
+                  level: 1,
+                  levelName: "KK-02-01",
+                  cells: [
+                    {
+                      place: 1,
+                      number: "KK-02-01-01",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 2,
+                      number: "KK-02-01-02",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 3,
+                      number: "KK-02-01-03",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 4,
+                      number: "KK-02-01-04",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                  ]
+                },
+                {
+                  level: 2,
+                  levelName: "KK-02-02",
+                  cells: [
+                    {
+                      place: 1,
+                      number: "KK-02-02-01",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 1,
+                    },
+                    {
+                      place: 2,
+                      number: "KK-02-02-02",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 0,
+                    },
+                    {
+                      place: 3,
+                      number: "KK-02-02-03",
+                      measurement: "Millimeter",
+                      width: 20000,
+                      height: 10000,
+                      depth: 20000,
+                      weight: 10000,
+                      freeWeight: 10000,
+                      active: 0,
+                    }
+                  ]
+                },
+              ]
+            }
+          ]
         },
         {
           area: 2,

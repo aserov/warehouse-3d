@@ -7,7 +7,7 @@ WH.canvas.SceneSync = (function() {
 
   function buildSceneInput(state) {
     const wh = state.currentWarehouse;
-    const areaLabelPrefix = WH.utils.t('area').toUpperCase();
+    const areaLabelPrefix = WH.utils.t('area');
     const floorLabelPrefix = WH.utils.t('floor');
 
     return {

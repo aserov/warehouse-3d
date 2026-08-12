@@ -1,7 +1,7 @@
 window.WH = window.WH || {};
 WH.webgl = WH.webgl || {};
 
-WH.webgl.createSceneCore = function(container, onAzimuthChange) {
+WH.webgl.createSceneCore = function(container, onAzimuthChange, onZoomChange) {
   const INITIAL_CAMERA_POSITION = new THREE.Vector3(40, 45, 50);
   const { camera: camCfg, colors } = WH.config.WAREHOUSE_CONFIG;
 
@@ -35,6 +35,11 @@ WH.webgl.createSceneCore = function(container, onAzimuthChange) {
     if (controls.target.y < 0) controls.target.y = 0;
     if (camera.position.y < 0.5) camera.position.y = 0.5;
     notifyAzimuth();
+
+    if (onZoomChange) {
+      const percent = WH.webgl.getZoomPercent(camera, controls, camCfg.minDistance, camCfg.maxDistance);
+      onZoomChange(percent);
+    }
   });
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);

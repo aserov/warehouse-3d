@@ -24,12 +24,15 @@ WH.webgl.SceneController = (function() {
     container = containerEl;
     const { camera: camCfg, colors, grid: gridCfg, focus: focusCfg } = WH.config.WAREHOUSE_CONFIG;
 
-    core = WH.webgl.createSceneCore(container, (azimuthDeg) => {
-      WH.events.emit('scene:azimuthChange', azimuthDeg);
-    });
+    core = WH.webgl.createSceneCore(
+      container,
+      (azimuthDeg) => WH.events.emit('scene:azimuthChange', azimuthDeg),
+      (zoomPercent) => WH.events.emit('scene:zoomChange', zoomPercent), // добавить
+    );
+
+    WH.webgl.buildAxes(core.scene);
 
     cameraAnimator = new WH.webgl.CameraAnimator(core.camera, core.controls);
-
     gridController = new WH.webgl.GridController(core.scene, core.camera, cameraAnimator, colors, gridCfg, camCfg);
 
     warehouseGroup = new THREE.Group();

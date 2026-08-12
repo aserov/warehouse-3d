@@ -19,6 +19,7 @@ const files = [
   'js/utils/i18n.js',
   'js/utils/eventBus.js',
 
+  'js/webgl/builders/axesBuilder.js',
   'js/webgl/builders/textures.js',
   'js/webgl/builders/cellBuilder.js',
   'js/webgl/builders/levelBuilder.js',

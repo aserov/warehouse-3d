@@ -33,11 +33,16 @@ WH.config.WAREHOUSE_CONFIG = {
   },
   grid: {
     positionY: -0.05,
+    paddingFactor: 0.8,
   },
   focus: {
     dimmedOpacity: 0.15,
-    paddingFactor: 1.4,
+    paddingFactor: 0.9,
   },
   areaPadding: 10.0,
   cellGap: 0.2,
+  axes: {
+    length: 25,
+    color: 0x808080,
+  },
 };

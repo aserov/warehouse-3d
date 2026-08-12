@@ -75,7 +75,7 @@ WH.webgl.GridController = class {
   positionCameraForGridBounds(animate) {
     const { center, size } = this.currentGridBounds;
     const fovRad = THREE.MathUtils.degToRad(this.camera.fov);
-    const padding = 1.1;
+    const padding = this.gridCfg.paddingFactor;
 
     let cameraDistance = (size / (2 * Math.tan(fovRad / 2))) * padding;
     cameraDistance = Math.max(cameraDistance, this.camCfg.minDistance);
